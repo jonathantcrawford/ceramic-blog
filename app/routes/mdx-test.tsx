@@ -12,8 +12,6 @@ import {getMDXComponent} from 'mdx-bundler/client'
 
 
 
-
-
 export const loader: LoaderFunction = async () => {
 
     const {code} = await compileMDX();
