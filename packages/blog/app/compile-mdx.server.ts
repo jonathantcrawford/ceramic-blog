@@ -5,7 +5,6 @@ import {bundleMDX} from 'mdx-bundler';
 
 
 
-
 export const compileMDX = async () => {
 
   const mdxSource = `
