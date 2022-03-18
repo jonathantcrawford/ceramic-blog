@@ -13,7 +13,8 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./app/*"],
+      "~ceramic/*": ["./ceramic/*"]
     },
     "skipLibCheck": true,
 
