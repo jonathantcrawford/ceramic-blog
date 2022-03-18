@@ -6,5 +6,6 @@
   },
   "hoist": true,
   "npmClient": "npm",
-  "useWorkspaces": true
+  "useWorkspaces": true,
+  "npmClientArgs": ["--no-lockfile"]
 }
