@@ -1,14 +1,10 @@
 {
-  "packages": [
-    "packages/*"
-  ],
+  "packages": ["packages/*"],
   "version": "0.1.1",
   "hoist": true,
   "stream": true,
   "bootstrap": {
-    "npmClientArgs": [
-      "--no-package-lock"
-    ]
+    "npmClientArgs": ["--no-package-lock"]
   },
   "useWorkspaces": true
 }

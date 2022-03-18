@@ -1,1 +1,14 @@
-{"definitions":{"basicProfile":"kjzl6cwe1jw145cjbeko9kil8g9bxszjhyde21ob8epxuxkaon1izyqsu8wgcic","blogPosts":"kjzl6cwe1jw14aqjsf8vjrf5iondpjk3c4plj8f2n23myi3mqm20oqpxgb4myk5"},"schemas":{"BasicProfile":"ceramic://k3y52l7qbv1frxt706gqfzmq6cbqdkptzk8uudaryhlkf6ly9vx21hqu4r6k1jqio","BlogPost":"ceramic://k1dpgaqe3i64kjlbre65rqzyua4ewteo4z87neqgetohhb18yy1umtpaqm7d455bjs7dapgnsz5erurxoljghcq6ra4ey5b1jhywrc8efyi978viktrxmplr7","BlogPosts":"ceramic://k3y52l7qbv1frybzuxsmsn5b3nkok3wos0o5q2n89hky63kw25z25bothltfs0b9c"},"tiles":{"placeholderBlogPost":"kjzl6cwe1jw147k9gu0yz4bysyre3620mo5tc2r8aryom8i4bd9bf0wzdiljf00"}}
+{
+  "definitions": {
+    "basicProfile": "kjzl6cwe1jw145cjbeko9kil8g9bxszjhyde21ob8epxuxkaon1izyqsu8wgcic",
+    "blogPosts": "kjzl6cwe1jw14aqjsf8vjrf5iondpjk3c4plj8f2n23myi3mqm20oqpxgb4myk5"
+  },
+  "schemas": {
+    "BasicProfile": "ceramic://k3y52l7qbv1frxt706gqfzmq6cbqdkptzk8uudaryhlkf6ly9vx21hqu4r6k1jqio",
+    "BlogPost": "ceramic://k1dpgaqe3i64kjlbre65rqzyua4ewteo4z87neqgetohhb18yy1umtpaqm7d455bjs7dapgnsz5erurxoljghcq6ra4ey5b1jhywrc8efyi978viktrxmplr7",
+    "BlogPosts": "ceramic://k3y52l7qbv1frybzuxsmsn5b3nkok3wos0o5q2n89hky63kw25z25bothltfs0b9c"
+  },
+  "tiles": {
+    "placeholderBlogPost": "kjzl6cwe1jw147k9gu0yz4bysyre3620mo5tc2r8aryom8i4bd9bf0wzdiljf00"
+  }
+}

@@ -1,13 +1,11 @@
 import { bundleMDX } from "mdx-bundler";
 
-import path from 'path'
+import path from "path";
 
 import "esbuild";
 import "@jontcrawford/snippets";
 
-
 export const compileMDX = async () => {
-
   const mdxSource = `
 ---
 title: Example Post
@@ -25,25 +23,25 @@ Here's a **neat** demo:
 
 `.trim();
 
-  if (process.platform === 'win32') {
+  if (process.platform === "win32") {
     process.env.ESBUILD_BINARY_PATH = path.join(
       process.cwd(),
-      'node_modules',
-      'esbuild',
-      'esbuild.exe',
-    )
+      "node_modules",
+      "esbuild",
+      "esbuild.exe"
+    );
   } else {
     process.env.ESBUILD_BINARY_PATH = path.join(
       process.cwd(),
-      'node_modules',
-      'esbuild',
-      'bin',
-      'esbuild',
-    )
+      "node_modules",
+      "esbuild",
+      "bin",
+      "esbuild"
+    );
   }
 
   const result = await bundleMDX({
-    source: mdxSource
+    source: mdxSource,
   });
 
   const { code } = result;
