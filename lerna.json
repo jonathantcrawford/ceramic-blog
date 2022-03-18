@@ -4,7 +4,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "hoist": true,
   "stream": true,
   "npmClient": "npm",
   "npmClientArgs": ["--no-lockfile"]
