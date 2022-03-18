@@ -3,11 +3,11 @@ import { json, useLoaderData } from "remix";
 
 import { compileMDX } from "~/compile-mdx.server";
 
-import { useMemo, useState, useEffect, Fragment } from "react";
+import { useMemo } from "react";
 
 import { getMDXComponent } from "mdx-bundler/client";
 
-import styles from "@ceramic-blog/snippets/dist/main.css";
+import styles from "@jontcrawford/snippets/dist/main.css";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: styles }];
