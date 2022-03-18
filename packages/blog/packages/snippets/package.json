@@ -1,6 +1,6 @@
 {
   "name": "@ceramic-blog/snippets",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Made with create-react-library",
   "author": "jonathantcrawford",
   "license": "MIT",
@@ -59,5 +59,5 @@
   "files": [
     "dist"
   ],
-  "gitHead": "fccb8d1e534001908451aa546eb8662c716aca9e"
+  "gitHead": "1cf0c65447017d245f0424b0803a3913a727be06"
 }
