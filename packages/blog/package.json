@@ -36,17 +36,18 @@
   "dependencies": {
     "@architect/architect": "^10.1.0",
     "@architect/functions": "^5.0.4",
+    "@ceramic-blog/snippets": "latest",
     "@reach/alert": "^0.16.0",
     "@remix-run/architect": "^1.3.1",
     "@remix-run/react": "^1.3.1",
     "bcryptjs": "2.4.3",
     "cuid": "^2.1.8",
+    "esbuild": "^0.14.27",
     "mdx-bundler": "^8.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "remix": "^1.3.1",
-    "tiny-invariant": "^1.2.0",
-    "@ceramic-blog/snippets": "latest"
+    "tiny-invariant": "^1.2.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^6.0.0",
@@ -65,7 +66,6 @@
     "c8": "^7.11.0",
     "cross-env": "^7.0.3",
     "cypress": "^9.5.2",
-    "esbuild": "^0.14.27",
     "esbuild-register": "^3.3.2",
     "eslint": "^8.11.0",
     "eslint-config-prettier": "^8.5.0",
