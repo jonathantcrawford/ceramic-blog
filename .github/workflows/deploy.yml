@@ -27,7 +27,7 @@ jobs:
           node-version: 14
 
       - name: 📥 Download deps
-        run: npm install
+        uses: bahmutov/npm-install@v1
 
       - name: 🔬 Lint
         run: npm run lint
@@ -48,7 +48,7 @@ jobs:
           node-version: 14
 
       - name: 📥 Download deps
-        run: npm install
+        uses: bahmutov/npm-install@v1
 
       - name: 🔎 Type check
         run: npm run typecheck --if-present
@@ -69,7 +69,7 @@ jobs:
           node-version: 14
 
       - name: 📥 Download deps
-        run: npm install
+        uses: bahmutov/npm-install@v1
 
       - name: ⚡ Run vitest
         run: npm run test -- --coverage
@@ -93,7 +93,7 @@ jobs:
           node-version: 14
 
       - name: 📥 Download deps
-        run: npm install
+        uses: bahmutov/npm-install@v1
 
       - name: 🏗 Build
         run: npm run build
@@ -132,7 +132,7 @@ jobs:
           VER=`npm --version`; echo "npm ver:    $VER"
 
       - name: 📥 Download deps
-        run: npm install
+        uses: bahmutov/npm-install@v1
 
       - name: 🏗 Build
         run: npm run build
