@@ -1,5 +1,6 @@
 {
   "name": "@ceramic-blog/snippets",
+  "private": false,
   "version": "0.0.5",
   "description": "Made with create-react-library",
   "author": "jonathantcrawford",
@@ -58,6 +59,5 @@
   },
   "files": [
     "dist"
-  ],
-  "gitHead": "1cf0c65447017d245f0424b0803a3913a727be06"
+  ]
 }
