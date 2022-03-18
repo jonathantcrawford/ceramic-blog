@@ -8,7 +8,8 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "run-s build:css build:lerna build:remix",
+    "clean": "rimraf .cache ./server/build ./public/build",
+    "build": "run-s clean build:css build:lerna build:remix",
     "build:css": "npm run generate:css -- --minify",
     "build:remix": "remix build",
     "build:lerna": "lerna run build",

@@ -1,10 +1,14 @@
 import { bundleMDX } from "mdx-bundler";
 
+import esbuild from "esbuild"
+
 import path from 'path'
 
 
 
 export const compileMDX = async () => {
+  let version = esbuild.version;
+
   const mdxSource = `
 ---
 title: Example Post
