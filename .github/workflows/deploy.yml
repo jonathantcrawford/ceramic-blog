@@ -137,12 +137,15 @@ jobs:
       - name: 🏗 Build
         run: npm run build
 
+      - name: Change Workding Directory
+        run: cd packages/blog
+
       - name: 🛠 Install Arc
         run: npm i -g @architect/architect
 
       - name: 🚀 Staging Deploy
         if: github.ref == 'refs/heads/dev'
-        run: cd apps/blog arc deploy --staging --prune
+        run: arc deploy --staging --prune
         env:
           CI: true
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
