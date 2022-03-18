@@ -1,13 +1,12 @@
 import { bundleMDX } from "mdx-bundler";
 
-import esbuild from "esbuild"
-
 import path from 'path'
 
+import "esbuild";
+import "@jontcrawford/snippets";
 
 
 export const compileMDX = async () => {
-  let version = esbuild.version;
 
   const mdxSource = `
 ---
@@ -44,7 +43,7 @@ Here's a **neat** demo:
   }
 
   const result = await bundleMDX({
-    source: mdxSource,
+    source: mdxSource
   });
 
   const { code } = result;

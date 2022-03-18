@@ -7,6 +7,8 @@ import { useMemo } from "react";
 
 import { getMDXComponent } from "mdx-bundler/client";
 
+
+
 import styles from "@jontcrawford/snippets/dist/main.css";
 
 export const links: LinksFunction = () => {
@@ -21,7 +23,9 @@ export const loader: LoaderFunction = async () => {
 export default function MDXTest() {
   const { code } = useLoaderData();
 
-  const Component = useMemo(() => getMDXComponent(code), [code]);
+  const Component = useMemo(
+    () => getMDXComponent(code)
+  , [code]);
   return (
     <main>
       <Component />
