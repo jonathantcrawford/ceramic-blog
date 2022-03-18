@@ -142,7 +142,7 @@ jobs:
 
       - name: 🚀 Staging Deploy
         if: github.ref == 'refs/heads/dev'
-        run: arc deploy --staging --prune
+        run: cd apps/blog arc deploy --staging --prune
         env:
           CI: true
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
