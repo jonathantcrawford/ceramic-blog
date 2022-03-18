@@ -9,9 +9,9 @@ import {
   useSearchParams,
 } from "remix";
 
-import { createUserSession, getUserId } from "src/blog/app/session.server";
-import { verifyLogin } from "src/blog/app/models/user.server";
-import { validateEmail } from "src/blog/app/utils";
+import { createUserSession, getUserId } from "~/session.server";
+import { verifyLogin } from "~/models/user.server";
+import { validateEmail } from "~/utils";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await getUserId(request);

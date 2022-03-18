@@ -3,8 +3,8 @@ import { Form, json, redirect, useActionData } from "remix";
 import type { ActionFunction } from "remix";
 import Alert from "@reach/alert";
 
-import { createNote } from "src/blog/app/models/note.server";
-import { requireUserId } from "src/blog/app/session.server";
+import { createNote } from "~/models/note.server";
+import { requireUserId } from "~/session.server";
 
 type ActionData = {
   errors?: {

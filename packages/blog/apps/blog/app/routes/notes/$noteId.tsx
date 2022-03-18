@@ -2,10 +2,10 @@ import type { LoaderFunction, ActionFunction } from "remix";
 import { redirect } from "remix";
 import { json, useLoaderData, useCatch, Form } from "remix";
 import invariant from "tiny-invariant";
-import type { Note } from "src/blog/app/models/note.server";
-import { deleteNote } from "src/blog/app/models/note.server";
-import { getNote } from "src/blog/app/models/note.server";
-import { requireUserId } from "src/blog/app/session.server";
+import type { Note } from "~/models/note.server";
+import { deleteNote } from "~/models/note.server";
+import { getNote } from "~/models/note.server";
+import { requireUserId } from "~/session.server";
 
 type LoaderData = {
   note: Note;
