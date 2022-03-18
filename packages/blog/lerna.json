@@ -3,7 +3,7 @@
     "packages/*"
   ],
   "version": "0.0.2",
-  "hoist": true,
+  "hoist": false,
   "stream": true,
   "bootstrap": {
     "npmClientArgs": [
