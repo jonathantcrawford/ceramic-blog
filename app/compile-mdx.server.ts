@@ -10,7 +10,7 @@ description: This is some description
 
 # Wahoo
 
-import { ExampleComponent } from "@ceramic-blog/snippets";
+import { ExampleComponent } from "@jontcrawford/snippets";
 
 Here's a **neat** demo:
 
