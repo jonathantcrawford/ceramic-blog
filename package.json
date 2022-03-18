@@ -1,10 +1,15 @@
 {
   "name": "ceramic-blog",
   "private": true,
-  "workspaces": [
-    "./apps/*",
-    "./packages/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "./apps/*",
+      "./packages/*"
+    ],
+    "nohoist": [
+      "**/apps/**"
+    ]
+  },
   "scripts": {
     "build": "lerna run build",
     "prepare": "lerna run prepare"

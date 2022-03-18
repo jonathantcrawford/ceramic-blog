@@ -5,3 +5,6 @@ dependencies
 
 devDependencies
 `lerna add <dependencies> --scope='<package>' --dev`
+
+
+`lerna link`
