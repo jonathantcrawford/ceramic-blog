@@ -132,12 +132,7 @@ jobs:
           VER=`npm --version`; echo "npm ver:    $VER"
 
       - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
-        with:
-          # This is the key right here
-          key: ${{ runner.os }}-cache-version-${{ hashFiles('**/package-lock.json') }}
-          path: |
-            ./
+        run: npm install
 
       - name: 🏗 Build
         run: npm run build
