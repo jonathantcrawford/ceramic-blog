@@ -5,6 +5,7 @@
     "access": "public"
   },
   "hoist": true,
+  "stream": true,
   "npmClient": "npm",
   "useWorkspaces": true,
   "npmClientArgs": ["--no-lockfile"]
