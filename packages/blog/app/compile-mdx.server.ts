@@ -1,12 +1,6 @@
-
-import {bundleMDX} from 'mdx-bundler';
-
-
-
-
+import { bundleMDX } from "mdx-bundler";
 
 export const compileMDX = async () => {
-
   const mdxSource = `
 ---
 title: Example Post
@@ -22,15 +16,13 @@ Here's a **neat** demo:
 
 <ExampleComponent>test</ExampleComponent>
 
-`.trim()
-  
+`.trim();
+
   const result = await bundleMDX({
-    source: mdxSource
-  })
+    source: mdxSource,
+  });
 
-  const {code} = result;
+  const { code } = result;
 
-  return {code} 
-
-
-}
+  return { code };
+};
