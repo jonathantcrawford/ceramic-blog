@@ -27,9 +27,7 @@ jobs:
           node-version: 14
 
       - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1  
-        with:
-          install-command: npm install
+        uses: bahmutov/npm-install@v1
 
       - name: 🔬 Lint
         run: npm run lint
