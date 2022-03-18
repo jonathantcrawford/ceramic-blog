@@ -25,7 +25,8 @@
     "typecheck": "tsc -b && tsc -b cypress",
     "ceramic:create-model": "node --experimental-json-modules ./ceramic/scripts/create-model.mjs",
     "ceramic:migrate-model": "node --experimental-json-modules ./ceramic/scripts/migrate-model.mjs",
-    "ceramic:publish-model": "node --experimental-json-modules ./ceramic/scripts/publish-model.mjs"
+    "ceramic:publish-model": "node --experimental-json-modules ./ceramic/scripts/publish-model.mjs",
+    "prepare": "npm run install"
   },
   "prettier": {},
   "eslintIgnore": [
