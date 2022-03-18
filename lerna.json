@@ -4,6 +4,7 @@
   "publishConfig": {
     "access": "public"
   },
+  "hoist": true,
   "npmClient": "npm",
   "useWorkspaces": true
 }
