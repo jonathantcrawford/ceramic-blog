@@ -137,7 +137,7 @@ jobs:
       - name: 🏗 Build
         run: npm run build
 
-      - name: Change Workding Directory
+      - name: Change Working Directory
         run: cd packages/blog
 
       - name: 🛠 Install Arc
