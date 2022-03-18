@@ -1,0 +1,24 @@
+{
+  "exclude": ["./cypress"],
+  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+  "compilerOptions": {
+    "lib": ["DOM", "DOM.Iterable", "ES2020"],
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "target": "ES2020",
+    "module": "ES2020",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["src/blog/app/*"],
+      "~ceramic/*": ["./ceramic/*"]
+    },
+    "skipLibCheck": true,
+
+    // Remix takes care of building everything in `remix build`.
+    "noEmit": true
+  }
+}
