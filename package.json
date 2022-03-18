@@ -1,8 +1,14 @@
 {
-  "name": "root",
+  "name": "ceramic-blog",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "templates/*"
+  ],
   "scripts": {
-    "build": "lerna bootstrap"
+    "build": "lerna run build",
+    "prepare": "lerna run prepare"
   },
   "devDependencies": {
     "lerna": "^4.0.0"
