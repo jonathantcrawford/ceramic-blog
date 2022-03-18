@@ -6,10 +6,9 @@
   "sideEffects": false,
   "scripts": {
     "clean": "rimraf .cache ./server/build ./public/build",
-    "build": "run-s clean build:css build:lerna build:remix",
+    "build": "run-s clean build:css build:remix",
     "build:css": "npm run generate:css -- --minify",
     "build:remix": "remix build",
-    "build:lerna": "lerna run build",
     "dev": "run-p dev:*",
     "dev:arc": "node ./dev sandbox",
     "dev:css": "npm run generate:css -- --watch",
