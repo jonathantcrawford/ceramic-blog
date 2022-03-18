@@ -4,9 +4,6 @@
   "description": "",
   "license": "MIT",
   "sideEffects": false,
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "clean": "rimraf .cache ./server/build ./public/build",
     "build": "run-s clean build:css build:lerna build:remix",

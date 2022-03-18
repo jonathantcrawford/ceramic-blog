@@ -9,6 +9,5 @@
     "npmClientArgs": [
       "--no-package-lock"
     ]
-  },
-  "useWorkspaces": true
+  }
 }
