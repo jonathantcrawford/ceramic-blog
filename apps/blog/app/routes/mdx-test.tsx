@@ -1,7 +1,7 @@
 import type { LoaderFunction, LinksFunction } from "remix";
 import { json, useLoaderData } from "remix";
 
-import { compileMDX } from "src/blog/app/compile-mdx.server";
+import { compileMDX } from "~/compile-mdx.server";
 
 import { useMemo } from "react";
 

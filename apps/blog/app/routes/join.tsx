@@ -9,10 +9,10 @@ import {
   useActionData,
 } from "remix";
 
-import { getUserId, createUserSession } from "src/blog/app/session.server";
+import { getUserId, createUserSession } from "~/session.server";
 
-import { createUser, getUserByEmail } from "src/blog/app/models/user.server";
-import { validateEmail } from "src/blog/app/utils";
+import { createUser, getUserByEmail } from "~/models/user.server";
+import { validateEmail } from "~/utils";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await getUserId(request);
