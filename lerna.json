@@ -10,5 +10,6 @@
       "--no-package-lock"
     ]
   },
-  "useWorkspaces": true
+  "useWorkspaces": true,
+  "independent": true
 }
