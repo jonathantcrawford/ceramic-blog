@@ -2,8 +2,8 @@
   "name": "ceramic-blog",
   "private": true,
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "./apps/*",
+    "./packages/*"
   ],
   "scripts": {
     "build": "lerna run build",
