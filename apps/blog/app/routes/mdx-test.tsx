@@ -14,7 +14,24 @@ export const links: LinksFunction = () => {
 };
 
 export const loader: LoaderFunction = async () => {
-  const { code } = await compileMDX();
+
+  const mdxSource = `
+---
+title: Example Post
+published: 2021-02-13
+description: This is some description
+---
+
+# Wahoo
+
+import { ExampleComponent } from "@jontcrawford/snippets";
+
+Here's a **neat** demo:
+
+<ExampleComponent>test</ExampleComponent>
+
+`.trim();
+  const { code } = await compileMDX({mdxSource});
   return json({ code });
 };
 

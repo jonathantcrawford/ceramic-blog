@@ -47,6 +47,7 @@
     "@self.id/web": "^0.3.0",
     "bcryptjs": "2.4.3",
     "cuid": "^2.1.8",
+    "easymde": "^2.16.1",
     "esbuild": "^0.14.27",
     "esbuild-register": "^3.3.2",
     "mdx-bundler": "^8.0.1",

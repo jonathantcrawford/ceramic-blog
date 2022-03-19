@@ -5,23 +5,8 @@ import path from "path";
 import "esbuild";
 import "@jontcrawford/snippets";
 
-export const compileMDX = async () => {
-  const mdxSource = `
----
-title: Example Post
-published: 2021-02-13
-description: This is some description
----
+export const compileMDX = async ({mdxSource}: {mdxSource: any}) => {
 
-# Wahoo
-
-import { ExampleComponent } from "@jontcrawford/snippets";
-
-Here's a **neat** demo:
-
-<ExampleComponent>test</ExampleComponent>
-
-`.trim();
 
   if (process.platform === "win32") {
     process.env.ESBUILD_BINARY_PATH = path.join(
@@ -41,7 +26,7 @@ Here's a **neat** demo:
   }
 
   const result = await bundleMDX({
-    source: mdxSource,
+    source: mdxSource.trim(),
   });
 
   const { code } = result;
