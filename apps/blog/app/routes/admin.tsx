@@ -102,8 +102,8 @@ export default function Admin() {
   // };
 
   return (
-    <>
-      <div onClick={() => authenticate()}>authenticate</div>
+    <div className="h-screen flex flex-col">
+      <div className="flex-[0_0_auto]" onClick={() => authenticate()}>authenticate</div>
       {/* <div>{JSON.stringify(profile)}</div>
       <div>{blogPosts && JSON.stringify(blogPosts)}</div>
       <div>
@@ -128,7 +128,7 @@ export default function Admin() {
         ></textarea>
         <button onClick={() => publish()}>publish</button>
       </div> */}
-      <Outlet context={{selfID}} />
-    </>
+      {selfID && <Outlet context={{selfID}} /> }
+    </div>
   );
 }
