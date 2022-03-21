@@ -36,7 +36,7 @@ export const loader = async ({ params }: any) => {
 
 
     const blogPostDocument = blogPostsDocument?.blogPosts.find(blogPost => blogPost.id === `ceramic://${params.did}`);
-    const {title, subTitle, date, emoji} = blogPostDocument;
+    const {title, subTitle, date, emoji} = blogPostDocument ?? {title: '', subTitle: '', date: '', emoji: ''};
 
     const tileDocument = await core.tileLoader.load(params.did);
     const { code } = await compileMDX({mdxSource: tileDocument.content.mdx});
