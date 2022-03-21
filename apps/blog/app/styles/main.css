@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  body {
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: "Open Sans";
+  }
+  *::-webkit-scrollbar {
+    width: 0px;
+  }
+  
+  *::selection {
+    @apply bg-yellow-100 text-black-100
+  }
+
+  @font-face {
+    font-family: "December";
+    src: url("/static/fonts/December/DecemberMedium.woff2") format("woff2"),
+      url("/static/fonts/December/DecemberMedium.woff") format("woff");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Hamlin";
+    src: url("/static/fonts/Hamlin/Hamlin-ExtraBold.woff2") format("woff2"),
+      url("/static/fonts/Hamlin/Hamlin-ExtraBold.woff") format("woff");
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: "Hamlin";
+    src: url("/static/fonts/Hamlin/Hamlin-Light.woff2") format("woff2"),
+      url("/static/fonts/Hamlin/Hamlin-Light.woff") format("woff");
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: "Hamlin";
+    src: url("/static/fonts/Hamlin/Hamlin-Regular.woff2") format("woff2"),
+      url("/static/fonts/Hamlin/Hamlin-Regular.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: "Hamlin";
+    src: url("/static/fonts/Hamlin/Hamlin-Bold.woff2") format("woff2"),
+      url("/static/fonts/Hamlin/Hamlin-Bold.woff") format("woff");
+    font-weight: bold;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: "Saygon";
+    src: url("/static/fonts/Saygon/Saygon-Thin.woff2") format("woff2"),
+      url("/static/fonts/Saygon/Saygon-Thin.woff") format("woff");
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+  }
+    
+  @font-face {
+    font-family: "Saygon";
+    src: url("/static/fonts/Saygon/Saygon-Light.woff2") format("woff2"),
+      url("/static/fonts/Saygon/Saygon-Light.woff") format("woff");
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: "Saygon";
+    src: url("/static/fonts/Saygon/Saygon-Regular.woff2") format("woff2"),
+      url("/static/fonts/Saygon/Saygon-Regular.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: "Saygon";
+    src: url("/static/fonts/Saygon/Saygon-Medium.woff2") format("woff2"),
+      url("/static/fonts/Saygon/Saygon-Medium.woff") format("woff");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: "Saygon";
+    src: url("/static/fonts/Saygon/Saygon-Semibold.woff2") format("woff2"),
+      url("/static/fonts/Saygon/Saygon-Semibold.woff") format("woff");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: "Saygon";
+    src: url("/static/fonts/Saygon/Saygon-SemiboldItalic.woff2") format("woff2"),
+      url("/static/fonts/Saygon/Saygon-SemiboldItalic.woff") format("woff");
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: "Saygon";
+    src: url("/static/fonts/Saygon/Saygon-Bold.woff2") format("woff2"),
+      url("/static/fonts/Saygon/Saygon-Bold.woff") format("woff");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: "Saygon";
+    src: url("/static/fonts/Saygon/Saygon-Extrabold.woff2") format("woff2"),
+      url("/static/fonts/Saygon/Saygon-Extrabold.woff") format("woff");
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: "Saygon";
+    src: url("/static/fonts/Saygon/Saygon-ExtraboldItalic.woff2") format("woff2"),
+      url("/static/fonts/Saygon/Saygon-ExtraboldItalic.woff") format("woff");
+    font-weight: 800;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+}
