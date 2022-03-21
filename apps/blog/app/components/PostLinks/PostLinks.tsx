@@ -20,7 +20,7 @@ function PendingNavLink({ className, to, prefetch, children }: any) {
 
   return (
     <NavLink
-      className={[className, isPending ? "text-pink-200 border-pink-200" : null].join(" ")}
+      className={[className, isPending ? "border-pink-200 text-pink-200" : "border-yellow-100 text-yellow-100 hover:text-yellow-200 hover:cursor-pointer hover:border-yellow-200"].join(" ")}
       data-pending={isPending ? "true" : null}
       to={to}
       prefetch={prefetch}
@@ -59,16 +59,16 @@ export const PostLinks = () => {
           <PendingNavLink
             prefetch="intent"
             to={`${blogPost.id.replace(/ceramic:\/\//g, '')}`}
-            className="p-[3vmin] rounded-[2vmin] border-[0.05vmin] border-yellow-100 no-underline text-yellow-100 flex flex-col hover:text-yellow-200 hover:cursor-pointer hover:border-yellow-200"
+            className="p-[3vmin] rounded-[2vmin] border-[0.05vmin] no-underline flex flex-col"
           >
                 <span className="text-2xl font-normal font-saygon pb-2">
-                  {"🔥"} {`${blogPost.title}`}
+                  {blogPost.emoji} {`${blogPost.title}`}
                 </span>
                 <span className="text-xl font-light font-saygon pb-4">
-                  {"Does edge server side rendering live up to the hype?"}
+                  {blogPost.subTitle}
                 </span>
                 <span className="text-lg font-light font-saygon text-align-right">
-                  {"02/02/2022"}
+                  {blogPost.date}
                 </span>
           </PendingNavLink>
           ))}

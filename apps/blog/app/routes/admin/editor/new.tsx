@@ -39,8 +39,7 @@ export default function CreateBlogPost() {
 
     const [title, setTitle] = useState("");
     const [subTitle, setSubTitle] = useState("");
-    const [slug, setSlug] = useState("");
-    const [text, setText] = useState("");
+    const [emoji, setEmoji] = useState("");
 
     useEffect(() => {
         const syncBlogPosts = async () => {
@@ -114,13 +113,18 @@ export default function CreateBlogPost() {
             const doc = await selfID?.client.dataModel.createTile(
                 "BlogPost",
                 {
-                date: new Date().toISOString(),
-                text: easyMDE.current.value(),
+                mdx: easyMDE.current.value(),
                 }
             );
             if (doc) {
                 await selfID?.set("blogPosts", {
-                    blogPosts: [...blogPostItems, { id: doc.id.toUrl(), title: title }],
+                    blogPosts: [...blogPostItems, { 
+                        id: doc.id.toUrl(), 
+                        title: title,
+                        date: new Date().toISOString(),
+                        subTitle: subTitle,
+                        emoji: emoji
+                    }],
                 });
                 submit(null, {method: 'get', action: '/admin'});
             }
@@ -136,7 +140,12 @@ export default function CreateBlogPost() {
 
     return (
         <>
-        <div className="flex-[1_1_auto]"><input type="text" value={title} onChange={(e) => setTitle(e.target.value)} /><button onClick={() => publish()}>publish</button></div>
+        <div className="flex-[1_1_auto]">
+            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <input type="text" value={subTitle} onChange={(e) => setSubTitle(e.target.value)} />
+            <input type="text" value={emoji} onChange={(e) => setEmoji(e.target.value)} />
+            <button onClick={() => publish()}>publish</button>
+        </div>
         <div className="flex-[8_8_auto] grid grid-cols-[50vw_50vw]">
             <div>
                 <textarea id="text-editor"></textarea>

@@ -13,7 +13,7 @@ export const PostHeader = ({ info }: any) => {
           {info.emoji} {info.title}
         </span>
         <span className="text-xl font-medium font-saygon pb-4">
-          {info.subtitle}
+          {info.subTitle}
         </span>
         <span className="text-xl font-medium font-saygon text-right">
           {info.date}

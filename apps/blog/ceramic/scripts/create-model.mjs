@@ -40,16 +40,10 @@ const blogPostSchemaID = await manager.createSchema("BlogPost", {
   title: "BlogPost",
   type: "object",
   properties: {
-    date: {
+    mdx: {
       type: "string",
-      format: "date-time",
-      title: "date",
-      maxLength: 30,
-    },
-    text: {
-      type: "string",
-      title: "text",
-      maxLength: 4000,
+      title: "mdx",
+      maxLength: 10000,
     },
   },
 });
@@ -75,6 +69,22 @@ const blogPostsSchemaID = await manager.createSchema("BlogPosts", {
             type: "string",
             title: "title",
             maxLength: 100,
+          },
+          subTitle: {
+            type: "string",
+            title: "subTitle",
+            maxLength: 100,
+          },
+          date: {
+            type: "string",
+            format: "date-time",
+            title: "date",
+            maxLength: 30,
+          },
+          emoji: {
+            type: "string",
+            title: "emoji",
+            maxLength: 30,
           },
         },
       },

@@ -60,7 +60,10 @@
     "tiny-invariant": "^1.2.0"
   },
   "devDependencies": {
+    "@ceramicnetwork/http-client": "^1.5.7",
+    "@datamodels/identity-profile-basic": "^0.1.2",
     "@faker-js/faker": "^6.0.0",
+    "@glazed/devtools": "^0.1.6",
     "@glazed/types": "^0.1.3",
     "@remix-run/dev": "*",
     "@remix-run/eslint-config": "*",
@@ -78,10 +81,14 @@
     "c8": "^7.11.0",
     "cross-env": "^7.0.3",
     "cypress": "^9.5.2",
+    "dids": "^2.4.3",
+    "dotenv": "^16.0.0",
     "esbuild-register": "^3.3.2",
     "eslint": "^8.11.0",
     "eslint-config-prettier": "^8.5.0",
     "happy-dom": "^2.49.0",
+    "key-did-provider-ed25519": "^1.1.0",
+    "key-did-resolver": "^1.4.4",
     "mock-aws-s3": "^4.0.2",
     "msw": "^0.39.2",
     "npm-run-all": "^4.1.5",
@@ -91,6 +98,7 @@
     "start-server-and-test": "^1.14.0",
     "tailwindcss": "^3.0.23",
     "typescript": "^4.6.2",
+    "uint8arrays": "^3.0.0",
     "vite-tsconfig-paths": "^3.4.1",
     "vitest": "^0.7.0"
   },

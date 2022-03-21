@@ -2,15 +2,15 @@ import type { ModelTypeAliases } from "@glazed/types";
 import type { BasicProfile } from "@datamodels/identity-profile-basic";
 
 export type BlogPost = {
-  date: string;
-  text: string;
-  subTitle: string;
-  slug: string;
+  mdx: string;
 };
 
 export type BlogPostItem = {
   id: string;
   title: string;
+  date: string;
+  subTitle: string;
+  emoji: string;
 };
 
 export type BlogPosts = {

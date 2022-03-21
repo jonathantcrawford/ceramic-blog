@@ -45,8 +45,7 @@ export default function EditBlogPost() {
 
     const [title, setTitle] = useState("");
     const [subTitle, setSubTitle] = useState("");
-    const [slug, setSlug] = useState("");
-    const [text, setText] = useState("");
+    const [emoji, setEmoji] = useState("");
 
     useEffect(() => {
         const syncBlogPosts = async () => {
@@ -58,8 +57,13 @@ export default function EditBlogPost() {
             doc?.subscribe((value) => {
                 if (value?.next) {
                     setBlogPostItems(value?.next?.content.blogPosts);
-                    const title = value?.next?.content.blogPosts.find((blogPost: BlogPostItem) => blogPost.id === `ceramic://${blogPostId}`).title;
+                    const blogPostItem = value?.next?.content.blogPosts.find((blogPost: BlogPostItem) => blogPost.id === `ceramic://${blogPostId}`)
+                    const title = blogPostItem.title;
+                    const subTitle = blogPostItem.subTitle;
+                    const emoji = blogPostItem.emoji;
                     setTitle(title);
+                    setSubTitle(subTitle);
+                    setEmoji(emoji);
                 } else {
                     setBlogPostItems(value.content.blogPosts);
                 }
@@ -69,7 +73,7 @@ export default function EditBlogPost() {
 
 
             const blogPost = await selfID?.client.tileLoader.load(blogPostId);
-            easyMDE.current.value(blogPost?.content.text);
+            easyMDE.current.value(blogPost?.content.mdx);
 
             //const blogPosts = await selfID?.get("blogPosts");
 
@@ -139,14 +143,17 @@ export default function EditBlogPost() {
 
             blogPost?.update({
                 ...blogPost?.content,
-                text: easyMDE.current.value()
+                mdx: easyMDE.current.value()
             })
 
             const blogPostItemsUpdates = blogPostItems.map((blogPostItem: BlogPostItem) => {
                 if (blogPostItem.id === `ceramic://${blogPostId}`) {
                     return {
                         ...blogPostItem,
-                        title: title
+                        title: title,
+                        subTitle: subTitle,
+                        emoji: emoji,
+                        date: new Date().toISOString()
                     }
                 } else {
                     return blogPostItem
@@ -169,7 +176,12 @@ export default function EditBlogPost() {
 
     return (
         <>
-        <div className="flex-[1_1_auto]"><input type="text" value={title} onChange={(e) => setTitle(e.target.value)} /><button onClick={() => update()}>update</button></div>
+        <div className="flex-[1_1_auto]">
+            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <input type="text" value={subTitle} onChange={(e) => setSubTitle(e.target.value)} />
+            <input type="text" value={emoji} onChange={(e) => setEmoji(e.target.value)} />
+            <button onClick={() => update()}>update</button>
+        </div>
         <div className="flex-[8_8_auto] grid grid-cols-[50vw_50vw]">
             <div>
                 <textarea id="text-editor"></textarea>
