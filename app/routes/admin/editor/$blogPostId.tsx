@@ -60,6 +60,13 @@ export default function EditBlogPost() {
                     setEmoji(emoji);
                 } else {
                     setBlogPostItems(value.content.blogPosts);
+                    const blogPostItem = value?.content.blogPosts.find((blogPost: BlogPostItem) => blogPost.id === `ceramic://${blogPostId}`)
+                    const title = blogPostItem.title;
+                    const subTitle = blogPostItem.subTitle;
+                    const emoji = blogPostItem.emoji;
+                    setTitle(title);
+                    setSubTitle(subTitle);
+                    setEmoji(emoji);
                 }
             });
 
