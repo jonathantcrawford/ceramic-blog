@@ -161,15 +161,18 @@
     @apply rounded-lg bg-yellow-100 text-black-100 font-saygon text-xl text-center hover:bg-yellow-200 py-2 px-3 flex items-center whitespace-nowrap w-[min-content] hover:cursor-pointer;
   }
 
+  .btn:disabled {
+    @apply bg-black-100 text-pink-200 border-2 border-pink-200 pointer-events-none;
+  }
+
   .code-snippet {
     display: flex;
     flex-direction: column;
   }
   
   .code-snippet code.file-name {
+    @apply text-black-100 bg-pink-200;
     border-radius: 0.4vh 0.4vh 0vh 0vh;
-    background-color: var(--color-6);
-    color: var(--color-0);
     padding: 0.6vh 0.6vh;
     overflow-wrap: break-word;
   }
