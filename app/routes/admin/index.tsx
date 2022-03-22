@@ -1,15 +1,28 @@
 import type { LinksFunction } from "remix";
 import { useFetcher, useOutletContext, Link } from "@remix-run/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 
 import { compileMDX } from "~/compile-mdx.server";
 
+import { Core, PublicID } from '@self.id/core';
 import type { SelfID } from "@self.id/web";
+import publishedModel from "~ceramic/models/model.json";
 import type { ModelTypes, BlogPostItem } from "~ceramic/models/types";
 import type { ModelTypesToAliases } from "@glazed/types";
 
-import { useMemo } from "react";
 import { getMDXComponent } from "mdx-bundler/client";
+
+import { PostLinks } from "~/components/PostLinks/PostLinks";
+
+import "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faTwitter,
+} from "@fortawesome/free-brands-svg-icons";
+
+import {
+    faPlus
+} from "@fortawesome/free-solid-svg-icons";
 
 import easyMDEStyles from "easymde/dist/easymde.min.css"
 
@@ -28,7 +41,7 @@ export default function Editor() {
 
     const [blogPosts, setBlogPosts] = useState<BlogPostItem[]>([]);
 
-    const [profileData, setProfileData] = useState(null);
+    const [profileData, setProfileData] = useState<any>(null);
 
     const [title, setTitle] = useState("");
     const [subTitle, setSubTitle] = useState("");
@@ -38,51 +51,41 @@ export default function Editor() {
     useEffect(() => {
         const syncProfileData = async () => {
             const basicProfileDefinitionID = await selfID?.client.dataModel.getDefinitionID("basicProfile");
-            console.log({basicProfileDefinitionID})
-            const doc = await selfID?.client.dataStore.getRecordDocument(
-                basicProfileDefinitionID as string
-            );
-            doc?.subscribe((value: any) => setProfileData(value?.next?.content));
-        }
-
-        const syncBlogPosts = async () => {
-            const blogPostDefinitionID =
-              await selfID?.client.dataModel.getDefinitionID("blogPosts");
-            const doc = await selfID?.client.dataStore.getRecordDocument(
-              blogPostDefinitionID as string
-            );
+            const doc = await selfID?.client.dataStore.getRecordDocument(basicProfileDefinitionID as string, selfID?.id);
             doc?.subscribe((value) => {
-                if (value?.next) {
-                    setBlogPosts(value?.next?.content.blogPosts);
-                } else {
-                    setBlogPosts(value.content.blogPosts);
-                }
+              if (value?.next) {
+                    setProfileData(value?.next?.content);
+              } else {
+                setProfileData(value?.content);
+              }
             });
-            console.log(doc)
-
-            //const blogPosts = await selfID?.get("blogPosts");
-
-            //setBlogPosts(blogPosts?.blogPosts);
-            // if (blogPosts) {
-            //       const blogPost = await self.client.tileLoader.load(blogPosts?.blogPosts[0].id);
-            //      console.log(blogPost);
-            //      //setBlogPosts(blogPost);
-            // //}
         }
         if (selfID) {
             syncProfileData();
-            syncBlogPosts();
         }
     },[selfID])
 
 
     return (
-        <div className="h-5/6 grid grid-cols-[50vw_50vw]">
-            <div>{JSON.stringify(profileData)}</div>
-            <div className="flex flex-col">{blogPosts && blogPosts.map((blogPost) => (
-                <Link key={blogPost.id.replace(/ceramic:\/\//g, '')} to={`editor/${blogPost.id.replace(/ceramic:\/\//g, '')}`}>{blogPost.title}</Link>
-            ))}
-                <Link key="new" to={'editor/new'}>new</Link>
+        <div className="flex-[1_1_auto] grid grid-cols-[50vw_50vw]">
+            <div className="flex flex-col p-8">
+                {profileData &&
+                    <>
+                        <div className="text-yellow-100 font-saygon text-3xl mb-4">{profileData.name}</div>
+                        <div className="text-yellow-100 font-saygon text-xl mb-4">{profileData.homeLocation}</div>
+                        <a rel="noreferrer" href={`https://twitter.com/${profileData.twitter}`} target="_blank" className="mb-4 text-yellow-100 font-saygon text-xl hover:text-yellow-200">
+                            <FontAwesomeIcon className="text-lg mr-4" icon={faTwitter} />
+                            {`@${profileData.twitter}`}
+                        </a>
+                        <div className="text-yellow-100 font-saygon text-xl mb-4">{profileData.emoji}</div>
+                        <div className="text-white-100 font-hamlin text-4xl italic mb-4">{profileData.description}</div>
+                        
+                    </>
+                }
+            </div>
+            <div className="flex flex-col p-8">
+                <Link key="new" className="btn self-end" to={'editor/new'}><FontAwesomeIcon className="text-base mr-2" icon={faPlus}/> new post</Link>
+                {selfID?.did && <PostLinks linkPrefix={'editor/'} did={selfID?.id}/>}
             </div>
         </div>   
     )

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 import { Outlet } from "remix";
 
@@ -19,14 +19,16 @@ export default function Admin() {
   // const [text, setText] = useState("");
 
 
-
-  const model: ModelTypesToAliases<ModelTypes> = publishedModel;
+  const [isLoading, setIsLoading] = useState(true);
+  
 
   const [selfID, setSelfID] = useState<SelfID<ModelTypes> | undefined>();
 
 
-  const connect = async () => {
+  const connect = useCallback(async () => {
     if (typeof document !== "undefined") {
+      const model: ModelTypesToAliases<ModelTypes> = publishedModel;
+
       const module = await import("@self.id/web");
 
       //@ts-ignore
@@ -63,16 +65,21 @@ export default function Admin() {
       //      //setBlogPosts(blogPost);
       // //}
 
-      setSelfID(self)
+      setSelfID(self);
+      setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     //@ts-ignore
     if (typeof document !== "undefined" && window.ethereum.selectedAddress) {
       connect();
+    } else {
+      Promise.all([
+        new Promise(resolve => setTimeout(resolve, 800))
+      ]).then(() => setIsLoading(false));
     }
-  }, []);
+  }, [connect]);
 
   const authenticate = async () => {
     if (typeof document !== "undefined") {
@@ -103,32 +110,13 @@ export default function Admin() {
 
   return (
     <div className="h-screen flex flex-col">
-      <div className="flex-[0_0_auto]" onClick={() => authenticate()}>authenticate</div>
-      {/* <div>{JSON.stringify(profile)}</div>
-      <div>{blogPosts && JSON.stringify(blogPosts)}</div>
-      <div>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          type="text"
-          value={subTitle}
-          onChange={(e) => setSubTitle(e.target.value)}
-        />
-        <input
-          type="text"
-          value={slug}
-          onChange={(e) => setSlug(e.target.value)}
-        />
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        ></textarea>
-        <button onClick={() => publish()}>publish</button>
-      </div> */}
-      {selfID && <Outlet context={{selfID}} /> }
+      {!isLoading && !selfID && <div className="h-full flex justify-center items-center"><div className="flex-[0_0_auto] btn h-[80px]" onClick={() => authenticate()}>authenticate</div></div>}
+      {isLoading && 
+        <div className="flex-[1_1_auto] text-yellow-100 font-saygon text-4xl place-self-center flex flex-col justify-center">
+          loading
+        </div>
+      }
+      {!isLoading && selfID && <Outlet context={{selfID}} /> }
     </div>
   );
 }

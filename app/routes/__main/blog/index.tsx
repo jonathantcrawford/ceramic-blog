@@ -45,7 +45,7 @@ export default function Index() {
 
   return (
     <div className="grid-in-ga-content w-full">
-      <PostLinks />
+      <PostLinks linkPrefix={''} did={'did:3:kjzl6cwe1jw147j8id1v2ovge4mgdu7luvpuiw34qg5ixc4zixa0qpza4kpruf6'} />
      </div>
   )
 }

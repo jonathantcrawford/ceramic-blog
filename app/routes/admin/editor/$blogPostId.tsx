@@ -62,7 +62,6 @@ export default function EditBlogPost() {
                     setBlogPostItems(value.content.blogPosts);
                 }
             });
-            console.log(doc)
 
 
 
@@ -165,13 +164,31 @@ export default function EditBlogPost() {
 
     return (
         <>
-        <div className="flex-[1_1_auto]">
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
-            <input type="text" value={subTitle} onChange={(e) => setSubTitle(e.target.value)} />
-            <input type="text" value={emoji} onChange={(e) => setEmoji(e.target.value)} />
-            <button onClick={() => update()}>update</button>
+        <div className="flex-[1_1_auto] flex flex-col items-center p-4">
+            <div className="flex-[1_1_auto] flex flex-row w-full justify-between mb-4">
+                <Link className="btn" to="../">back to admin</Link>
+                <button className="btn" onClick={() => update()}>update</button>
+            </div>
+            
+            <div className="flex-[1_1_auto] flex flex-row w-full">
+                    <div className="flex flex-col flex-[0_0_auto] w-[60px] mr-8">
+                        <label htmlFor="emoji" className="bg-black-100 text-yellow-100 font-saygon text-lg mb-2">Emoji</label>
+                        <input name="emoji" type="text" className="text-center bg-black-100 text-yellow-100 font-saygon text-lg focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2" value={emoji} onChange={(e) => setEmoji(e.target.value)} />
+                    </div>
+
+                    <div className="flex flex-col flex-[1_1_auto] w-auto">
+                        <label htmlFor="title" className="bg-black-100 text-yellow-100 font-saygon text-lg mb-2">Title</label>
+                        <input name="title" type="text" className="bg-black-100 text-yellow-100 font-saygon text-lg focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2" value={title} onChange={(e) => setTitle(e.target.value)} />
+                    </div>
+            </div>
+            <div className="flex-[1_1_auto] flex flex-col w-full">
+                <label htmlFor="subTitle" className="bg-black-100 text-yellow-100 font-saygon text-lg mb-2">Subtitle</label>
+                <input name="subTitle" type="text" className="bg-black-100 text-yellow-100 font-saygon text-lg focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2" value={subTitle} onChange={(e) => setSubTitle(e.target.value)} />
+            </div>
+
+            
         </div>
-        <div className="flex-[8_8_auto] grid grid-cols-[50vw_50vw]">
+        <div className="flex-[8_8_auto] grid grid-cols-[30vw_70vw]">
             <div className="h-full">
                 <textarea id="text-editor"></textarea>
             </div>

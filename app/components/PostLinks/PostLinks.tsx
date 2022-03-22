@@ -30,7 +30,7 @@ function PendingNavLink({ className, to, prefetch, children }: any) {
   );
 }
 
-export const PostLinks = () => {
+export const PostLinks = ({linkPrefix, did}: {linkPrefix: string, did: string}) => {
 
   const [blogPosts, setBlogPosts] = useState<Array<BlogPostItem> | []>([])
   
@@ -39,15 +39,19 @@ export const PostLinks = () => {
     const load = async () => {
       const model: ModelTypesToAliases<ModelTypes> = publishedModel;
       const core = new Core<ModelTypes>({ ceramic: 'testnet-clay', model });
-      const blogOwnerID = await new PublicID({core, id: 'did:3:kjzl6cwe1jw147j8id1v2ovge4mgdu7luvpuiw34qg5ixc4zixa0qpza4kpruf6'});
-      const [blogPostsDocument] = await Promise.all([
-        blogOwnerID.get('blogPosts'),
-      ]);
-      setBlogPosts(blogPostsDocument?.blogPosts as Array<BlogPostItem>);
+      const blogPostDefinitionID = await core.dataModel.getDefinitionID("blogPosts");
+      const doc = await core.dataStore.getRecordDocument(blogPostDefinitionID as string, did);
+      doc?.subscribe((value) => {
+        if (value?.next) {
+            setBlogPosts(value?.next?.content.blogPosts);
+        } else {
+            setBlogPosts(value.content.blogPosts);
+        }
+      });
 
     }
     load();
-  })
+  },[])
 
   return (
     <>
@@ -57,8 +61,9 @@ export const PostLinks = () => {
       <div className="grid auto-rows-min grid-flow-row gap-[5vh]">
         {blogPosts.map(blogPost => (
           <PendingNavLink
+            key={`${blogPost.id.replace(/ceramic:\/\//g, '')}`}
             prefetch="intent"
-            to={`${blogPost.id.replace(/ceramic:\/\//g, '')}`}
+            to={`${linkPrefix}${blogPost.id.replace(/ceramic:\/\//g, '')}`}
             className="p-[3vmin] rounded-[2vmin] border-[0.05vmin] no-underline flex flex-col"
           >
                 <span className="text-2xl font-normal font-saygon pb-2">

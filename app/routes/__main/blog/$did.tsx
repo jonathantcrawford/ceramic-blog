@@ -46,7 +46,7 @@ export default function Did() {
 
 
     return (
-        <div className="grid-in-ga-content w-100p markdown">
+        <div className="grid-in-ga-content w-full">
             <PostHeader info={{title, subTitle, date, emoji}}/>
             <Component components={mdxComponents}/>
         </div>
