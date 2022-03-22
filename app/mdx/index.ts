@@ -1,5 +1,11 @@
+import { getMDXComponent } from "mdx-bundler/client";
 import { ExampleComponent } from "./ExampleComponent/ExampleComponent";
 
-export {
+const mdxComponents = {
     ExampleComponent
+}
+
+export {
+    getMDXComponent,
+    mdxComponents
 }

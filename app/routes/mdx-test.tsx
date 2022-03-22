@@ -5,9 +5,8 @@ import { compileMDX } from "~/compile-mdx.server";
 
 import { useMemo } from "react";
 
-import { getMDXComponent } from "mdx-bundler/client";
 
-import { ExampleComponent } from "~/mdx";
+import { getMDXComponent, mdxComponents } from "~/mdx";
 
 
 export const loader: LoaderFunction = async () => {
@@ -36,9 +35,7 @@ export default function MDXTest() {
   const Component = useMemo(() => getMDXComponent(code), [code]);
   return (
     <main>
-      <Component components={{
-        ExampleComponent
-      }}/>
+      <Component components={mdxComponents}/>
     </main>
   );
 }

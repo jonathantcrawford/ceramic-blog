@@ -10,7 +10,7 @@ import type { ModelTypesToAliases } from "@glazed/types";
 
 import { compileMDX } from "~/compile-mdx.server";
 
-import { getMDXComponent } from "mdx-bundler/client";
+import { getMDXComponent, mdxComponents } from "~/mdx";
 
 
 import { PostHeader } from "~/components/PostHeader/PostHeader";
@@ -48,7 +48,7 @@ export default function Did() {
     return (
         <div className="grid-in-ga-content w-100p markdown">
             <PostHeader info={{title, subTitle, date, emoji}}/>
-            <Component/>
+            <Component components={mdxComponents}/>
         </div>
     )
 }
