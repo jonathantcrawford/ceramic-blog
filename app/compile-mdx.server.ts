@@ -3,7 +3,6 @@ import { bundleMDX } from "mdx-bundler";
 import path from "path";
 
 import "esbuild";
-import "@jontcrawford/snippets";
 
 export const compileMDX = async ({mdxSource}: {mdxSource: any}) => {
 

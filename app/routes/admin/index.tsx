@@ -13,16 +13,12 @@ import { getMDXComponent } from "mdx-bundler/client";
 
 import easyMDEStyles from "easymde/dist/easymde.min.css"
 
-import styles from "@jontcrawford/snippets/dist/main.css";
 
-
-import "@jontcrawford/snippets";
 
 
 export const links: LinksFunction = () => {
     return [
         { rel: "stylesheet", href: easyMDEStyles },
-        { rel: "stylesheet", href: styles },
     ];
   };
 

@@ -16,11 +16,7 @@ import { getMDXComponent } from "mdx-bundler/client";
 import { PostHeader } from "~/components/PostHeader/PostHeader";
 
 
-import styles from "@jontcrawford/snippets/dist/main.css";
 
-export const links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: styles }];
-};
 
 
 

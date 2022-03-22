@@ -13,17 +13,11 @@ import easyMDEStyles from "easymde/dist/easymde.min.css"
 import easyMDEFixStyles from "~/styles/misc/easymde-fix.css"
 
 
-import styles from "@jontcrawford/snippets/dist/main.css";
-
-
-import "@jontcrawford/snippets";
-
 
 export const links: LinksFunction = () => {
     return [
         { rel: "stylesheet", href: easyMDEStyles },
-        { rel: "stylesheet", href: easyMDEFixStyles},
-        { rel: "stylesheet", href: styles },
+        { rel: "stylesheet", href: easyMDEFixStyles}
     ];
 };
 
