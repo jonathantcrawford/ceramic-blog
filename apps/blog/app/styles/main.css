@@ -15,7 +15,7 @@
   }
   
   *::selection {
-    @apply bg-yellow-100 text-black-100
+    @apply bg-yellow-100 text-black-100;
   }
 
   @font-face {
@@ -141,4 +141,12 @@
     font-display: swap;
   }
   
+  h1 {
+    @apply text-white-100 font-saygon text-4xl font-semibold;
+  }
+
+  h2 {
+    @apply text-white-100 font-saygon text-4xl;
+  }
+
 }

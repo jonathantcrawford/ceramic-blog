@@ -5,8 +5,12 @@ import { compileMDX } from "~/compile-mdx.server";
 
 
 export const action: ActionFunction = async ({request}) => {
-  const formData = await request.formData();
-  const mdxSource = formData.get("mdxSource");
-  const code  = await compileMDX({mdxSource});
-  return json(code);
+  try {
+    const formData = await request.formData();
+    const mdxSource = formData.get("mdxSource");
+    const {code}  = await compileMDX({mdxSource});
+    return json({code});
+  } catch {
+    return json({error: 'mdx typo'})
+  }
 };

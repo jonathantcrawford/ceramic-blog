@@ -1,18 +1,17 @@
 import type { LinksFunction, LoaderFunction } from "remix";
-import { useFetcher, useOutletContext, Link, useLoaderData } from "@remix-run/react";
+import { useFetcher, useOutletContext, Link, useLoaderData, Outlet } from "@remix-run/react";
 import { json, useSubmit, redirect } from "remix";
 import { useEffect, useRef, useState } from "react";
 
-import { compileMDX } from "~/compile-mdx.server";
 
 import type { SelfID } from "@self.id/web";
 import type { ModelTypes, BlogPostItem } from "~ceramic/models/types";
 import type { ModelTypesToAliases } from "@glazed/types";
 
-import { useMemo } from "react";
-import { getMDXComponent } from "mdx-bundler/client";
 
 import easyMDEStyles from "easymde/dist/easymde.min.css"
+import easyMDEFixStyles from "~/styles/misc/easymde-fix.css"
+
 
 import styles from "@jontcrawford/snippets/dist/main.css";
 
@@ -23,6 +22,7 @@ import "@jontcrawford/snippets";
 export const links: LinksFunction = () => {
     return [
         { rel: "stylesheet", href: easyMDEStyles },
+        { rel: "stylesheet", href: easyMDEFixStyles},
         { rel: "stylesheet", href: styles },
     ];
 };
@@ -104,17 +104,12 @@ export default function EditBlogPost() {
                         element: document.getElementById('text-editor'),
                         lineWrapping: false,
                         lineNumbers: true,
-                        overlayMode: {
-                            mode: {},
-                            combine: false
-                        },
-                        previewRender: (plainText, preview) => { // Async method
-                            setTimeout(() => {
-                                fetcher.submit({mdxSource: plainText}, {method: 'post', action: '/mdx'});
-                            }, 250);
-                    
-                            return "Loading...";
-                        },
+                        toolbar: false,
+                        status: false
+                    });
+
+                    easyMDE.current.codemirror.on("change", () => {
+                        fetcher.submit({mdxSource: easyMDE.current.value()}, {method: 'post', action: '/mdx'});
                     });
                 }
             }
@@ -172,7 +167,7 @@ export default function EditBlogPost() {
 
 
 
-    const Component = useMemo(() => fetcher?.data?.code ? getMDXComponent(fetcher?.data?.code) : () => <div></div>, [fetcher]);
+    
 
     return (
         <>
@@ -183,11 +178,11 @@ export default function EditBlogPost() {
             <button onClick={() => update()}>update</button>
         </div>
         <div className="flex-[8_8_auto] grid grid-cols-[50vw_50vw]">
-            <div>
+            <div className="h-full">
                 <textarea id="text-editor"></textarea>
             </div>
-            <div className="container">
-                <Component/>
+            <div className="h-full">
+                <Outlet context={{code: fetcher?.data?.code, error: fetcher?.data?.error}}/>
             </div>
         </div>
         </>
