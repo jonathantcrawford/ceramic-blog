@@ -1,5 +1,5 @@
 import type { LinksFunction, LoaderFunction } from "remix";
-import { useFetcher, useOutletContext, Link, useLoaderData, useSubmit } from "@remix-run/react";
+import { useFetcher, useOutletContext, Link, useLoaderData, useSubmit, Outlet } from "@remix-run/react";
 import { json } from "remix";
 import { useEffect, useRef, useState } from "react";
 
@@ -82,17 +82,12 @@ export default function CreateBlogPost() {
                         element: document.getElementById('text-editor'),
                         lineWrapping: false,
                         lineNumbers: true,
-                        overlayMode: {
-                            mode: {},
-                            combine: false
-                        },
-                        previewRender: (plainText, preview) => { // Async method
-                            setTimeout(() => {
-                                fetcher.submit({mdxSource: plainText}, {method: 'post', action: '/mdx'});
-                            }, 250);
-                    
-                            return "Loading...";
-                        },
+                        toolbar: false,
+                        status: false
+                    });
+
+                    easyMDE.current.codemirror.on("change", () => {
+                        fetcher.submit({mdxSource: easyMDE.current.value()}, {method: 'post', action: '/mdx'});
                     });
                 }
             }
@@ -128,10 +123,6 @@ export default function CreateBlogPost() {
 
     };
 
-
-
-    const Component = useMemo(() => fetcher?.data?.code ? getMDXComponent(fetcher?.data?.code) : () => <div></div>, [fetcher]);
-
     return (
         <>
         <div className="flex-[1_1_auto]">
@@ -141,11 +132,11 @@ export default function CreateBlogPost() {
             <button onClick={() => publish()}>publish</button>
         </div>
         <div className="flex-[8_8_auto] grid grid-cols-[50vw_50vw]">
-            <div>
+            <div className="h-full">
                 <textarea id="text-editor"></textarea>
             </div>
-            <div className="container">
-                <Component/>
+            <div className="h-full">
+                <Outlet context={{code: fetcher?.data?.code, error: fetcher?.data?.error}}/>
             </div>
         </div>
         </>
