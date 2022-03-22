@@ -6,6 +6,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "remix";
 import type { LinksFunction, MetaFunction, LoaderFunction } from "remix";
 
@@ -28,15 +29,26 @@ export const meta: MetaFunction = () => ({
 
 type LoaderData = {
   user: Awaited<ReturnType<typeof getUser>>;
+  ENV: any;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
+  const url = new URL(request.url);
+
   return json<LoaderData>({
     user: await getUser(request),
+    ENV: {
+      HTTP_PROTOCOL: process.env.NODE_ENV === "development" ? "http:" : "http:",
+      WS_PROTOCOL: process.env.NODE_ENV === "development" ? "ws:" : "wss:",
+      HOST: url.host,
+      NODE_ENV: process.env.NODE_ENV,
+    },
   });
 };
 
 export default function App() {
+  const {ENV} = useLoaderData();
+
   return (
     <html lang="en" className="h-full bg-black-100">
       <head>
@@ -46,8 +58,13 @@ export default function App() {
       <body className="h-full">
         <Outlet />
         <ScrollRestoration />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(ENV)}`,
+          }}
+        />
         <Scripts />
-        <LiveReload />
+        {process.env.NODE_ENV === "development" && <LiveReload />}
       </body>
     </html>
   );

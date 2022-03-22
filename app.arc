@@ -6,6 +6,8 @@ ceramic-blog-4403
   method any
   src server
 
+@ws
+
 @static
 
 @tables
