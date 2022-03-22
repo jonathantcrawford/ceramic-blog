@@ -144,7 +144,7 @@ jobs:
 
       - name: 🚀 Staging Deploy
         if: github.ref == 'refs/heads/dev'
-        run: yarn workspace blog run deploy:staging
+        run: arc deploy --staging --prune
         env:
           CI: true
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
