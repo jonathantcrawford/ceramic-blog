@@ -7,11 +7,8 @@ import { useMemo } from "react";
 
 import { getMDXComponent } from "mdx-bundler/client";
 
-import styles from "@jontcrawford/snippets/dist/main.css";
+import { ExampleComponent } from "~/mdx";
 
-export const links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: styles }];
-};
 
 export const loader: LoaderFunction = async () => {
 
@@ -23,8 +20,6 @@ description: This is some description
 ---
 
 # Wahoo
-
-import { ExampleComponent } from "@jontcrawford/snippets";
 
 Here's a **neat** demo:
 
@@ -41,7 +36,9 @@ export default function MDXTest() {
   const Component = useMemo(() => getMDXComponent(code), [code]);
   return (
     <main>
-      <Component />
+      <Component components={{
+        ExampleComponent
+      }}/>
     </main>
   );
 }
