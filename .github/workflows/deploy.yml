@@ -120,7 +120,7 @@ jobs:
       - name: ⎔ Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 14.19.1
 
       - name: 👀 Env
         run: |
