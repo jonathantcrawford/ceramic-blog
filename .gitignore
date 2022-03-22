@@ -1,14 +1,1 @@
-node_modules
-.DS_Store
 
-/server/build
-/public/build
-preferences.arc
-sam.json
-sam.yaml
-.env
-
-/cypress/screenshots
-/cypress/videos
-
-/app/styles/tailwind.css
