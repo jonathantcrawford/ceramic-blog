@@ -7,8 +7,14 @@ import { deleteNote } from "~/models/note.server";
 import { getNote } from "~/models/note.server";
 import { requireUserId } from "~/session.server";
 
+import { getMDXComponent, mdxComponents } from "~/mdx";
+import { useMemo } from "react";
+
+import { compileMDX } from "~/compile-mdx.server";
+
 type LoaderData = {
   note: Note;
+  code: string;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -19,7 +25,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   if (!note) {
     throw new Response("Not Found", { status: 404 });
   }
-  return json<LoaderData>({ note });
+  const { code } = await compileMDX({mdxSource: note.body});
+  return json<LoaderData>({ code, note });
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -32,17 +39,19 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function NoteDetailsPage() {
-  const data = useLoaderData() as LoaderData;
+  const {code, note} = useLoaderData() as LoaderData;
+
+  const Component = useMemo(() => code ? getMDXComponent(code) : () => null, [code]);
 
   return (
     <div>
-      <h3 className="text-2xl font-bold">{data.note.title}</h3>
-      <p className="py-6">{data.note.body}</p>
+      <h3 className="text-2xl font-bold">{note.title}</h3>
+      <Component components={mdxComponents}/>
       <hr className="my-4" />
       <Form method="post">
         <button
           type="submit"
-          className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+          className="btn"
         >
           Delete
         </button>

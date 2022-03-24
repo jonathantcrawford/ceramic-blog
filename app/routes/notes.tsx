@@ -21,15 +21,15 @@ export default function NotesPage() {
 
   return (
     <div className="flex h-full min-h-screen flex-col">
-      <header className="flex items-center justify-between bg-slate-800 p-4 text-white">
-        <h1 className="text-3xl font-bold">
+      <header className="flex items-center justify-between bg-slate-800 p-4 text-white border-b border-pink-200">
+        <h1 className="text-3xl font-saygon">
           <Link to=".">Notes</Link>
         </h1>
         <p>{user.email}</p>
         <Form action="/logout" method="post">
           <button
             type="submit"
-            className="rounded bg-slate-600 py-2 px-4 text-blue-100 hover:bg-blue-500 active:bg-blue-600"
+            className="btn"
           >
             Logout
           </button>
@@ -37,8 +37,8 @@ export default function NotesPage() {
       </header>
 
       <main className="flex h-full bg-white">
-        <div className="h-full w-80 border-r bg-gray-50">
-          <Link to="new" className="block p-4 text-xl text-blue-500">
+        <div className="h-full w-80 border-r border-pink-200">
+          <Link to="new" className="block p-4 text-xl font-saygon text-yellow-100">
             + New Note
           </Link>
 
@@ -52,11 +52,11 @@ export default function NotesPage() {
                 <li key={note.id}>
                   <NavLink
                     className={({ isActive }) =>
-                      `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
+                      `block border-b p-4 text-xl font-saygon text-yellow-100 ${isActive ? "bg-white" : ""}`
                     }
                     to={note.id}
                   >
-                    📝 {note.title}
+                    {note.title}
                   </NavLink>
                 </li>
               ))}
