@@ -97,10 +97,10 @@ export default function Join() {
     <div className="flex min-h-full flex-col justify-center">
       <div className="mx-auto w-full max-w-md px-8">
         <Form method="post" className="space-y-6" noValidate>
-          <div>
+        <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-base font-saygon text-yellow-100"
             >
               Email address
             </label>
@@ -115,7 +115,7 @@ export default function Join() {
                 autoComplete="email"
                 aria-invalid={actionData?.errors?.email ? true : undefined}
                 aria-describedby="email-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+                className="w-full bg-black-100 text-yellow-100 font-saygon text-lg focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
               />
               {actionData?.errors?.email && (
                 <div className="pt-1 text-red-700" id="email-error">
@@ -128,7 +128,7 @@ export default function Join() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-base font-saygon text-yellow-100"
             >
               Password
             </label>
@@ -141,7 +141,7 @@ export default function Join() {
                 autoComplete="new-password"
                 aria-invalid={actionData?.errors?.password ? true : undefined}
                 aria-describedby="password-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+                className="w-full bg-black-100 text-yellow-100 font-saygon text-lg focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
               />
               {actionData?.errors?.password && (
                 <div className="pt-1 text-red-700" id="password-error">
@@ -154,15 +154,14 @@ export default function Join() {
           <input type="hidden" name="redirectTo" value={redirectTo} />
           <button
             type="submit"
-            className="w-full rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+            className="w-full btn flex justify-center"
           >
             Create Account
           </button>
-          <div className="flex items-center justify-center">
-            <div className="text-center text-sm text-gray-500">
+          <div className="font-saygon text-tiny text-yellow-100">
               Already have an account?{" "}
               <Link
-                className="text-blue-500 underline"
+                className="ml-2 font-saygon text-yellow-100 underline"
                 to={{
                   pathname: "/login",
                   search: searchParams.toString(),
@@ -171,7 +170,6 @@ export default function Join() {
                 Log in
               </Link>
             </div>
-          </div>
         </Form>
       </div>
     </div>
