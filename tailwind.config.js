@@ -34,6 +34,9 @@ module.exports = {
       },
       'white': {
         100: '#ffffff'
+      },
+      'red': {
+        100: '#ff124f'
       }
     },
     gridTemplateAreas: {

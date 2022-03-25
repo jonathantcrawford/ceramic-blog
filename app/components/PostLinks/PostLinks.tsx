@@ -8,6 +8,8 @@ import publishedModel from "~ceramic/models/model.json";
 import type { ModelTypes, BlogPostItem } from "~ceramic/models/types";
 import type { ModelTypesToAliases } from "@glazed/types";
 
+import { BlogPost } from "~/models/blog_post.server";
+
 
 
 function PendingNavLink({ className, to, prefetch, children }: any) {
@@ -30,28 +32,28 @@ function PendingNavLink({ className, to, prefetch, children }: any) {
   );
 }
 
-export const PostLinks = ({linkPrefix, did}: {linkPrefix: string, did: string}) => {
+export const PostLinks = ({linkPrefix, posts}: {linkPrefix: string, posts: Omit<BlogPost, "body">[] }) => {
 
-  const [blogPosts, setBlogPosts] = useState<Array<BlogPostItem> | []>([])
+  //const [blogPosts, setBlogPosts] = useState<Array<BlogPostItem> | []>([])
   
 
-  useEffect(() => {
-    const load = async () => {
-      const model: ModelTypesToAliases<ModelTypes> = publishedModel;
-      const core = new Core<ModelTypes>({ ceramic: 'testnet-clay', model });
-      const blogPostDefinitionID = await core.dataModel.getDefinitionID("blogPosts");
-      const doc = await core.dataStore.getRecordDocument(blogPostDefinitionID as string, did);
-      doc?.subscribe((value) => {
-        if (value?.next) {
-            setBlogPosts(value?.next?.content.blogPosts);
-        } else {
-            setBlogPosts(value.content.blogPosts);
-        }
-      });
+  // useEffect(() => {
+  //   const load = async () => {
+  //     const model: ModelTypesToAliases<ModelTypes> = publishedModel;
+  //     const core = new Core<ModelTypes>({ ceramic: 'testnet-clay', model });
+  //     const blogPostDefinitionID = await core.dataModel.getDefinitionID("blogPosts");
+  //     const doc = await core.dataStore.getRecordDocument(blogPostDefinitionID as string, did);
+  //     doc?.subscribe((value) => {
+  //       if (value?.next) {
+  //           setBlogPosts(value?.next?.content.blogPosts);
+  //       } else {
+  //           setBlogPosts(value.content.blogPosts);
+  //       }
+  //     });
 
-    }
-    load();
-  },[])
+  //   }
+  //   load();
+  // },[])
 
   return (
     <>
@@ -59,21 +61,21 @@ export const PostLinks = ({linkPrefix, did}: {linkPrefix: string, did: string}) 
         Blog Posts
       </div>
       <div className="grid auto-rows-min grid-flow-row gap-[5vh]">
-        {blogPosts.map(blogPost => (
+        {posts.map((post: any) => (
           <PendingNavLink
-            key={`${blogPost.id.replace(/ceramic:\/\//g, '')}`}
+            key={`${post.id.replace(/ceramic:\/\//g, '')}`}
             prefetch="intent"
-            to={`${linkPrefix}${blogPost.id.replace(/ceramic:\/\//g, '')}`}
+            to={`${linkPrefix}${post.id.replace(/ceramic:\/\//g, '')}`}
             className="p-[3vmin] rounded-[2vmin] border-[0.05vmin] no-underline flex flex-col"
           >
                 <span className="text-2xl font-normal font-saygon pb-2">
-                  {blogPost.emoji} {`${blogPost.title}`}
+                  {post.emoji} {`${post.title}`}
                 </span>
                 <span className="text-xl font-light font-saygon pb-4">
-                  {blogPost.subTitle}
+                  {post.subTitle}
                 </span>
                 <span className="text-lg font-light font-saygon text-align-right">
-                  {blogPost.date}
+                  {post.date}
                 </span>
           </PendingNavLink>
           ))}

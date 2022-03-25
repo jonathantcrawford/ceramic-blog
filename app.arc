@@ -15,8 +15,8 @@ user
   pk *String
 
 password
-  pk *String # userId
+  pk *String # user_id
 
-note
-  pk *String  # userId
-  sk **String # noteId
+blog_post
+  pk *String  # user_id
+  sk **String # blog_post_id
