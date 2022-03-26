@@ -4,16 +4,18 @@ import { useLoaderData, json } from "remix";
 
 
 import { PostLinks } from "~/components/PostLinks/PostLinks";
-import { useEffect, useState } from "react";
+
+import { getBlogPostListItems } from "~/models/blog_post.server";
+
+type LoaderData = {
+  blogPostListItems: Awaited<ReturnType<typeof getBlogPostListItems>>;
+};
 
 
-export const links: LinksFunction = () => {
-  return [
-    {
-      rel: "icon",
-      href: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>",
-    },
-  ];
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const blogPostListItems = await getBlogPostListItems();
+  return json<LoaderData>({ blogPostListItems });
 };
 
 export const meta: MetaFunction = () => {
@@ -40,12 +42,21 @@ export const meta: MetaFunction = () => {
   };
 };
 
-export default function Index() {
+export const links: LinksFunction = () => {
+  return [
+    {
+      rel: "icon",
+      href: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>",
+    },
+  ];
+};
 
+export default function Index() {
+  const {blogPostListItems} = useLoaderData();
 
   return (
     <div className="grid-in-ga-content w-full">
-      <PostLinks linkPrefix={''} did={'did:3:kjzl6cwe1jw147j8id1v2ovge4mgdu7luvpuiw34qg5ixc4zixa0qpza4kpruf6'} />
+      <PostLinks linkPrefix={''} posts={blogPostListItems} linkAttribute={'slug'}/>
      </div>
   )
 }

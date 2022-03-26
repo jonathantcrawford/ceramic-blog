@@ -5,15 +5,15 @@ import { PostLinks } from "~/components/PostLinks/PostLinks";
  
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
-import { getBlogPostListItems } from "~/models/blog_post.server";
+import { getBlogPostListItemsByUserId } from "~/models/blog_post.server";
 
 type LoaderData = {
-  blogPostListItems: Awaited<ReturnType<typeof getBlogPostListItems>>;
+  blogPostListItems: Awaited<ReturnType<typeof getBlogPostListItemsByUserId>>;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
-  const blogPostListItems = await getBlogPostListItems({ userId });
+  const blogPostListItems = await getBlogPostListItemsByUserId({ userId });
   return json<LoaderData>({ blogPostListItems });
 };
 
@@ -49,7 +49,7 @@ export default function NotesPage() {
           {data.blogPostListItems.length === 0 ? (
             <p className="p-4">No blog posts yet</p>
           ) : (
-            <PostLinks linkPrefix={'blog_posts/edit/'} posts={data.blogPostListItems}/>
+            <PostLinks linkPrefix={'blog_posts/'} posts={data.blogPostListItems} linkAttribute={'id'}/>
           )}
         </div>
       </main>

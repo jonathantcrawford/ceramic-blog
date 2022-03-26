@@ -8,58 +8,106 @@ export type BlogPost = {
   subTitle: string;
   emoji: string;
   slug: string;
-  date: string;
+  createdAt: string;
+  updatedAt: string;
   body: string;
 };
 
-const skToId = (sk: string) => sk.replace(/^blog_post#/, "");
-const idToSk = (id: string) => `blog_post#${id}`;
 
-export async function getBlogPost({
-  userId,
+export async function getBlogPostById({
   id,
 }: {
-  userId: string;
   id: string;
-}): Promise<BlogPost | null> {
+}): Promise<Omit<BlogPost, "userId"> | null> {
   const db = await arc.tables();
-
-  const result = await await db.blog_post.get({ pk: userId, sk: idToSk(id) });
+  const result = await await db.blog_post.get({ pk: `blog_post#${id}`});
 
   if (result) {
     return {
-      userId: result.pk,
-      id: result.sk,
+      id: result.pk.replace(/^blog_post#/, ""),
       title: result.title,
       subTitle: result.subTitle,
       emoji: result.emoji,
-      slug: result.slug,
-      date: result.date,
+      slug: result.slug.replace(/^slug#/, ""),
+      createdAt: result.createdAt,
+      updatedAt: result.updatedAt,
       body: result.body,
     };
   }
   return null;
 }
 
-export async function getBlogPostListItems({
+export async function getBlogPostBySlug({
+  slug,
+}: {
+  slug: string;
+}): Promise<Omit<BlogPost, "userId"> | null> {
+  const db = await arc.tables();
+
+  const result = await await db.blog_post.query({
+    IndexName: 'bySlug',
+    KeyConditionExpression: "slug = :slug",
+    ExpressionAttributeValues: { ":slug": `slug#${slug}` },
+  })
+  console.log(result)
+
+  const [record] = result.Items;
+
+  if (record) {
+    return {
+      id: record.pk.replace(/^blog_post#/, ""),
+      title: record.title,
+      subTitle: record.subTitle,
+      emoji: record.emoji,
+      slug: record.slug.replace(/^slug#/, ""),
+      createdAt: result.createdAt,
+      updatedAt: result.updatedAt,
+      body: record.body,
+    };
+  }
+  return null;
+}
+
+export async function getBlogPostListItemsByUserId({
   userId,
 }: {
   userId: string;
 }): Promise<Array<Omit<BlogPost, "body" >>> {
   const db = await arc.tables();
-
   const result = await db.blog_post.query({
-    KeyConditionExpression: "pk = :pk",
-    ExpressionAttributeValues: { ":pk": userId },
+    IndexName: 'byUserId',
+    KeyConditionExpression: "userId = :userId",
+    ExpressionAttributeValues: { ":userId": `user#${userId}` },
   });
 
   return result.Items.map((n: any) => ({
     title: n.title,
-    id: skToId(n.sk),
+    id: n.pk.replace(/^blog_post#/, ""),
     emoji: n.emoji,
     subTitle: n.subTitle,
-    date: n.date,
-    slug: n.slug
+    createdAt: n.createdAt,
+    updatedAt: n.updatedAt,
+    slug: n.slug.replace(/^slug#/, "")
+  }));
+}
+
+export async function getBlogPostListItems()
+: Promise<Array<Omit<BlogPost, "body" >>> {
+  const db = await arc.tables();
+
+  const result = await db.blog_post.scan({
+    ExpressionAttributeValues: { ":pk": `blog_post#` },
+    FilterExpression: 'begins_with(pk, :pk)'
+  });
+
+  return result.Items.map((n: any) => ({
+    title: n.title,
+    id: n.pk.replace(/^blog_post#/, ""),
+    emoji: n.emoji,
+    subTitle: n.subTitle,
+    createdAt: n.createdAt,
+    updatedAt: n.updatedAt,
+    slug: n.slug.replace(/^slug#/, ""),
   }));
 }
 
@@ -68,7 +116,6 @@ export async function createBlogPost({
   subTitle,
   emoji,
   slug,
-  date,
   body,
   userId,
 }: {
@@ -76,41 +123,77 @@ export async function createBlogPost({
   subTitle: string,
   emoji: string,
   slug: string,
-  date: string
   body: string,
   userId: string;
-}): Promise<BlogPost> {
-  const db = await arc.tables();
+}): Promise<BlogPost | {error: string}> {
+ 
 
-  const result = await db.blog_post.put({
-    pk: userId,
-    sk: `blog_post#${cuid()}`,
-    title: title,
-    subTitle: subTitle,
-    emoji: emoji,
-    slug: slug,
-    date: date,
-    body: body,
-  });
-  return {
-    id: skToId(result.sk),
-    userId: result.pk,
-    title: result.title,
-    subTitle: result.subTitle,
-    emoji: result.emoji,
-    slug: result.slug,
-    date: result.date,
-    body: result.body,
-  };
+  const client = await arc.tables();
+  
+  //@ts-ignore
+  const reflect = await client.reflect()
+
+  
+  try {
+    const newCuid = cuid();
+    const createdAt = (new Date()).toISOString();
+    const updatedAt = createdAt;
+
+    //@ts-ignore
+    await client._doc.transactWrite({
+      TransactItems: [
+        {
+          Put: {
+            TableName: reflect.blog_post,
+            Item: {
+              pk: `slug#${slug}`
+            },
+            ConditionExpression: 'attribute_not_exists(pk)'
+          }
+        },
+        {
+          Put: {
+            Item: {
+              pk: `blog_post#${newCuid}`,
+              userId:  `user#${userId}`,
+              title: title,
+              subTitle: subTitle,
+              emoji: emoji,
+              slug: `slug#${slug}`,
+              createdAt: createdAt,
+              updatedAt: updatedAt,
+              body: body,
+            },
+            TableName: reflect.blog_post
+          }
+        }
+      ]
+    }).promise();
+
+    return {
+      id: newCuid,
+      userId:  userId,
+      title: title,
+      subTitle: subTitle,
+      emoji: emoji,
+      slug: slug,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      body: body,
+    };
+  } catch (err) {
+    console.log(err)
+    return {
+      error: 'slug already exists'
+    }
+  }
 }
 
 export async function deleteBlogPost({
   id,
-  userId,
 }: {
   id: string;
-  userId: string;
 }) {
   const db = await arc.tables();
-  return db.blog_post.delete({ pk: userId, sk: idToSk(id) });
+  return db.blog_post.delete({ pk: `blog_post#${id}` });
 }

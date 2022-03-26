@@ -11,12 +11,28 @@ ceramic-blog-4403
 @static
 
 @tables
+arc-session
+  _idx *String
+  _ttl TTL
+
 user
   pk *String
 
 password
-  pk *String # user_id
+  pk *String
 
 blog_post
-  pk *String  # user_id
-  sk **String # blog_post_id
+  pk *String
+
+@tables-indexes
+user
+  email *String
+  name byEmail
+
+blog_post
+  userId *String
+  name byUserId
+
+blog_post
+  slug *String
+  name bySlug

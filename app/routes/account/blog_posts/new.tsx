@@ -64,7 +64,9 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  await createBlogPost({ title, body, subTitle, slug, emoji, date, userId });
+  const blogPost = await createBlogPost({ title, body, subTitle, slug, emoji, date, userId });
+
+  console.log(blogPost)
 
   return redirect(`/account`);
 };
@@ -80,9 +82,15 @@ export default function NewNotePage() {
   React.useEffect(() => {
     if (actionData?.errors?.title) {
       titleRef.current?.focus();
+    } else if (actionData?.errors?.subTitle) {
+      subTitleRef.current?.focus();
+    } else if (actionData?.errors?.slug) {
+      slugRef.current?.focus();
+    } else if (actionData?.errors?.emoji) {
+      emojiRef.current?.focus();
     } else if (actionData?.errors?.body) {
       bodyRef.current?.focus();
-    }
+    } 
   }, [actionData]);
 
   const fetcher = useFetcher();

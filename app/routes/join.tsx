@@ -54,6 +54,7 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
+  console.log('begin get userby email');
   const existingUser = await getUserByEmail(email);
   if (existingUser) {
     return json<ActionData>(
@@ -62,6 +63,7 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
+  console.log('begin create user');
   const user = await createUser(email, password);
 
   return createUserSession({

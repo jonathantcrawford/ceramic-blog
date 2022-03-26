@@ -1,12 +1,19 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 
-import { Outlet } from "remix";
+import type { LoaderFunction } from "remix";
+
+import { Outlet, redirect } from "remix";
 
 import type { SelfID } from "@self.id/web";
 
 import publishedModel from "~ceramic/models/model.json";
 import type { ModelTypes } from "~ceramic/models/types";
 import type { ModelTypesToAliases } from "@glazed/types";
+
+
+export const loader: LoaderFunction = async () => {
+  return redirect("/");
+};
 
 export default function Admin() {
   //const [profile, setProfile] = useState<any>(null);

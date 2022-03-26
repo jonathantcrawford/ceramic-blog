@@ -32,7 +32,7 @@ function PendingNavLink({ className, to, prefetch, children }: any) {
   );
 }
 
-export const PostLinks = ({linkPrefix, posts}: {linkPrefix: string, posts: Omit<BlogPost, "body">[] }) => {
+export const PostLinks = ({linkPrefix, linkAttribute, posts}: {linkPrefix: string, linkAttribute: string, posts: Omit<BlogPost, "body">[] }) => {
 
   //const [blogPosts, setBlogPosts] = useState<Array<BlogPostItem> | []>([])
   
@@ -63,9 +63,9 @@ export const PostLinks = ({linkPrefix, posts}: {linkPrefix: string, posts: Omit<
       <div className="grid auto-rows-min grid-flow-row gap-[5vh]">
         {posts.map((post: any) => (
           <PendingNavLink
-            key={`${post.id.replace(/ceramic:\/\//g, '')}`}
+            key={post.slug}
             prefetch="intent"
-            to={`${linkPrefix}${post.id.replace(/ceramic:\/\//g, '')}`}
+            to={`${linkPrefix}${post[linkAttribute]}`}
             className="p-[3vmin] rounded-[2vmin] border-[0.05vmin] no-underline flex flex-col"
           >
                 <span className="text-2xl font-normal font-saygon pb-2">
@@ -75,7 +75,7 @@ export const PostLinks = ({linkPrefix, posts}: {linkPrefix: string, posts: Omit<
                   {post.subTitle}
                 </span>
                 <span className="text-lg font-light font-saygon text-align-right">
-                  {post.date}
+                  {post.updatedAt}
                 </span>
           </PendingNavLink>
           ))}

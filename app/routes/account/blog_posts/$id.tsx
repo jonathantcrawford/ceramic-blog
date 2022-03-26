@@ -4,7 +4,7 @@ import { json, useLoaderData, useCatch, Form } from "remix";
 import invariant from "tiny-invariant";
 import type { BlogPost } from "~/models/blog_post.server";
 import { deleteBlogPost } from "~/models/blog_post.server";
-import { getBlogPost } from "~/models/blog_post.server";
+import { getBlogPostById } from "~/models/blog_post.server";
 import { requireUserId } from "~/session.server";
 
 import { getMDXComponent, mdxComponents } from "~/mdx";
@@ -13,15 +13,16 @@ import { useMemo } from "react";
 import { compileMDX } from "~/compile-mdx.server";
 
 type LoaderData = {
-  blogPost: BlogPost;
+  blogPost: Omit<BlogPost, "userId">;
   code: string;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  const userId = await requireUserId(request);
+  await requireUserId(request);
   invariant(params.id, "blog_post_id not found");
 
-  const blogPost = await getBlogPost({ userId, id: params.id });
+  console.log('params', params.id)
+  const blogPost = await getBlogPostById({ id: params.id });
   if (!blogPost) {
     throw new Response("Not Found", { status: 404 });
   }
@@ -30,10 +31,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
-  const userId = await requireUserId(request);
+  await requireUserId(request);
   invariant(params.id, "blog_post_id not found");
 
-  await deleteBlogPost({ userId, id: params.id });
+  await deleteBlogPost({ id: params.id });
 
   return redirect("/account");
 };
