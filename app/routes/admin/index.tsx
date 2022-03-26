@@ -85,7 +85,7 @@ export default function Editor() {
             </div>
             <div className="flex flex-col p-8">
                 <Link key="new" className="btn self-end" to={'editor/new'}><FontAwesomeIcon className="text-base mr-2" icon={faPlus}/> new post</Link>
-                {selfID?.did && <PostLinks linkPrefix={'editor/'} did={selfID?.id}/>}
+                {/* {selfID?.did && <PostLinks linkPrefix={'editor/'} did={selfID?.id}/>} */}
             </div>
         </div>   
     )

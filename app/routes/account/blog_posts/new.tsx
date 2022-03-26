@@ -1,11 +1,11 @@
-import * as React from "react";
-import { Form, json, redirect, useActionData, useFetcher } from "remix";
+import React, { useCallback, useEffect, useState} from "react";
+import ReactDOM from "react-dom";
+import { Form, json, redirect, useActionData, useFetcher, Outlet } from "remix";
 import type { ActionFunction } from "remix";
 import Alert from "@reach/alert";
 
 import { createBlogPost } from "~/models/blog_post.server";
 import { requireUserId } from "~/session.server";
-import { mdxComponents, getMDXComponent } from "~/mdx";
 
 type ActionData = {
   errors?: {
@@ -26,7 +26,6 @@ export const action: ActionFunction = async ({ request }) => {
   const slug = formData.get("slug");
   const emoji = formData.get("emoji");
   const body = formData.get("body");
-  const date = (new Date()).toDateString();
 
 
   if (typeof title !== "string" || title.length === 0) {
@@ -64,20 +63,28 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  const blogPost = await createBlogPost({ title, body, subTitle, slug, emoji, date, userId });
+  const {errors} = await createBlogPost({ title, body, subTitle, slug, emoji, userId });
 
-  console.log(blogPost)
+  if (errors) {
+    return json<ActionData>(
+      { errors },
+      { status: 400 }
+    );
+  }
 
   return redirect(`/account`);
 };
 
-export default function NewNotePage() {
+export default function NewBlogPostPage() {
   const actionData = useActionData() as ActionData;
   const titleRef = React.useRef<HTMLInputElement>(null);
   const subTitleRef = React.useRef<HTMLInputElement>(null);
   const slugRef = React.useRef<HTMLInputElement>(null);
   const emojiRef = React.useRef<HTMLInputElement>(null);
   const bodyRef = React.useRef<HTMLTextAreaElement>(null);
+
+
+  const formPropationByPassRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (actionData?.errors?.title) {
@@ -95,13 +102,10 @@ export default function NewNotePage() {
 
   const fetcher = useFetcher();
 
-  const Component = React.useMemo(() => fetcher?.data?.code ? getMDXComponent(fetcher.data.code) : () => null, [fetcher]);
-
-  
-
 
 
   return (
+    <>
     <Form
       method="post"
       style={{
@@ -205,9 +209,9 @@ export default function NewNotePage() {
             <span className="text-base text-yellow-100 font-saygon">Body: </span>
             <textarea
               ref={bodyRef}
+              onChange={e => fetcher.submit({mdxSource: e.target.value}, {method: 'post', action: '/mdx'})}
               name="body"
               rows={8}
-              onChange={(e) => fetcher.submit({mdxSource: e.target.value}, {method: 'post', action: '/mdx'})}
               className="w-full bg-black-100 text-yellow-100 font-saygon text-lg focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
               aria-invalid={actionData?.errors?.body ? true : undefined}
               aria-errormessage={
@@ -222,10 +226,10 @@ export default function NewNotePage() {
           )}
         </div>
 
-        <div className="w-[50vw]">
-            <Component components={mdxComponents}/>
-        </div>
+        <div className="w-[50vw]" ref={formPropationByPassRef}></div>
       </div>
     </Form>
+    {formPropationByPassRef?.current && ReactDOM.createPortal(<Outlet context={{code: fetcher?.data?.code, error: fetcher?.data?.error}}/>, formPropationByPassRef?.current)}
+    </>
   );
 }

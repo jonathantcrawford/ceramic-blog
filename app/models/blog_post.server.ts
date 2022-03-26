@@ -125,7 +125,7 @@ export async function createBlogPost({
   slug: string,
   body: string,
   userId: string;
-}): Promise<BlogPost | {error: string}> {
+}): Promise<BlogPost | {errors: any}> {
  
 
   const client = await arc.tables();
@@ -184,7 +184,9 @@ export async function createBlogPost({
   } catch (err) {
     console.log(err)
     return {
-      error: 'slug already exists'
+      errors: {
+        slug: "slug already exists"
+      }
     }
   }
 }
@@ -195,5 +197,7 @@ export async function deleteBlogPost({
   id: string;
 }) {
   const db = await arc.tables();
-  return db.blog_post.delete({ pk: `blog_post#${id}` });
+  const result = await db.blog_post.get({pk: `blog_post#${id}`});
+  await db.blog_post.delete({ pk: `blog_post#${id}` });
+  return db.blog_post.delete({ pk: result.slug });
 }

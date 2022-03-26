@@ -25,7 +25,7 @@ export const compileMDX = async ({mdxSource}: {mdxSource: any}) => {
   }
 
   const result = await bundleMDX({
-    source: mdxSource.trim(),
+    source: mdxSource.trim()
   });
 
   const { code } = result;

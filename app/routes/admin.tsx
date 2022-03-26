@@ -11,9 +11,9 @@ import type { ModelTypes } from "~ceramic/models/types";
 import type { ModelTypesToAliases } from "@glazed/types";
 
 
-export const loader: LoaderFunction = async () => {
-  return redirect("/");
-};
+// export const loader: LoaderFunction = async () => {
+//   return redirect("/");
+// };
 
 export default function Admin() {
   //const [profile, setProfile] = useState<any>(null);
