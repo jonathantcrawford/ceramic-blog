@@ -63,11 +63,11 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  const {errors} = await createBlogPost({ title, body, subTitle, slug, emoji, userId });
+  const result = await createBlogPost({ title, body, subTitle, slug, emoji, userId });
 
-  if (errors) {
+  if (result?.errors) {
     return json<ActionData>(
-      { errors },
+      { errors: result.errors },
       { status: 400 }
     );
   }

@@ -77,7 +77,8 @@ export async function getBlogPostListItemsByUserId({
   const result = await db.blog_post.query({
     IndexName: 'byUserId',
     KeyConditionExpression: "userId = :userId",
-    ExpressionAttributeValues: { ":userId": `user#${userId}` },
+    ExpressionAttributeValues: { ":userId": `user#${userId}`, ':pk': 'blog_post#' },
+    FilterExpression: 'begins_with(pk, :pk)'
   });
 
   return result.Items.map((n: any) => ({
@@ -125,7 +126,7 @@ export async function createBlogPost({
   slug: string,
   body: string,
   userId: string;
-}): Promise<BlogPost | {errors: any}> {
+}): Promise<{blogPost?: BlogPost, errors?: any}> {
  
 
   const client = await arc.tables();
@@ -146,7 +147,8 @@ export async function createBlogPost({
           Put: {
             TableName: reflect.blog_post,
             Item: {
-              pk: `slug#${slug}`
+              pk: `slug#${slug}`,
+              userId: `user#${userId}`,
             },
             ConditionExpression: 'attribute_not_exists(pk)'
           }
@@ -171,15 +173,17 @@ export async function createBlogPost({
     }).promise();
 
     return {
-      id: newCuid,
-      userId:  userId,
-      title: title,
-      subTitle: subTitle,
-      emoji: emoji,
-      slug: slug,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-      body: body,
+      blogPost: {
+        id: newCuid,
+        userId:  userId,
+        title: title,
+        subTitle: subTitle,
+        emoji: emoji,
+        slug: slug,
+        createdAt: createdAt,
+        updatedAt: updatedAt,
+        body: body,
+      }
     };
   } catch (err) {
     console.log(err)
@@ -191,6 +195,117 @@ export async function createBlogPost({
   }
 }
 
+
+export async function updateBlogPost({
+  title,
+  subTitle,
+  emoji,
+  slug,
+  body,
+  id,
+  userId,
+}: {
+  title: string,
+  subTitle: string,
+  emoji: string,
+  slug: string,
+  body: string,
+  id: string,
+  userId: string;
+}): Promise<{blogPost?: Omit<BlogPost, "createdAt">, errors?: any}> {
+ 
+
+  const client = await arc.tables();
+  
+  //@ts-ignore
+  const reflect = await client.reflect()
+
+  
+  try {
+    const updatedAt = (new Date()).toISOString();
+
+    const result = await getBlogPostById({id});
+    if (!result) {
+      return {
+        errors: {
+          generic: "could not perform update. blog post id was not found."
+        }
+      }
+    }
+
+    const {slug: oldSlug} = result;
+
+
+    const slugUpdates = slug === oldSlug ? [] : [
+      {
+        Put: {
+          TableName: reflect.blog_post,
+          Item: {
+            pk: `slug#${slug}`,
+            userId: `user#${userId}`
+          },
+          ConditionExpression: 'attribute_not_exists(pk)'
+        }
+      },
+      {
+        Delete: {
+          TableName: reflect.blog_post,
+          Key: {
+            pk: `slug#${oldSlug}`,
+          },
+          ConditionExpression: 'userId = :userId',
+          ExpressionAttributeValues: {
+            ':userId': `user#${userId}`
+          }
+        }
+      },
+    ];
+    
+    //@ts-ignore
+    await client._doc.transactWrite({
+      TransactItems: [
+        ...slugUpdates,
+        {
+          Update: {
+            Key: {
+              pk: `blog_post#${id}`,
+            },
+            UpdateExpression: "SET title = :title, subTitle = :subTitle, emoji = :emoji, slug = :slug, updatedAt = :updatedAt, body = :body",
+            ExpressionAttributeValues: {
+              ':title': title,
+              ':subTitle': subTitle,
+              ':emoji': emoji,
+              ':slug': `slug#${slug}`,
+              ':updatedAt': updatedAt,
+              ':body': body
+            },
+            TableName: reflect.blog_post
+          }
+        }
+      ]
+    }).promise();
+
+    return {
+      blogPost: {
+        id: id,
+        userId:  userId,
+        title: title,
+        subTitle: subTitle,
+        emoji: emoji,
+        slug: slug,
+        updatedAt: updatedAt,
+        body: body,
+      }
+    };
+  } catch (err) {
+    console.log(err)
+    return {
+      errors: {
+        slug: "slug already exists"
+      }
+    }
+  }
+}
 export async function deleteBlogPost({
   id,
 }: {
