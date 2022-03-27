@@ -11,6 +11,6 @@ export const action: ActionFunction = async ({request}) => {
     const {code}  = await compileMDX({mdxSource});
     return json({code});
   } catch {
-    return json({error: 'mdx typo'})
+    return json({error: 'Invalid element or syntax.'})
   }
 };

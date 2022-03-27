@@ -7,6 +7,10 @@ import Alert from "@reach/alert";
 import { createBlogPost } from "~/models/blog_post.server";
 import { requireUserId } from "~/session.server";
 
+import { useMemo } from "react";
+import { getMDXComponent, mdxComponents } from "~/mdx";
+import {ErrorBoundary as ComponentErrorBoundary} from "react-error-boundary";
+
 type ActionData = {
   errors?: {
     title?: string;
@@ -15,6 +19,16 @@ type ActionData = {
     emoji?: string;
     body?: string;
   };
+};
+
+const ErrorFallback = ({ error, resetErrorBoundary }: any) => {
+  return (
+    <div role="alert" className="flex flex-col justify-start">
+      <div className="text-red-100 font-saygon text-lg whitespace-pre-wrap mb-3">{error.message}</div>
+      <div className="text-white-100 font-saygon text-md mb-3">Check your syntax and try to recompile.</div>
+      <button className="btn self-center m-8" onClick={resetErrorBoundary}>Recompile</button>
+    </div>
+  );
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -101,6 +115,16 @@ export default function NewBlogPostPage() {
   }, [actionData]);
 
   const fetcher = useFetcher();
+
+  const Component = useMemo(() => 
+    fetcher?.data?.code
+    ? getMDXComponent(fetcher?.data?.code) 
+    : () => (
+      <div className="h-full text-red-100 text-md font-saygon flex items-center justify-center">
+          {fetcher?.data?.error}
+      </div>
+      )
+    , [fetcher?.data?.code, fetcher?.data?.error]);
 
 
 
@@ -212,7 +236,7 @@ export default function NewBlogPostPage() {
               onChange={e => fetcher.submit({mdxSource: e.target.value}, {method: 'post', action: '/mdx'})}
               name="body"
               rows={8}
-              className="w-full bg-black-100 text-yellow-100 font-saygon text-lg focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
+              className="w-full bg-black-100 text-yellow-100 font-saygon text-base focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
               aria-invalid={actionData?.errors?.body ? true : undefined}
               aria-errormessage={
                 actionData?.errors?.body ? "body-error" : undefined
@@ -226,10 +250,16 @@ export default function NewBlogPostPage() {
           )}
         </div>
 
-        <div className="w-[50vw]" ref={formPropationByPassRef}></div>
+        <div className="w-[50vw] p-7" ref={formPropationByPassRef}></div>
       </div>
     </Form>
-    {formPropationByPassRef?.current && ReactDOM.createPortal(<Outlet context={{code: fetcher?.data?.code, error: fetcher?.data?.error}}/>, formPropationByPassRef?.current)}
+    {formPropationByPassRef?.current && ReactDOM.createPortal(
+      <ComponentErrorBoundary
+        FallbackComponent={ErrorFallback}
+      >
+        <Component components={mdxComponents}/>
+      </ComponentErrorBoundary>
+    , formPropationByPassRef?.current)}
     </>
   );
 }

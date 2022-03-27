@@ -1,5 +1,5 @@
 import { LoaderFunction, ActionFunction, useFormAction } from "remix";
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import { redirect } from "remix";
 import { json, useLoaderData, useCatch, Form, useFetcher, useActionData, Outlet } from "remix";
@@ -8,6 +8,10 @@ import type { BlogPost } from "~/models/blog_post.server";
 import { deleteBlogPost, getBlogPostById, updateBlogPost } from "~/models/blog_post.server";
 import { requireUserId } from "~/session.server";
 import Alert from "@reach/alert";
+
+import { useMemo } from "react";
+import { getMDXComponent, mdxComponents } from "~/mdx";
+import {ErrorBoundary as ComponentErrorBoundary} from "react-error-boundary";
 
 type ActionData = {
   blogPost?: Omit<BlogPost, "createdAt">,
@@ -22,6 +26,16 @@ type ActionData = {
 
 type LoaderData = {
   blogPost: Omit<BlogPost, "userId">;
+};
+
+const ErrorFallback = ({ error, resetErrorBoundary }: any) => {
+  return (
+    <div role="alert" className="flex flex-col justify-start">
+      <div className="text-red-100 font-saygon text-lg whitespace-pre-wrap mb-3">{error.message}</div>
+      <div className="text-white-100 font-saygon text-md mb-3">Check your syntax and try to recompile.</div>
+      <button className="btn self-center m-8" onClick={resetErrorBoundary}>Recompile</button>
+    </div>
+  );
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -39,8 +53,6 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 export const action: ActionFunction = async ({ request, context, params }) => {
   const userId = await requireUserId(request);
   invariant(params.id, "blog_post_id not found");
-
-  console.log({request, context, params})
 
   const formData = await request.formData();
   const _action = formData.get("_action");
@@ -143,6 +155,20 @@ export default function EditBlogPostPage() {
   }, []);
 
   const fetcher = useFetcher();
+
+  useEffect(() => {
+    fetcher.submit({mdxSource: blogPost?.body}, {method: 'post', action: '/mdx'})
+  },[])
+
+  const Component = useMemo(() => 
+    fetcher?.data?.code
+    ? getMDXComponent(fetcher?.data?.code) 
+    : () => (
+      <div className="h-full text-red-100 text-md font-saygon flex items-center justify-center">
+          {fetcher?.data?.error}
+      </div>
+      )
+    , [fetcher?.data?.code, fetcher?.data?.error]);
 
 
   return (
@@ -263,12 +289,13 @@ export default function EditBlogPostPage() {
               onChange={e => fetcher.submit({mdxSource: e.target.value}, {method: 'post', action: '/mdx'})}
               name="body"
               rows={8}
-              className="w-full bg-black-100 text-yellow-100 font-saygon text-lg focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
+              defaultValue={blogPost?.body}
+              className="w-full bg-black-100 text-yellow-100 font-saygon text-base focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
               aria-invalid={actionData?.errors?.body ? true : undefined}
               aria-errormessage={
                 actionData?.errors?.body ? "body-error" : undefined
               }
-            >{blogPost?.body}</textarea>
+            />
           </label>
           {actionData?.errors?.body && (
             <Alert className="pt-1 text-red-100 font-saygon text-md" id="body=error">
@@ -277,10 +304,16 @@ export default function EditBlogPostPage() {
           )}
         </div>
 
-        <div className="w-[50vw]" ref={formPropationByPassRef}></div>
+        <div className="w-[50vw] p-7" ref={formPropationByPassRef}></div>
       </div>
     </Form>
-    {formPropationByPassRef?.current && ReactDOM.createPortal(<Outlet context={{code: fetcher?.data?.code, error: fetcher?.data?.error}}/>, formPropationByPassRef?.current)}
+    {formPropationByPassRef?.current && ReactDOM.createPortal(
+      <ComponentErrorBoundary
+        FallbackComponent={ErrorFallback}
+      >
+        <Component components={mdxComponents}/>
+      </ComponentErrorBoundary>
+    , formPropationByPassRef?.current)}
     </>
   );
 }
