@@ -147,18 +147,29 @@ export default function EditBlogPostPage() {
     } 
   }, [actionData]);
 
+  const autoSizeTextArea = (replicatedValue: string) => {
+    if (bodyRef?.current) {
+      bodyRef?.current?.parentElement?.setAttribute('data-replicated-value', replicatedValue)
+    }
+  }
+
+  const fetcher = useFetcher();
+
   React.useEffect(() => { 
     titleRef.current?.setAttribute("value", blogPost?.title);
     subTitleRef.current?.setAttribute("value", blogPost?.subTitle);
     slugRef.current?.setAttribute("value", blogPost?.slug);
     emojiRef.current?.setAttribute("value", blogPost?.emoji);
+    autoSizeTextArea(blogPost?.body);
+    fetcher.submit({mdxSource: blogPost?.body}, {method: 'post', action: '/mdx'});
+
   }, []);
 
-  const fetcher = useFetcher();
+  
 
-  useEffect(() => {
-    fetcher.submit({mdxSource: blogPost?.body}, {method: 'post', action: '/mdx'})
-  },[])
+
+
+
 
   const Component = useMemo(() => 
     fetcher?.data?.code
@@ -284,18 +295,22 @@ export default function EditBlogPostPage() {
         <div className="w-[50vw]">
           <label className="flex w-full flex-col gap-1">
             <span className="text-base text-yellow-100 font-saygon">Body: </span>
-            <textarea
-              ref={bodyRef}
-              onChange={e => fetcher.submit({mdxSource: e.target.value}, {method: 'post', action: '/mdx'})}
-              name="body"
-              rows={8}
-              defaultValue={blogPost?.body}
-              className="w-full bg-black-100 text-yellow-100 font-saygon text-base focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
-              aria-invalid={actionData?.errors?.body ? true : undefined}
-              aria-errormessage={
-                actionData?.errors?.body ? "body-error" : undefined
-              }
-            />
+            <div className="autoresize-textarea w-full text-base font-saygon bg-black-100 text-yellow-100">
+              <textarea
+                ref={bodyRef}
+                onChange={e => {
+                  autoSizeTextArea(e.target.value);
+                  fetcher.submit({mdxSource: e.target.value}, {method: 'post', action: '/mdx'})
+                }}
+                name="body"
+                rows={8}
+                defaultValue={blogPost?.body}
+                aria-invalid={actionData?.errors?.body ? true : undefined}
+                aria-errormessage={
+                  actionData?.errors?.body ? "body-error" : undefined
+                }
+              />
+            </div>
           </label>
           {actionData?.errors?.body && (
             <Alert className="pt-1 text-red-100 font-saygon text-md" id="body=error">
