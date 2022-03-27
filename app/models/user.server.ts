@@ -62,7 +62,7 @@ export async function createUser(email: string, password: string) {
   console.log('create user', result);
 
   await db.password.put({
-    pk: result.pk,
+    pk: `email#${email}`,
     password: hashedPassword,
   });
 
