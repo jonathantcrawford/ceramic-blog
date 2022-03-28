@@ -48,12 +48,20 @@ module.exports = {
         '. . .',
         '. ga-footer .',
       ],
+      'blog-post-form': [
+        'bpf-header bpf-header bpf-header bpf-header',
+        'bpf-emoji bpf-title bpf-title bpf-slug',
+        'bpf-subTitle bpf-subTitle bpf-subTitle bpf-subTitle',
+        'bpf-body bpf-body bpf-preview bpf-preview'
+      ]
     },
     gridTemplateColumns: {
       'layout': '5vw 90vw 5vw',
+      'blog-post-form': '80px auto calc(60vw - 400px) 400px'
     },
     gridTemplateRows: {
       'layout': '5vh min-content 5vh auto 5vh min-content',
+      'blog-post-form': 'min-content min-content min-content auto'
     },
   },
   plugins: [

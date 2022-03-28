@@ -16,6 +16,7 @@
   
   *::selection {
     @apply bg-yellow-100 text-black-100;
+    -webkit-text-fill-color: #000000;
   }
 
   @font-face {
@@ -158,7 +159,7 @@
 
 @layer components {
   .btn {
-    @apply rounded-lg bg-yellow-100 text-black-100 font-saygon text-xl text-center hover:bg-yellow-200 py-2 px-3 flex items-center whitespace-nowrap w-[min-content] hover:cursor-pointer;
+    @apply m-4 rounded-lg bg-yellow-100 text-black-100 font-saygon text-lg text-center hover:bg-yellow-200 py-2 px-3 flex items-center whitespace-nowrap w-[min-content] hover:cursor-pointer;
   }
 
   .btn:disabled {
@@ -261,6 +262,14 @@
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
     @apply border-solid border-yellow-100;
+  }
+
+  input:-internal-autofill-selected {
+    -webkit-text-fill-color: #feed01;
+  }
+
+  input:-internal-autofill-selected:focus {
+    -webkit-text-fill-color: #f90090;
   }
 
   input:-internal-autofill-selected,

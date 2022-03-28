@@ -1,17 +1,21 @@
 import { LoaderFunction, ActionFunction, useFormAction } from "remix";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { redirect } from "remix";
-import { json, useLoaderData, useCatch, Form, useFetcher, useActionData, Outlet } from "remix";
+import { json, useLoaderData, useCatch, Form, useFetcher, useActionData, Outlet, Link } from "remix";
 import invariant from "tiny-invariant";
 import type { BlogPost } from "~/models/blog_post.server";
-import { deleteBlogPost, getBlogPostById, updateBlogPost } from "~/models/blog_post.server";
+import { deleteBlogPost, getBlogPostById, updateBlogPost, createBlogPost } from "~/models/blog_post.server";
 import { requireUserId } from "~/session.server";
 import Alert from "@reach/alert";
 
 import { useMemo } from "react";
 import { getMDXComponent, mdxComponents } from "~/mdx";
 import {ErrorBoundary as ComponentErrorBoundary} from "react-error-boundary";
+
+import { MultiActionButton } from "~/components/MultiActionButton/MultiActionButton";
+
+
 
 type ActionData = {
   blogPost?: Omit<BlogPost, "createdAt">,
@@ -25,8 +29,174 @@ type ActionData = {
 };
 
 type LoaderData = {
-  blogPost: Omit<BlogPost, "userId">;
+  formType: 'create'| 'update';
+  blogPost: Pick<BlogPost, "body" | "title" | "subTitle" | "slug" | "emoji" | "status">;
 };
+
+
+const EmojiField = React.forwardRef<any, any>(({actionData}: any, ref) => {
+  const [dirty, setDirty] = useState(false);
+
+  useEffect(() => {
+    if (actionData?.errors?.emoji) setDirty(false)
+  }, [actionData]);
+
+  return (
+    <div className="grid-in-bpf-emoji">
+    <label className="flex w-full flex-col gap-1">
+      <span className="text-base text-yellow-100 font-saygon">Emoji: </span>
+      <input
+        ref={ref}
+        name="emoji"
+        onChange={() => {if(!dirty) setDirty(true)}}
+        className="bg-black-100 text-yellow-100 font-saygon text-base focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
+        aria-invalid={actionData?.errors?.emoji ? true : undefined}
+        aria-errormessage={
+          actionData?.errors?.emoji ? "emoji-error" : undefined
+        }
+      />
+    </label>
+    {!dirty && actionData?.errors?.emoji && (
+      <Alert className="pt-1 text-red-100 font-saygon text-base" id="emoji=error">
+        {actionData.errors.emoji}
+      </Alert>
+    )}
+  </div>
+  )
+});
+
+const TitleField = React.forwardRef<any, any>(({actionData}: any, ref: any) => {
+
+  const [dirty, setDirty] = useState(false);
+
+  useEffect(() => {
+    if (actionData?.errors?.title) setDirty(false)
+  }, [actionData]);
+
+  return (
+    <div className="grid-in-bpf-title">
+    <label className="flex w-full flex-col gap-1">
+      <span className="text-base text-yellow-100 font-saygon">Title: </span>
+      <input
+        ref={ref}
+        name="title"
+        onChange={() => {if(!dirty) setDirty(true)}}
+        className="bg-black-100 text-yellow-100 font-saygon text-base focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
+        aria-invalid={actionData?.errors?.title ? true : undefined}
+        aria-errormessage={
+          actionData?.errors?.title ? "title-error" : undefined
+        }
+      />
+    </label>
+    {!dirty && actionData?.errors?.title && (
+      <Alert className="pt-1 text-red-100 font-saygon text-base" id="title=error">
+        {actionData.errors.title}
+      </Alert>
+    )}
+  </div>
+  )
+});
+
+const SubTitleField = React.forwardRef<any, any>(({actionData}: any, ref: any) => {
+  const [dirty, setDirty] = useState(false);
+
+  useEffect(() => {
+    if (actionData?.errors?.subTitle) setDirty(false)
+  }, [actionData]);
+
+
+  return (
+    <div className="grid-in-bpf-subTitle">
+    <label className="flex w-full flex-col gap-1">
+      <span className="text-base text-yellow-100 font-saygon">Sub Title: </span>
+      <input
+        ref={ref}
+        name="subTitle"
+        onChange={() => {if(!dirty) setDirty(true)}}
+        className="bg-black-100 text-yellow-100 font-saygon text-base focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
+        aria-invalid={actionData?.errors?.subTitle ? true : undefined}
+        aria-errormessage={
+          actionData?.errors?.subTitle ? "subtTitle-error" : undefined
+        }
+      />
+    </label>
+    {!dirty && actionData?.errors?.subTitle && (
+      <Alert className="pt-1 text-red-100 font-saygon text-base" id="subTitle=error">
+        {actionData.errors.subTitle}
+      </Alert>
+    )}
+  </div>
+  )
+});
+
+const SlugField = React.forwardRef<any, any>(({actionData}: any, ref: any) => {
+  const [dirty, setDirty] = useState(false);
+
+  useEffect(() => {
+    if (actionData?.errors?.slug) setDirty(false)
+  }, [actionData]);
+
+  return (
+    <div className="grid-in-bpf-slug">
+    <label className="flex w-full flex-col gap-1">
+      <span className="text-base text-yellow-100 font-saygon">Slug: </span>
+      <input
+        ref={ref}
+        name="slug"
+        onChange={() => {if(!dirty) setDirty(true)}}
+        className="bg-black-100 text-yellow-100 font-saygon text-base focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
+        aria-invalid={actionData?.errors?.slug ? true : undefined}
+        aria-errormessage={
+          actionData?.errors?.slug ? "slug-error" : undefined
+        }
+      />
+    </label>
+    {!dirty && actionData?.errors?.slug && (
+      <Alert className="pt-1 text-red-100 font-saygon text-base" id="slug=error">
+        {actionData.errors.slug}
+      </Alert>
+    )}
+  </div>
+  )
+})
+
+const BodyField = React.forwardRef(({actionData, autoSizeTextArea, fetcher, defaultValue}: any, ref: any) => {
+  const [dirty, setDirty] = useState(false);
+
+  useEffect(() => {
+    if (actionData?.errors?.body) setDirty(false)
+  }, [actionData]);
+
+  return (
+    <div className="grid-in-bpf-body">
+      <label className="flex w-full flex-col gap-1 h-full">
+        <span className="text-base text-yellow-100 font-saygon">Body: </span>
+        <div className="autoresize-textarea w-full text-base font-saygon bg-black-100 text-yellow-100 h-full">
+          <textarea
+            ref={ref}
+            onChange={e => {
+              if(!dirty) setDirty(true)
+              autoSizeTextArea(e.target.value);
+              fetcher.submit({mdxSource: e.target.value}, {method: 'post', action: '/mdx'})
+            }}
+            name="body"
+            rows={8}
+            defaultValue={defaultValue}
+            aria-invalid={actionData?.errors?.body ? true : undefined}
+            aria-errormessage={
+              actionData?.errors?.body ? "body-error" : undefined
+            }
+          />
+        </div>
+      </label>
+      {!dirty && actionData?.errors?.body && (
+        <Alert className="pt-1 text-red-100 font-saygon text-base" id="body=error">
+          {actionData.errors.body}
+        </Alert>
+      )}
+    </div>
+  )
+})
 
 const ErrorFallback = ({ error, resetErrorBoundary }: any) => {
   return (
@@ -40,14 +210,28 @@ const ErrorFallback = ({ error, resetErrorBoundary }: any) => {
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   await requireUserId(request);
-  invariant(params.id, "blog_post_id not found");
+  if (params.id !== 'new') {
+    invariant(params.id, "blog_post_id not found");
 
-  const blogPost = await getBlogPostById({ id: params.id });
-  if (!blogPost) {
-    throw new Response("Not Found", { status: 404 });
+    const blogPost = await getBlogPostById({ id: params.id });
+    if (!blogPost) {
+      throw new Response("Not Found", { status: 404 });
+    }
+  
+    return json<LoaderData>({ formType: 'update', blogPost });
+  } else {
+    return json<LoaderData>({
+      formType: 'create',
+      blogPost: {
+        title: '',
+        subTitle: '',
+        slug: '',
+        emoji: '',
+        body: '',
+        status: 'draft',
+      }
+    })
   }
-
-  return json<LoaderData>({ blogPost });
 };
 
 export const action: ActionFunction = async ({ request, context, params }) => {
@@ -69,6 +253,7 @@ export const action: ActionFunction = async ({ request, context, params }) => {
         return redirect("/account");
     case 'save':
     case 'publish':
+    case 'create':
     default:
       if (typeof title !== "string" || title.length === 0) {
         return json<ActionData>(
@@ -112,25 +297,36 @@ export const action: ActionFunction = async ({ request, context, params }) => {
         );
       }
 
-      const result = await updateBlogPost({ id: params.id, title, body, subTitle, slug, emoji, userId, status: _action === 'publish' ? 'published' : status });
-    
-      if (result.errors) {
-        return json<ActionData>(
-          { errors: result?.errors },
-          { status: 400 }
-        );
+      if (_action === 'create') {
+        const result = await createBlogPost({ title, body, subTitle, slug, emoji, userId, status: 'draft' });
+        if (result.errors) {
+          return json<ActionData>(
+            { errors: result?.errors },
+            { status: 400 }
+          );
+        } else {
+          return redirect(`/account/blog_posts/${result?.blogPost?.id}`)
+        }
       } else {
-        return json<ActionData>(
-          { blogPost: result.blogPost},
-          { status: 200 }
-        )
+        const result = await updateBlogPost({ id: params.id, title, body, subTitle, slug, emoji, userId, status: _action === 'publish' ? 'published' : status });
+        if (result.errors) {
+          return json<ActionData>(
+            { errors: result?.errors },
+            { status: 400 }
+          );
+        } else {
+          return json<ActionData>(
+            { blogPost: result.blogPost},
+            { status: 200 }
+          )
+        }
       }
-    
+      
   }
 };
 
 export default function EditBlogPostPage() {
-  const {blogPost} = useLoaderData();
+  const {formType, blogPost} = useLoaderData();
 
   const actionData = useActionData() as ActionData;
   const titleRef = React.useRef<HTMLInputElement>(null);
@@ -138,9 +334,8 @@ export default function EditBlogPostPage() {
   const slugRef = React.useRef<HTMLInputElement>(null);
   const emojiRef = React.useRef<HTMLInputElement>(null);
   const bodyRef = React.useRef<HTMLTextAreaElement>(null);
+  const formPropagationBypassRef = React.useRef<HTMLDivElement>(null);
 
-
-  const formPropationByPassRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (actionData?.errors?.title) {
@@ -171,15 +366,9 @@ export default function EditBlogPostPage() {
     emojiRef.current?.setAttribute("value", blogPost?.emoji);
     autoSizeTextArea(blogPost?.body);
     fetcher.submit({mdxSource: blogPost?.body}, {method: 'post', action: '/mdx'});
-
   }, []);
 
   
-
-
-
-
-
   const Component = useMemo(() => 
     fetcher?.data?.code
     ? getMDXComponent(fetcher?.data?.code) 
@@ -195,158 +384,73 @@ export default function EditBlogPostPage() {
     <>
     <Form
       method="post"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 8,
-        width: "100%",
-      }}
+      className="grid grid-areas-blog-post-form grid-cols-blog-post-form grid-rows-blog-post-form min-h-screen gap-4 p-4 pb-8 w-screen"
     >
-        <button
-          name="_action"
-          value="delete"
-          type="submit"
-          className="btn"
-        >
-          Delete
-        </button>
-      <div className="text-right">
-        <button
-          name="_action"
-          value="save"
-          type="submit"
-          className="btn"
-        >
-          Save
-        </button>
+      <div className="flex items-center w-full justify-between grid-in-bpf-header">
+        <Link to="/account" className="text-yellow-100 text-lg font-saygon underline-none">Back To Account</Link>
         <input name="status" value={blogPost?.status} type="hidden"/>
+        {formType === 'create' 
+        ?
         <button
-          name="_action"
-          value="publish"
-          type="submit"
-          className="btn"
-        >
-          Publish
+              key="create"
+              name="_action"
+              value="create"
+              type="submit"
+              className="btn"
+            >
+            Create
         </button>
-      </div>
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <span className="text-base text-yellow-100 font-saygon">Title: </span>
-          <input
-            ref={titleRef}
-            name="title"
-            className="bg-black-100 text-yellow-100 font-saygon text-lg focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
-            aria-invalid={actionData?.errors?.title ? true : undefined}
-            aria-errormessage={
-              actionData?.errors?.title ? "title-error" : undefined
-            }
+        : <MultiActionButton
+            primary={({className}: any) => (
+              <button
+                key="save"
+                name="_action"
+                value="save"
+                type="submit"
+                className={className}
+              >
+              Save
+            </button>
+            )}
+            options={({className}: any) => [
+              (blogPost?.status === 'draft' ? [(<button
+                key="publish"
+                name="_action"
+                value="publish"
+                type="submit"
+                className={className}
+              >
+              Publish
+              </button>)] : []),
+              (<button
+                key="delete"
+                name="_action"
+                value="delete"
+                type="submit"
+                className={className}
+                >
+                Delete
+              </button>),
+            ]}
           />
-        </label>
-        {actionData?.errors?.title && (
-          <Alert className="pt-1 text-red-100 font-saygon text-md" id="title=error">
-            {actionData.errors.title}
-          </Alert>
-        )}
+        }
       </div>
 
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <span className="text-base text-yellow-100 font-saygon">Sub Title: </span>
-          <input
-            ref={subTitleRef}
-            name="subTitle"
-            className="bg-black-100 text-yellow-100 font-saygon text-lg focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
-            aria-invalid={actionData?.errors?.subTitle ? true : undefined}
-            aria-errormessage={
-              actionData?.errors?.subTitle ? "subtTitle-error" : undefined
-            }
-          />
-        </label>
-        {actionData?.errors?.subTitle && (
-          <Alert className="pt-1 text-red-100 font-saygon text-md" id="subTitle=error">
-            {actionData.errors.subTitle}
-          </Alert>
-        )}
-      </div>
+      <EmojiField ref={emojiRef} actionData={actionData}/>
+      <TitleField ref={titleRef} actionData={actionData}/>
+      <SlugField ref={slugRef} actionData={actionData}/>
+      <SubTitleField ref={subTitleRef} actionData={actionData}/>
+      <BodyField ref={bodyRef} actionData={actionData} autoSizeTextArea={autoSizeTextArea} fetcher={fetcher} defaultValue={blogPost?.body}/>
+      <div className="grid-in-bpf-preview mt-6" ref={formPropagationBypassRef}></div>
 
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <span className="text-base text-yellow-100 font-saygon">Slug: </span>
-          <input
-            ref={slugRef}
-            name="slug"
-            className="bg-black-100 text-yellow-100 font-saygon text-lg focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
-            aria-invalid={actionData?.errors?.slug ? true : undefined}
-            aria-errormessage={
-              actionData?.errors?.slug ? "slug-error" : undefined
-            }
-          />
-        </label>
-        {actionData?.errors?.slug && (
-          <Alert className="pt-1 text-red-100 font-saygon text-md" id="slug=error">
-            {actionData.errors.slug}
-          </Alert>
-        )}
-      </div>
-
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <span className="text-base text-yellow-100 font-saygon">Emoji: </span>
-          <input
-            ref={emojiRef}
-            name="emoji"
-            className="bg-black-100 text-yellow-100 font-saygon text-lg focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
-            aria-invalid={actionData?.errors?.emoji ? true : undefined}
-            aria-errormessage={
-              actionData?.errors?.emoji ? "emoji-error" : undefined
-            }
-          />
-        </label>
-        {actionData?.errors?.emoji && (
-          <Alert className="pt-1 text-red-100 font-saygon text-md" id="emoji=error">
-            {actionData.errors.emoji}
-          </Alert>
-        )}
-      </div>
-
-      <div className="flex">
-        <div className="w-[50vw]">
-          <label className="flex w-full flex-col gap-1">
-            <span className="text-base text-yellow-100 font-saygon">Body: </span>
-            <div className="autoresize-textarea w-full text-base font-saygon bg-black-100 text-yellow-100">
-              <textarea
-                ref={bodyRef}
-                onChange={e => {
-                  autoSizeTextArea(e.target.value);
-                  fetcher.submit({mdxSource: e.target.value}, {method: 'post', action: '/mdx'})
-                }}
-                name="body"
-                rows={8}
-                defaultValue={blogPost?.body}
-                aria-invalid={actionData?.errors?.body ? true : undefined}
-                aria-errormessage={
-                  actionData?.errors?.body ? "body-error" : undefined
-                }
-              />
-            </div>
-          </label>
-          {actionData?.errors?.body && (
-            <Alert className="pt-1 text-red-100 font-saygon text-md" id="body=error">
-              {actionData.errors.body}
-            </Alert>
-          )}
-        </div>
-
-        <div className="w-[50vw] p-7" ref={formPropationByPassRef}></div>
-      </div>
     </Form>
-    {formPropationByPassRef?.current && ReactDOM.createPortal(
+    {formPropagationBypassRef?.current && ReactDOM.createPortal(
       <ComponentErrorBoundary
         FallbackComponent={ErrorFallback}
       >
         <Component components={mdxComponents}/>
       </ComponentErrorBoundary>
-    , formPropationByPassRef?.current)}
+    , formPropagationBypassRef?.current)}
     </>
   );
 }
