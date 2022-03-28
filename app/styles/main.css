@@ -263,13 +263,9 @@
     @apply border-solid border-yellow-100;
   }
 
-  input:autofill {
-    filter: invert(1);
-    border: solid 2px #0112fe;
-  }
-
-  input:autofill:focus {
-    border: solid 2px #06ff6f;
+  input:-internal-autofill-selected,
+  input:-internal-autofill-selected:focus {
+    -webkit-box-shadow:0 0 0 50px black inset;
   }
 
   .autoresize-textarea {
