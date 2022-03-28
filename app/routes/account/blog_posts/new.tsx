@@ -116,6 +116,12 @@ export default function NewBlogPostPage() {
 
   const fetcher = useFetcher();
 
+  const autoSizeTextArea = (replicatedValue: string) => {
+    if (bodyRef?.current) {
+      bodyRef?.current?.parentElement?.setAttribute('data-replicated-value', replicatedValue)
+    }
+  }
+
   const Component = useMemo(() => 
     fetcher?.data?.code
     ? getMDXComponent(fetcher?.data?.code) 
@@ -231,17 +237,21 @@ export default function NewBlogPostPage() {
         <div className="w-[50vw]">
           <label className="flex w-full flex-col gap-1">
             <span className="text-base text-yellow-100 font-saygon">Body: </span>
+            <div className="autoresize-textarea w-full text-base font-saygon bg-black-100 text-yellow-100">
             <textarea
               ref={bodyRef}
-              onChange={e => fetcher.submit({mdxSource: e.target.value}, {method: 'post', action: '/mdx'})}
+              onChange={e => {
+                autoSizeTextArea(e.target.value);
+                fetcher.submit({mdxSource: e.target.value}, {method: 'post', action: '/mdx'})
+              }}
               name="body"
               rows={8}
-              className="w-full bg-black-100 text-yellow-100 font-saygon text-base focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
               aria-invalid={actionData?.errors?.body ? true : undefined}
               aria-errormessage={
                 actionData?.errors?.body ? "body-error" : undefined
               }
             />
+            </div>
           </label>
           {actionData?.errors?.body && (
             <Alert className="pt-1 text-red-100 font-saygon text-md" id="body=error">
