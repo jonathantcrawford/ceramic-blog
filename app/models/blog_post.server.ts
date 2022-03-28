@@ -8,6 +8,7 @@ export type BlogPost = {
   subTitle: string;
   emoji: string;
   slug: string;
+  status: string;
   createdAt: string;
   updatedAt: string;
   body: string;
@@ -29,6 +30,7 @@ export async function getBlogPostById({
       subTitle: result.subTitle,
       emoji: result.emoji,
       slug: result.slug.replace(/^slug#/, ""),
+      status: result.status,
       createdAt: result.createdAt,
       updatedAt: result.updatedAt,
       body: result.body,
@@ -60,6 +62,7 @@ export async function getBlogPostBySlug({
       subTitle: record.subTitle,
       emoji: record.emoji,
       slug: record.slug.replace(/^slug#/, ""),
+      status: record.status,
       createdAt: result.createdAt,
       updatedAt: result.updatedAt,
       body: record.body,
@@ -85,6 +88,7 @@ export async function getBlogPostListItemsByUserId({
     title: n.title,
     id: n.pk.replace(/^blog_post#/, ""),
     emoji: n.emoji,
+    status: n.status,
     subTitle: n.subTitle,
     createdAt: n.createdAt,
     updatedAt: n.updatedAt,
@@ -106,10 +110,17 @@ export async function getBlogPostListItems()
     id: n.pk.replace(/^blog_post#/, ""),
     emoji: n.emoji,
     subTitle: n.subTitle,
+    status: n.status,
     createdAt: n.createdAt,
     updatedAt: n.updatedAt,
     slug: n.slug.replace(/^slug#/, ""),
   }));
+}
+
+export async function getPublishedBlogPostItems()
+: Promise<Array<Omit<BlogPost, "body" >>> {
+  const blogPostItems = await getBlogPostListItems();
+  return blogPostItems.filter(blogPost => blogPost.status === 'published');
 }
 
 export async function createBlogPost({
@@ -119,13 +130,15 @@ export async function createBlogPost({
   slug,
   body,
   userId,
+  status
 }: {
   title: string,
   subTitle: string,
   emoji: string,
   slug: string,
   body: string,
-  userId: string;
+  userId: string,
+  status: string
 }): Promise<{blogPost?: BlogPost, errors?: any}> {
  
 
@@ -162,6 +175,7 @@ export async function createBlogPost({
               subTitle: subTitle,
               emoji: emoji,
               slug: `slug#${slug}`,
+              status: status,
               createdAt: createdAt,
               updatedAt: updatedAt,
               body: body,
@@ -180,6 +194,7 @@ export async function createBlogPost({
         subTitle: subTitle,
         emoji: emoji,
         slug: slug,
+        status: status,
         createdAt: createdAt,
         updatedAt: updatedAt,
         body: body,
@@ -201,6 +216,7 @@ export async function updateBlogPost({
   subTitle,
   emoji,
   slug,
+  status,
   body,
   id,
   userId,
@@ -209,6 +225,7 @@ export async function updateBlogPost({
   subTitle: string,
   emoji: string,
   slug: string,
+  status: string,
   body: string,
   id: string,
   userId: string;
@@ -270,14 +287,18 @@ export async function updateBlogPost({
             Key: {
               pk: `blog_post#${id}`,
             },
-            UpdateExpression: "SET title = :title, subTitle = :subTitle, emoji = :emoji, slug = :slug, updatedAt = :updatedAt, body = :body",
+            UpdateExpression: "SET title = :title, subTitle = :subTitle, emoji = :emoji, slug = :slug, updatedAt = :updatedAt, body = :body, #status = :status",
+            ExpressionAttributeNames: {
+              '#status': 'status'
+            },
             ExpressionAttributeValues: {
               ':title': title,
               ':subTitle': subTitle,
               ':emoji': emoji,
+              ':status': status,
               ':slug': `slug#${slug}`,
               ':updatedAt': updatedAt,
-              ':body': body
+              ':body': body,
             },
             TableName: reflect.blog_post
           }
@@ -293,6 +314,7 @@ export async function updateBlogPost({
         subTitle: subTitle,
         emoji: emoji,
         slug: slug,
+        status: status,
         updatedAt: updatedAt,
         body: body,
       }

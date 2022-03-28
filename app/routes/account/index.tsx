@@ -49,7 +49,13 @@ export default function NotesPage() {
           {data.blogPostListItems.length === 0 ? (
             <p className="p-4">No blog posts yet</p>
           ) : (
-            <PostLinks linkPrefix={'blog_posts/'} posts={data.blogPostListItems} linkAttribute={'id'}/>
+            <PostLinks title={'Drafts'} linkPrefix={'blog_posts/'} posts={data.blogPostListItems.filter(blogPost => blogPost.status === 'draft')} linkAttribute={'id'}/>
+          )}
+
+          {data.blogPostListItems.length === 0 ? (
+            <p className="p-4">No blog posts yet</p>
+          ) : (
+            <PostLinks title={'Published'} linkPrefix={'blog_posts/'} posts={data.blogPostListItems.filter(blogPost => blogPost.status === 'published')} linkAttribute={'id'}/>
           )}
         </div>
       </main>

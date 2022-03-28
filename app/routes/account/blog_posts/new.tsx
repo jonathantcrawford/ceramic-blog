@@ -77,7 +77,7 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  const result = await createBlogPost({ title, body, subTitle, slug, emoji, userId });
+  const result = await createBlogPost({ title, body, subTitle, slug, emoji, userId, status: 'draft' });
 
   if (result?.errors) {
     return json<ActionData>(

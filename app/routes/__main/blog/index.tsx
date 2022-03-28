@@ -5,16 +5,16 @@ import { useLoaderData, json } from "remix";
 
 import { PostLinks } from "~/components/PostLinks/PostLinks";
 
-import { getBlogPostListItems } from "~/models/blog_post.server";
+import { getPublishedBlogPostItems } from "~/models/blog_post.server";
 
 type LoaderData = {
-  blogPostListItems: Awaited<ReturnType<typeof getBlogPostListItems>>;
+  blogPostListItems: Awaited<ReturnType<typeof getPublishedBlogPostItems>>;
 };
 
 
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const blogPostListItems = await getBlogPostListItems();
+  const blogPostListItems = await getPublishedBlogPostItems();
   return json<LoaderData>({ blogPostListItems });
 };
 
@@ -56,7 +56,7 @@ export default function Index() {
 
   return (
     <div className="grid-in-ga-content w-full">
-      <PostLinks linkPrefix={''} posts={blogPostListItems} linkAttribute={'slug'}/>
+      <PostLinks title={'Blog Posts'} linkPrefix={''} posts={blogPostListItems} linkAttribute={'slug'}/>
      </div>
   )
 }

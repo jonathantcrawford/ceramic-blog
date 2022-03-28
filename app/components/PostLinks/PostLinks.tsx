@@ -32,7 +32,7 @@ function PendingNavLink({ className, to, prefetch, children }: any) {
   );
 }
 
-export const PostLinks = ({linkPrefix, linkAttribute, posts}: {linkPrefix: string, linkAttribute: string, posts: Omit<BlogPost, "body">[] }) => {
+export const PostLinks = ({title, linkPrefix, linkAttribute, posts}: {title: string, linkPrefix: string, linkAttribute: string, posts: Omit<BlogPost, "body">[] }) => {
 
   //const [blogPosts, setBlogPosts] = useState<Array<BlogPostItem> | []>([])
   
@@ -58,7 +58,7 @@ export const PostLinks = ({linkPrefix, linkAttribute, posts}: {linkPrefix: strin
   return (
     <>
       <div className="mt-8 font-saygon text-3xl font-normal text-pink-200 mb-6 pb-2 border-b-2 border-b-solid border-b-pink-200">
-        Blog Posts
+        {title}
       </div>
       <div className="grid auto-rows-min grid-flow-row gap-[5vh]">
         {posts.map((post: any) => (

@@ -59,6 +59,7 @@ export const action: ActionFunction = async ({ request, context, params }) => {
   const title = formData.get("title");
   const subTitle = formData.get("subTitle");
   const slug = formData.get("slug");
+  const status = formData.get("status");
   const emoji = formData.get("emoji");
   const body = formData.get("body");
 
@@ -66,7 +67,8 @@ export const action: ActionFunction = async ({ request, context, params }) => {
     case 'delete':
         await deleteBlogPost({ id: params.id });
         return redirect("/account");
-    case 'update':
+    case 'save':
+    case 'publish':
     default:
       if (typeof title !== "string" || title.length === 0) {
         return json<ActionData>(
@@ -103,7 +105,14 @@ export const action: ActionFunction = async ({ request, context, params }) => {
         );
       }
 
-      const result = await updateBlogPost({ id: params.id, title, body, subTitle, slug, emoji, userId });
+      if (typeof status !== "string" || status.length === 0) {
+        return json<ActionData>(
+          { errors: { body: "Invalid status" } },
+          { status: 400 }
+        );
+      }
+
+      const result = await updateBlogPost({ id: params.id, title, body, subTitle, slug, emoji, userId, status: _action === 'publish' ? 'published' : status });
     
       if (result.errors) {
         return json<ActionData>(
@@ -204,11 +213,20 @@ export default function EditBlogPostPage() {
       <div className="text-right">
         <button
           name="_action"
-          value="update"
+          value="save"
           type="submit"
           className="btn"
         >
           Save
+        </button>
+        <input name="status" value={blogPost?.status} type="hidden"/>
+        <button
+          name="_action"
+          value="publish"
+          type="submit"
+          className="btn"
+        >
+          Publish
         </button>
       </div>
       <div>
