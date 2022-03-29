@@ -1,5 +1,5 @@
 @app
-ceramic-blog-4403
+blog
 
 @http
 /*

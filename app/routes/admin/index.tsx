@@ -24,16 +24,8 @@ import {
     faPlus
 } from "@fortawesome/free-solid-svg-icons";
 
-import easyMDEStyles from "easymde/dist/easymde.min.css"
 
 
-
-
-export const links: LinksFunction = () => {
-    return [
-        { rel: "stylesheet", href: easyMDEStyles },
-    ];
-  };
 
 export default function Editor() {
 
