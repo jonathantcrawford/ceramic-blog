@@ -51,7 +51,6 @@ export async function getBlogPostBySlug({
     KeyConditionExpression: "slug = :slug",
     ExpressionAttributeValues: { ":slug": `slug#${slug}` },
   })
-  console.log(result)
 
   const [record] = result.Items;
 
@@ -63,8 +62,8 @@ export async function getBlogPostBySlug({
       emoji: record.emoji,
       slug: record.slug.replace(/^slug#/, ""),
       status: record.status,
-      createdAt: result.createdAt,
-      updatedAt: result.updatedAt,
+      createdAt: record.createdAt,
+      updatedAt: record.updatedAt,
       body: record.body,
     };
   }

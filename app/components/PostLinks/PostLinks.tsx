@@ -75,7 +75,7 @@ export const PostLinks = ({title, linkPrefix, linkAttribute, posts}: {title: str
                   {post.subTitle}
                 </span>
                 <span className="text-lg font-light font-saygon text-align-right">
-                  {post.updatedAt}
+                  {new Date(post.updatedAt).toDateString()}
                 </span>
           </PendingNavLink>
           ))}

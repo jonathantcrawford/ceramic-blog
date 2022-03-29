@@ -16,7 +16,7 @@ export const PostHeader = ({ info }: any) => {
           {info.subTitle}
         </span>
         <span className="text-xl font-medium font-saygon text-right">
-          {info.date}
+          {new Date(info.updatedAt).toDateString()}
         </span>
       </div>
     </>
