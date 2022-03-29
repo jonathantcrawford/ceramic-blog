@@ -130,7 +130,6 @@ jobs:
           echo "SHA:        ${{ github.sha }}"
           VER=`node --version`; echo "Node ver:   $VER"
           VER=`npm --version`; echo "npm ver:    $VER"
-          echo ${{ secrets.ARC_APP_SECRET }}
 
       - name: Make .env file
         uses: SpicyPizza/create-envfile@v1.3
