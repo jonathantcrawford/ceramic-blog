@@ -77,7 +77,7 @@ export let action: ActionFunction = async ({ request }) => {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `9495f37b-a152-415b-a32c-32660779ba1b`,
+          Authorization: process.env.NFT_PORT_TOKEN ?? '',
         },
         method: "GET",
       }
