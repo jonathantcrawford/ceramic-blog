@@ -149,9 +149,6 @@ jobs:
 
       - name: 🏗 Build Packages
         run: yarn build
-        env:
-          NODE_ENV: ${{ secrets.NODE_ENV }}
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
 
       - name: 🛠 Install Arc
         run: yarn global add @architect/architect
