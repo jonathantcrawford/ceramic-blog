@@ -131,16 +131,6 @@ jobs:
           VER=`node --version`; echo "Node ver:   $VER"
           VER=`npm --version`; echo "npm ver:    $VER"
 
-      - name: Make .env file
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          envkey_ARC_APP_SECRET: ${{ secrets.ARC_APP_SECRET }}
-          envkey_SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-          envkey_NODE_ENV: ${{ secrets.NODE_ENV }}
-          directory: ./
-          file_name: .env
-          fail_on_empty: false
-
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
         with:
@@ -148,6 +138,9 @@ jobs:
 
       - name: 🏗 Build Packages
         run: yarn build
+        env:
+          NODE_ENV: ${{ secrets.NODE_ENV }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
 
       - name: 🛠 Install Arc
         run: yarn global add @architect/architect
