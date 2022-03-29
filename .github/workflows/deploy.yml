@@ -133,6 +133,15 @@ jobs:
           VER=`node --version`; echo "Node ver:   $VER"
           VER=`npm --version`; echo "npm ver:    $VER"
 
+      - name: Make .env file
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          envkey_SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          envkey_NODE_ENV: ${{ secrets.NODE_ENV}}
+          directory: ./
+          file_name: .env
+          fail_on_empty: false
+
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
         with:
