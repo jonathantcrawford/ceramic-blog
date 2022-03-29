@@ -3,7 +3,7 @@ node_modules
 
 docker
 
-/server/build
+server/
 /public/build
 preferences.arc
 sam.json
