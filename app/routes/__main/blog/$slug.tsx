@@ -22,7 +22,6 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   invariant(params.slug, "blog_post_id not found");
   const blogPost = await getBlogPostBySlug({slug: params.slug});
 
-  console.log(blogPost);
   if (!blogPost) {
     throw new Response("Not Found", { status: 404 });
   }
