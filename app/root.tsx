@@ -38,7 +38,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json<LoaderData>({
     user: await getUser(request),
     ENV: {
-      HTTP_PROTOCOL: process.env.NODE_ENV === "development" ? "http:" : "http:",
+      HTTP_PROTOCOL: process.env.NODE_ENV === "development" ? "http:" : "https:",
       WS_PROTOCOL: process.env.NODE_ENV === "development" ? "ws:" : "wss:",
       HOST: url.host,
       NODE_ENV: process.env.NODE_ENV,

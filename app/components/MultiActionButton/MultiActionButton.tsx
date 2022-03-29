@@ -82,7 +82,7 @@ export const MultiActionButton = ({primary, options}: any) => {
 
 
   return (
-    <div className="w-[130px] relative m-4">
+    <div className="w-[130px] relative">
       <div className="flex w-full">
         {primary({className: primaryActionButtonClasses.join(' ')})}
         {/* <button className={primaryActionButtonClasses.join(' ')}>update</button> */}
