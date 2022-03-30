@@ -7,37 +7,8 @@ import {
   Form
 } from 'remix';
 import { useEffect } from "react";
-import { uploadImageStreamToS3 } from '~/s3-upload.server';
+import { s3UploadHandler } from '~/s3-upload.server';
 
-let s3UploadHandler: UploadHandler = async ({ name, stream }) => {
-  if (name !== 'cover') {
-    console.log(`Field [${name}] not accepted, skipping`);
-    stream.resume();
-    return;
-  }
-
-  // TODO: Check for `mimetype` here as well
-  // if (!['image/jpeg', 'image/jpg'].includes(mimetype)) {
-  //   console.log(`Field [${name}] not supported '${mimetype}', skipping`);
-  //   stream.resume();
-  //   return;
-  // }
-
-  console.log(`Field [${name}] starting upload...`);
-
-  try {
-    let upload = await uploadImageStreamToS3(stream, {
-      maxFileSize: 1_000_000,
-      sizes: [200, 600],
-      format: 'png'
-    });
-    console.log(`Field [${name}] finished upload`);
-    return JSON.stringify(upload);
-  } catch (error) {
-    console.log(`Field [${name}] failed upload: ${error}`);
-    return JSON.stringify({ error });
-  }
-};
 
 export const action: ActionFunction = async ({ request, context, params }) => {
   console.log(request.headers)

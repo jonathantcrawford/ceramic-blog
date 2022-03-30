@@ -1,3 +1,6 @@
+import {
+  UploadHandler,
+} from 'remix';
 import { S3 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import { Readable, PassThrough } from 'stream';
@@ -25,7 +28,6 @@ function s3Upload({ key, mime }: S3UploadParams) {
   let upload = new Upload({
     client: s3Client,
     params: {
-      ACL: 'public-read',
       Bucket: process.env.S3_BUCKET,
       Key: key,
       ContentType: mime,
@@ -41,7 +43,7 @@ function getS3Key(filename: string) {
 }
 
 function getS3KeyUrl(key: string) {
-  return `${process.env.S3_ENDPOINT}/${key}`;
+  return `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${key}`;
 }
 
 type ImageStreamUploadResult = {
@@ -142,3 +144,33 @@ export async function uploadImageStreamToS3(
       });
   });
 }
+
+export const s3UploadHandler: UploadHandler = async ({ name, stream }) => {
+  if (name !== 'cover') {
+    console.log(`Field [${name}] not accepted, skipping`);
+    stream.resume();
+    return;
+  }
+
+  // TODO: Check for `mimetype` here as well
+  // if (!['image/jpeg', 'image/jpg'].includes(mimetype)) {
+  //   console.log(`Field [${name}] not supported '${mimetype}', skipping`);
+  //   stream.resume();
+  //   return;
+  // }
+
+  console.log(`Field [${name}] starting upload...`);
+
+  try {
+    let upload = await uploadImageStreamToS3(stream, {
+      maxFileSize: 1_000_000,
+      sizes: [200, 600],
+      format: 'png'
+    });
+    console.log(`Field [${name}] finished upload`);
+    return JSON.stringify(upload);
+  } catch (error) {
+    console.log(`Field [${name}] failed upload: ${error}`);
+    return JSON.stringify({ error });
+  }
+};
