@@ -167,12 +167,12 @@
   }
 
   .markdown p {
-    @apply text-white-100 font-saygon text-lg mb-4;
+    @apply text-white-100 font-saygon text-lg mb-4 leading-14;
   }
 
   .markdown ol,
   .markdown ul {
-    @apply pl-6 pt-4;
+    @apply pl-8 pt-4;
   }
 
   .markdown ol li,

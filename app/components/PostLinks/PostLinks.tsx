@@ -60,7 +60,7 @@ export const PostLinks = ({title, linkPrefix, linkAttribute, posts}: {title: str
       <div className="font-saygon text-2xl font-normal text-pink-200 mb-6 pb-2 border-b-2 border-b-solid border-b-pink-200">
         {title}
       </div>
-      <div className="grid auto-rows-min grid-flow-row gap-6">
+      <div className="grid auto-rows-min grid-flow-row gap-6 mb-6">
         {posts.map((post: any) => (
           <PendingNavLink
             key={post.slug}

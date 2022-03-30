@@ -28,6 +28,12 @@ module.exports = {
       '6xl': '3.583rem',
       '7xl': '4.3rem',
     },
+    lineHeight: {
+      'extra-loose': '2.5',
+      '12': '3rem',
+      '14': '3.5rem',
+      '16': '4rem',
+    },
     colors: {
       'yellow': {
         100: '#feed01',
