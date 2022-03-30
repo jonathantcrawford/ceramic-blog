@@ -8,6 +8,7 @@
   "repository": "",
   "sideEffects": false,
   "scripts": {
+    "fresh-modules": "rimraf ./node_modules",
     "clean": "rimraf .cache ./server ./public/build",
     "build": "run-s clean build:css build:remix",
     "build:css": "npm run generate:css -- --minify",
