@@ -1,36 +1,9 @@
 diff --git a/node_modules/@remix-run/architect/server.js b/node_modules/@remix-run/architect/server.js
-index 5bf4c51..e5aba16 100644
+index 98aa0f1..10b93df 100644
 --- a/node_modules/@remix-run/architect/server.js
 +++ b/node_modules/@remix-run/architect/server.js
-@@ -16,17 +16,17 @@ var node = require('@remix-run/node');
- var binaryTypes = require('./binary-types.js');
- 
- /**
-- * A function that returns the value to use as `context` in route `loader` and
-- * `action` functions.
-- *
-- * You can think of this as an escape hatch that allows you to pass
-- * environment/platform-specific values through to your loader/action.
-- */
-+* A function that returns the value to use as `context` in route `loader` and
-+* `action` functions.
-+*
-+* You can think of this as an escape hatch that allows you to pass
-+* environment/platform-specific values through to your loader/action.
-+*/
- 
- /**
-- * Returns a request handler for Architect that serves the response using
-- * Remix.
-- */
-+* Returns a request handler for Architect that serves the response using
-+* Remix.
-+*/
- function createRequestHandler({
-   build,
-   getLoadContext,
-@@ -35,7 +35,7 @@ function createRequestHandler({
-   let handleRequest = node.createRequestHandler(build, mode);
+@@ -37,7 +37,7 @@ function createRequestHandler({
+   let handleRequest = serverRuntime.createRequestHandler(build, platform, mode);
    return async (event, _context) => {
      let abortController = new node.AbortController();
 -    let request = createRemixRequest(event, abortController);
@@ -38,12 +11,11 @@ index 5bf4c51..e5aba16 100644
      let loadContext = typeof getLoadContext === "function" ? getLoadContext(event) : undefined;
      let response = await handleRequest(request, loadContext);
      return sendRemixResponse(response, abortController);
-@@ -45,10 +45,16 @@ function createRemixRequest(event, abortController) {
+@@ -47,10 +47,15 @@ function createRemixRequest(event, abortController) {
    let host = event.headers["x-forwarded-host"] || event.headers.host;
    let search = event.rawQueryString.length ? `?${event.rawQueryString}` : "";
    let url = new URL(event.rawPath + search, `https://${host}`);
 +  let isFormData = false;
-+
 +  if (event.headers["content-type"] && event.headers["content-type"].includes("multipart/form-data")) {
 +    isFormData = true;
 +  }
