@@ -52,22 +52,24 @@ type ImageStreamUploadResult = {
 };
 
 type ImageUploadOptions = {
-  maxFileSize?: number;
-  sizes?: number[];
-  format?: 'jpeg' | 'jpg' | 'webp' | 'png';
+  maxFileSize: number;
+  sizes: number[];
+  format: 'jpeg' | 'jpg' | 'webp' | 'png';
 };
 
 export async function uploadImageStreamToS3(
   file: Readable,
   {
-    maxFileSize = 1_000_000,
-    sizes = [200, 600],
-    format = 'webp',
-  }: ImageUploadOptions = {}
+    maxFileSize,
+    sizes,
+    format,
+  }: ImageUploadOptions
 ) {
   return new Promise<ImageStreamUploadResult>((resolve, reject) => {
     let id = cuid();
     let meter = new UploadMeter(maxFileSize);
+    console.log(sharp.format);
+    console.log({maxFileSize, sizes, format});
     let meta = sharp().metadata((_err, meta) => {
       meta &&
         console.log(`meta [${id}] format: ${meta.format} | size: ${meta.size}`);
