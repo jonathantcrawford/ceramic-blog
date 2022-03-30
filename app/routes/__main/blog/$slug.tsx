@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { json, useLoaderData } from "remix";
+import { json, useLoaderData, NavLink } from "remix";
 import type { LinksFunction, LoaderFunction, MetaFunction } from "remix";
 
 import { compileMDX } from "~/compile-mdx.server";
@@ -90,9 +90,16 @@ export default function Slug() {
     const Component = useMemo(() => getMDXComponent(code), [code]);
 
     return (
-        <div className="grid-in-ga-content w-full">
+      <>
+        <NavLink
+          prefetch="intent"
+          to="/blog"
+          className="grid-in-ga-links no-underline text-yellow-100 hover:text-yellow-200 font-saygon text-lg mb-2"
+        >{`< all posts`}</NavLink>
+        <div className="grid-in-ga-content w-full markdown">
             <PostHeader info={{title, subTitle, updatedAt, emoji}}/>
             <Component components={mdxComponents}/>
         </div>
+      </>
     )
 }

@@ -22,12 +22,12 @@ export default function NotesPage() {
   const user = useUser();
 
   return (
-    <div className="flex h-full min-h-screen flex-col">
-      <header className="flex items-center justify-between bg-slate-800 p-4 text-white">
-        <h1 className="text-3xl font-saygon">
+    <div className="flex h-full min-h-screen flex-col p-8">
+      <header className="flex items-center justify-between bg-slate-800 text-white mb-4">
+        <div className="text-white-100 text-3xl font-saygon">
           <Link to=".">Account</Link>
-        </h1>
-        <p>{user.email}</p>
+        </div>
+        <div className="text-white-100 text-2xl font-saygon">{user.email}</div>
         <Form action="/logout" method="post">
           <button
             type="submit"
@@ -39,12 +39,10 @@ export default function NotesPage() {
       </header>
 
       <main className="flex h-full bg-white">
-        <div className="h-full w-full p-8">
-          <Link to="blog_posts/new" className="block p-4 text-xl font-saygon text-yellow-100">
+        <div className="h-full w-full">
+          <Link to="blog_posts/new" className="mb-8 block text-lg font-saygon text-yellow-100">
             + New Blog Post
           </Link>
-
-          <hr />
 
           {data.blogPostListItems.length === 0 ? (
             <p className="p-4">No blog posts yet</p>

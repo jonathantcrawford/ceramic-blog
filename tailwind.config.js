@@ -1,6 +1,14 @@
 module.exports = {
   content: ["./app/**/*.{ts,tsx,jsx,js}"],
   theme: {
+    screens: {
+      'mobile': '0px',
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     fontFamily: {
       'december': ['December', 'sans'],
       'saygon': ['Saygon', 'sans-serif'],
@@ -32,6 +40,10 @@ module.exports = {
       'black': {
         100: '#000000'
       },
+      'gray': {
+        100: '#444444',
+        200: '#1d1d1d'
+      },
       'white': {
         100: '#ffffff'
       },
@@ -41,12 +53,12 @@ module.exports = {
     },
     gridTemplateAreas: {
       'layout': [
-        '. . .',
-        '. ga-header .',
-        '. . .',
-        '. ga-content .',
-        '. . .',
-        '. ga-footer .',
+        '. . . .',
+        '. ga-header ga-header .',
+        '. . . .',
+        '. ga-links ga-content .',
+        '. . . .',
+        '. ga-footer ga-footer .',
       ],
       'blog-post-form': [
         'bpf-header bpf-header bpf-header bpf-header',
@@ -56,7 +68,7 @@ module.exports = {
       ]
     },
     gridTemplateColumns: {
-      'layout': '5vw 90vw 5vw',
+      'layout': '5vw 20vw 70vw 5vw',
       'blog-post-form': '80px auto calc(60vw - 400px) 400px'
     },
     gridTemplateRows: {

@@ -1,24 +1,17 @@
-import { NavLink } from "remix";
+
 
 export const PostHeader = ({ info }: any) => {
   return (
-    <>
-      <NavLink
-        prefetch="intent"
-        to="/blog"
-        className="no-underline text-yellow-100 hover:text-yellow-200 font-saygon text-xl mb-2"
-      >{`< all posts`}</NavLink>
-      <div className="bg-pink-200 text-black-100 no-underline rounded-[2vmin] border-[0_05vmin] border-solid border-pink-200 p-[3vmin] flex flex-col">
-        <span className="text-4xl font-extrabold font-saygon pb-2">
-          {info.emoji} {info.title}
-        </span>
-        <span className="text-xl font-medium font-saygon pb-4">
-          {info.subTitle}
-        </span>
-        <span className="text-xl font-medium font-saygon text-right">
-          {new Date(info.updatedAt).toDateString()}
-        </span>
-      </div>
-    </>
+    <div className="bg-pink-200 text-black-100 no-underline rounded-xl border-6 border-solid border-pink-200 p-[3vmin] flex flex-col mt-4 mb-4">
+      <span className="text-4xl font-extrabold font-saygon pb-2">
+        {info.emoji} {info.title}
+      </span>
+      <span className="text-xl font-medium font-saygon pb-4">
+        {info.subTitle}
+      </span>
+      <span className="text-xl font-medium font-saygon text-right">
+        {new Date(info.updatedAt).toDateString()}
+      </span>
+    </div>
   );
 };

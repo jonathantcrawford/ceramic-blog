@@ -384,9 +384,9 @@ export default function EditBlogPostPage() {
     <>
     <Form
       method="post"
-      className="grid grid-areas-blog-post-form grid-cols-blog-post-form grid-rows-blog-post-form min-h-screen gap-4 p-4 pb-8 w-screen"
+      className="grid grid-areas-blog-post-form grid-cols-blog-post-form grid-rows-blog-post-form min-h-screen gap-4 p-8 w-screen"
     >
-      <div className="flex items-center w-full justify-between grid-in-bpf-header">
+      <div className="flex items-center w-full justify-between grid-in-bpf-header mb-4">
         <Link to="/account" className="text-yellow-100 text-lg font-saygon underline-none">Back To Account</Link>
         <input name="status" value={blogPost?.status} type="hidden"/>
         {formType === 'create' 
@@ -441,7 +441,7 @@ export default function EditBlogPostPage() {
       <SlugField ref={slugRef} actionData={actionData}/>
       <SubTitleField ref={subTitleRef} actionData={actionData}/>
       <BodyField ref={bodyRef} actionData={actionData} autoSizeTextArea={autoSizeTextArea} fetcher={fetcher} defaultValue={blogPost?.body}/>
-      <div className="grid-in-bpf-preview mt-6" ref={formPropagationBypassRef}></div>
+      <div className="grid-in-bpf-preview mt-6 markdown" ref={formPropagationBypassRef}></div>
 
     </Form>
     {formPropagationBypassRef?.current && ReactDOM.createPortal(

@@ -57,24 +57,24 @@ export const PostLinks = ({title, linkPrefix, linkAttribute, posts}: {title: str
 
   return (
     <>
-      <div className="mt-8 font-saygon text-3xl font-normal text-pink-200 mb-6 pb-2 border-b-2 border-b-solid border-b-pink-200">
+      <div className="font-saygon text-2xl font-normal text-pink-200 mb-6 pb-2 border-b-2 border-b-solid border-b-pink-200">
         {title}
       </div>
-      <div className="grid auto-rows-min grid-flow-row gap-[5vh]">
+      <div className="grid auto-rows-min grid-flow-row gap-6">
         {posts.map((post: any) => (
           <PendingNavLink
             key={post.slug}
             prefetch="intent"
             to={`${linkPrefix}${post[linkAttribute]}`}
-            className="p-[3vmin] rounded-[2vmin] border-[0.05vmin] no-underline flex flex-col"
+            className="p-5 rounded-[2vmin] border-[0.05vmin] no-underline flex mobile:flex-col md:flex-row md:items-center md:flex-wrap"
           >
-                <span className="text-2xl font-normal font-saygon pb-2">
+                <span className="text-xl font-normal font-saygon mb-2 md:flex-[1_1_100%]">
                   {post.emoji} {`${post.title}`}
                 </span>
-                <span className="text-xl font-light font-saygon pb-4">
+                <span className="text-lg font-light font-saygon mb-2 md:flex-[1_1_70%]">
                   {post.subTitle}
                 </span>
-                <span className="text-lg font-light font-saygon text-align-right">
+                <span className="text-base font-light font-saygon mb-2 md:flex-[1_1_30%] md:text-right">
                   {new Date(post.updatedAt).toDateString()}
                 </span>
           </PendingNavLink>

@@ -34,7 +34,7 @@ export default function Index() {
 
 
   return (
-    <div className="grid-in-ga-content w-full">
+    <div className="row-start-4 row-end-5 col-start-2 col-end-4 w-full">
       <About />
     </div>
   );

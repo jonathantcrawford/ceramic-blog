@@ -5,6 +5,7 @@ export const About = () => {
     "mt-4",
     "font-hamlin",
     "text-2xl",
+    "font-light",
     "text-white-100",
   ].join(" ");
 

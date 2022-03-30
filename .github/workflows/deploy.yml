@@ -134,7 +134,7 @@ jobs:
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
         with:
-          install-command: yarn fresh-modules && yarn
+          install-command: yarn
 
       - name: 🏗 Build Packages
         run:  yarn build 
