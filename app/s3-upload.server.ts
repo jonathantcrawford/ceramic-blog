@@ -70,10 +70,10 @@ export async function uploadImageStreamToS3(
     let meter = new UploadMeter(maxFileSize);
     console.log(sharp.format);
     console.log({maxFileSize, sizes, format});
-    let meta = sharp().metadata((_err, meta) => {
-      meta &&
-        console.log(`meta [${id}] format: ${meta.format} | size: ${meta.size}`);
-    });
+    // let meta = sharp().metadata((_err, meta) => {
+    //   meta &&
+    //     console.log(`meta [${id}] format: ${meta.format} | size: ${meta.size}`);
+    // });
 
     // Initialize root transform writestream
     let transform = sharp();
@@ -93,7 +93,7 @@ export async function uploadImageStreamToS3(
     function abort(reason: string) {
       file.unpipe();
       meter.unpipe();
-      meta.unpipe();
+      //meta.unpipe();
 
       transforms.forEach((t) => {
         t.resizeStream.unpipe();
@@ -103,7 +103,7 @@ export async function uploadImageStreamToS3(
       transform.unpipe();
       transform.removeAllListeners();
 
-      meta.removeAllListeners();
+      //meta.removeAllListeners();
       meter.removeAllListeners();
 
       file.resume();
@@ -116,10 +116,10 @@ export async function uploadImageStreamToS3(
       abort('LIMIT_REACHED');
     });
 
-    meta.on('error', (err) => {
-      console.log('meta [ERROR]: ', err);
-      abort('INVALID_FILE');
-    });
+    // meta.on('error', (err) => {
+    //   console.log('meta [ERROR]: ', err);
+    //   abort('INVALID_FILE');
+    // });
 
     transform.on('error', (err) => {
       console.log('transform [ERROR]: ', err);
@@ -130,7 +130,8 @@ export async function uploadImageStreamToS3(
     transforms.forEach((t) => t.resizeStream.pipe(t.uploadStream));
 
     // Kick off stream handling by piping it into the root transform sstream
-    file.pipe(meter).pipe(meta).pipe(transform);
+    //file.pipe(meter).pipe(meta).pipe(transform);
+    file.pipe(meter).pipe(transform);
 
     // Wait for all streams being uploaded to S3
     Promise.all(transforms.map((t) => t.upload.done()))

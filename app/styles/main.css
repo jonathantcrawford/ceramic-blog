@@ -209,7 +209,14 @@
 
 
   .markdown code {
-    @apply font-semibold text-base bg-pink-200 text-black-100 p-1;
+    @apply font-semibold text-base bg-pink-200 text-black-100 p-1 rounded-sm;
+  }
+
+  .markdown pre > code{
+    color: unset;
+    background-color: unset;
+    padding: unset;
+    border-radius: unset;
   }
 
 
@@ -236,6 +243,7 @@
   }
 
   .code-snippet {
+    @apply my-8;
     display: flex;
     flex-direction: column;
   }
