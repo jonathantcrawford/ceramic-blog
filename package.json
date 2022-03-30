@@ -64,6 +64,7 @@
     "react-error-boundary": "^3.1.4",
     "react-syntax-highlighter": "^15.5.0",
     "remix": "^1.3.1",
+    "sharp": "^0.30.3",
     "tiny-invariant": "^1.2.0"
   },
   "devDependencies": {
@@ -85,6 +86,7 @@
     "@types/react": "^17.0.40",
     "@types/react-dom": "^17.0.13",
     "@types/react-syntax-highlighter": "^13.5.2",
+    "@types/sharp": "^0.30.0",
     "@vitejs/plugin-react": "^1.2.0",
     "c8": "^7.11.0",
     "cross-env": "^7.0.3",
