@@ -13,3 +13,6 @@ sam.yaml
 /cypress/videos
 
 /app/styles/tailwind.css
+
+
+node_modules/.cache
