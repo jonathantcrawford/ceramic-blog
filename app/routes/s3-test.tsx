@@ -27,7 +27,9 @@ let s3UploadHandler: UploadHandler = async ({ name, stream }) => {
 
   try {
     let upload = await uploadImageStreamToS3(stream, {
-      maxFileSize: 5_000_000,
+      maxFileSize: 50_000_000,
+      sizes: [600, 1200, 2400],
+      format: 'png'
     });
     console.log(`Field [${name}] finished upload`);
     return JSON.stringify(upload);
