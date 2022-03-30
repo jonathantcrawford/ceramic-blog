@@ -73,7 +73,7 @@ export default function S3Test() {
     return (
       <>
         <Form method="post" encType="multipart/form-data">
-            <input type="file" name="cover" />
+            <input type="file" name="cover" accept='image/png'/>
             <button type="submit" className="btn">submit</button>
         </Form>
       </>

@@ -6,6 +6,7 @@ import cuid from 'cuid';
 import { UploadMeter } from './upload-meter.server';
 
 const s3Client = new S3({
+  forcePathStyle: true,
   endpoint: process.env.S3_ENDPOINT,
   region: process.env.S3_REGION,
   credentials: {
