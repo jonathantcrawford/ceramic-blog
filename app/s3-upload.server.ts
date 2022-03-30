@@ -58,8 +58,8 @@ type ImageUploadOptions = {
 export async function uploadImageStreamToS3(
   file: Readable,
   {
-    maxFileSize = 5_000_000,
-    sizes = [600, 1200, 2400],
+    maxFileSize = 1_000_000,
+    sizes = [200, 600],
     format = 'webp',
   }: ImageUploadOptions = {}
 ) {
