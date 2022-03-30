@@ -131,13 +131,13 @@ jobs:
           VER=`node --version`; echo "Node ver:   $VER"
           VER=`npm --version`; echo "npm ver:    $VER"
 
-      - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn
+      # - name: 📥 Download deps
+      #   uses: bahmutov/npm-install@v1
+      #   with:
+      #     install-command: yarn
 
       - name: 🏗 Build Packages
-        run:  yarn build 
+        run:  yarn && yarn build 
 
       - name: 🛠 Install Arc
         run: yarn global add @architect/architect
