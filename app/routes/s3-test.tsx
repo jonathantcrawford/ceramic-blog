@@ -1,118 +1,64 @@
+import {
+  ActionFunction,
+  json,
+  unstable_parseMultipartFormData as parseMultipartFormData,
+  UploadHandler,
+  useActionData,
+  Form
+} from 'remix';
 import { useEffect } from "react";
-import { UploadHandler, ActionFunction, json } from "remix";
-import { unstable_parseMultipartFormData, useActionData, Form } from "remix";
+import { uploadImageStreamToS3 } from '~/s3-upload.server';
 
-//import { getS3Instance } from "~/s3-upload.server";
-
-import { s3Client, parallelUpload } from "~/s3-upload.server";
-
-import stream, { Readable} from "stream"
-
-export const action: ActionFunction = async ({
-  request,
-}) => {
-
-
-  // function uploadStreamToS3 (readStream: Readable, key: any, callback?: any) {
-  //   return new Promise((resolve, reject) => {
-      
-  //     const s3 = getS3Instance();
-  //     const pass = new stream.PassThrough();
-
-  //     const upload = s3.upload({
-  //       Bucket: process.env.S3_BUCKET ?? "",
-  //       Key: key,
-  //       Body: pass
-  //     });
-    
-  
-  //     upload.on("httpUploadProgress", function (progress) {
-  //       console.log(progress)
-  //       //   if (result) {
-  //       //     resolve(result);
-  //       //   } else {
-  //       //     reject(error);
-  //       //   }
-  //     })
-
-  //     upload.send();
-  
-    
-  //     // Pipe the Readable stream to the s3-upload-stream module.
-  //     readStream.pipe(pass);
-  //   })
-  // }
-
-  async function uploadStreamToS3 (readStream: Readable, key: any, callback?: any) {
-
-      
-      const pass = new stream.PassThrough();
-
-      const uploader = parallelUpload({
-        Bucket: process.env.S3_BUCKET ?? "",
-        Key: key,
-        Body: pass
-      })
-    
-  
-      uploader.on("httpUploadProgress", function (progress) {
-        console.log(progress)
-        //   if (result) {
-        //     resolve(result);
-        //   } else {
-        //     reject(error);
-        //   }
-      })
-
-      
-  
-    
-      // Pipe the Readable stream to the s3-upload-stream module.
-      readStream.pipe(pass);
-
-      await uploader.done();
-
-      return `${process.env.S3_ENDPOINT}/${key}`
+let s3UploadHandler: UploadHandler = async ({ name, stream }) => {
+  if (name !== 'cover') {
+    console.log(`Field [${name}] not accepted, skipping`);
+    stream.resume();
+    return;
   }
 
-  const uploadHandler: UploadHandler = async ({
-    name,
-    stream,
-    filename,
+  // TODO: Check for `mimetype` here as well
+  // if (!['image/jpeg', 'image/jpg'].includes(mimetype)) {
+  //   console.log(`Field [${name}] not supported '${mimetype}', skipping`);
+  //   stream.resume();
+  //   return;
+  // }
 
-  }) => {
-    // we only care about the file form field called "avatar"
-    // so we'll ignore anything else
-    // NOTE: the way our form is set up, we shouldn't get any other fields,
-    // but this is good defensive programming in case someone tries to hit our
-    // action directly via curl or something weird like that.
-    if (name !== "file") {
-      stream.resume();
-      return;
-    }
+  console.log(`Field [${name}] starting upload...`);
 
-    const uploadedImage = await uploadStreamToS3(
-      stream,
-      filename
-    );
-
-
-    return uploadedImage
-  };
-
-  const formData = await unstable_parseMultipartFormData(
-    request,
-    uploadHandler
-  );
-
-  const imageUrl = formData.get("file");
-
-  // because our uploadHandler returns a string, that's what the imageUrl will be.
-  // ... etc
-
-  return json(imageUrl, { status: 200})
+  try {
+    let upload = await uploadImageStreamToS3(stream, {
+      maxFileSize: 5_000_000,
+    });
+    console.log(`Field [${name}] finished upload`);
+    return JSON.stringify(upload);
+  } catch (error) {
+    console.log(`Field [${name}] failed upload: ${error}`);
+    return JSON.stringify({ error });
+  }
 };
 
+export const action: ActionFunction = async ({ request, context, params }) => {
+  console.log(request.headers)
+  console.log(params)
+  let formData = await parseMultipartFormData(request, s3UploadHandler);
+
+  // let formData;
+  // try {
+  //   formData = await parseMultipartFormData(request, s3UploadHandler);
+  // } catch (error) {
+  //   console.log('Caught: ', error);
+  //   return json({ error }, { status: 400 });
+  // }
+
+  let cover = JSON.parse(formData.get('cover') as string);
+
+  return json(
+    {
+      fields: { cover },
+    },
+    { status: cover.error ? 400 : 200 }
+  );
+};
 export default function S3Test() {
 
   const actionData = useActionData();
@@ -124,9 +70,8 @@ export default function S3Test() {
 
     return (
       <>
-        {actionData && <img src={actionData} crossOrigin="anonymous"/>}
         <Form method="post" encType="multipart/form-data">
-            <input type="file" name="file" />
+            <input type="file" name="cover" />
             <button type="submit" className="btn">submit</button>
         </Form>
       </>
