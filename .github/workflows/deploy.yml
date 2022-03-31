@@ -137,7 +137,7 @@ jobs:
       #     install-command: yarn
 
       - name: 🏗 Build Packages
-        run:  yarn postinstall && yarn build 
+        run:  yarn && yarn build 
 
       - name: 🛠 Install Arc
         run: yarn global add @architect/architect
