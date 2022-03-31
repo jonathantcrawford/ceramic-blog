@@ -3,7 +3,7 @@ import { NavLink } from "remix";
 export const Header = () => {
   const navLinkClasses = [
     "font-december",
-    "text-7xl",
+    "text-6xl",
     "no-underline",
     "flex",
     "flex-wrap",
@@ -23,7 +23,7 @@ export const Header = () => {
             : [...navLinkClasses, ...notActiveClasses].join(" ")
         }
       >
-        <span>Jon Crawford</span>
+        <span className="w-min leading-14">Jon Crawford</span>
       </NavLink>
       <div className="mt-1 font-hamlin font-light text-base text-white-100">
         <b>Software Engineer</b> <b>@</b>{" "}

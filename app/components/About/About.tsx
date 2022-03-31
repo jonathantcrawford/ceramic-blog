@@ -2,7 +2,7 @@ import { NavLink } from "remix";
 
 export const About = () => {
   const aboutClasses = [
-    "mt-4",
+    "mt-2",
     "font-hamlin",
     "text-2xl",
     "font-light",
@@ -22,7 +22,10 @@ export const About = () => {
   return (
     <div className={aboutClasses}>
       <div className={divClasses}>
-        I am interested in design systems, web3 and user experiences.
+        Interests in design, 
+        <br/>
+        full stack development,
+        <br/>and web3 user experiences.
       </div>
       <div className={divClasses}>
         Feel free to check out my{" "}
