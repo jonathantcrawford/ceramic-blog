@@ -19,7 +19,7 @@ export const MultiActionButton = ({primary, options}: any) => {
     "py-2",
     "px-3",
     "font-saygon",
-    "text-lg",
+    "text-base",
     "hover:bg-yellow-200",
     "text-left",
     "rounded-tl-lg",
@@ -61,7 +61,7 @@ export const MultiActionButton = ({primary, options}: any) => {
     "bg-yellow-100", 
     "hover:bg-yellow-200", 
     "font-saygon", 
-    "text-lg", 
+    "text-base", 
     "py-2", 
     "px-3", 
     "text-left",
@@ -72,10 +72,10 @@ export const MultiActionButton = ({primary, options}: any) => {
     "last:rounded-bl-lg",
     ...(actionsVisible 
       ? [
-        "opacity-100",
+        "visible",
         ]
       : [
-        "opacity-0"
+        "hidden"
       ])
   ];
 

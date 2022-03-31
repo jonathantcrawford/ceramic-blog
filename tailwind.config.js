@@ -12,7 +12,8 @@ module.exports = {
     fontFamily: {
       'december': ['December', 'sans'],
       'saygon': ['Saygon', 'sans-serif'],
-      'hamlin': ['Hamlin', 'sans-serif']
+      'hamlin': ['Hamlin', 'sans-serif'],
+      'mono': ['monospace']
     },
     fontSize: {
       'xs': '0.579rem',
@@ -66,20 +67,30 @@ module.exports = {
         '. . . .',
         '. ga-footer ga-footer .',
       ],
-      'blog-post-form': [
-        'bpf-header bpf-header bpf-header bpf-header',
-        'bpf-emoji bpf-title bpf-title bpf-slug',
+      'blog-post-forms': [
+        'bpf-sections auto'
+      ],
+      'blog-post-content-form': [
+        '. . . bpf-submit',
+        'bpf-emoji bpf-title bpf-title bpf-title',
         'bpf-subTitle bpf-subTitle bpf-subTitle bpf-subTitle',
         'bpf-body bpf-body bpf-preview bpf-preview'
+      ],
+      'account': [
+        'acc-sidebar-min acc-sidebar-max acc-route',
       ]
     },
     gridTemplateColumns: {
       'layout': '5vw 20vw 70vw 5vw',
-      'blog-post-form': '80px auto calc(60vw - 400px) 400px'
+      'blog-post-forms': '120px auto',
+      'blog-post-content-form': '80px auto auto auto',
+      'account': 'min-content 250px auto'
     },
     gridTemplateRows: {
       'layout': '5vh min-content 5vh auto 5vh min-content',
-      'blog-post-form': 'min-content min-content min-content auto'
+      'blog-post-forms': 'auto',
+      'blog-post-content-form': 'min-content min-content min-content auto',
+      'account': 'auto'
     },
   },
   plugins: [

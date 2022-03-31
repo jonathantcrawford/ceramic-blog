@@ -12,6 +12,7 @@ export type BlogPost = {
   createdAt: string;
   updatedAt: string;
   body: string;
+  images: string[];
 };
 
 
@@ -33,6 +34,7 @@ export async function getBlogPostById({
       status: result.status,
       createdAt: result.createdAt,
       updatedAt: result.updatedAt,
+      images: result.images,
       body: result.body,
     };
   }
@@ -43,7 +45,7 @@ export async function getBlogPostBySlug({
   slug,
 }: {
   slug: string;
-}): Promise<Omit<BlogPost, "userId"> | null> {
+}): Promise<Omit<BlogPost, "userId" | "images"> | null> {
   const db = await arc.tables();
 
   const result = await await db.blog_post.query({
@@ -138,7 +140,7 @@ export async function createBlogPost({
   body: string,
   userId: string,
   status: string
-}): Promise<{blogPost?: BlogPost, errors?: any}> {
+}): Promise<{blogPost?: Omit<BlogPost, "images">, errors?: any}> {
  
 
   const client = await arc.tables();
@@ -228,7 +230,7 @@ export async function updateBlogPost({
   body: string,
   id: string,
   userId: string;
-}): Promise<{blogPost?: Omit<BlogPost, "createdAt">, errors?: any}> {
+}): Promise<{blogPost?: Omit<BlogPost, "createdAt" | "images">, errors?: any}> {
  
 
   const client = await arc.tables();
@@ -327,6 +329,74 @@ export async function updateBlogPost({
     }
   }
 }
+
+export async function updateBlogPostImages({
+  images,
+  id,
+  userId,
+}: {
+  images: string[],
+  id: string,
+  userId: string;
+}): Promise<{blogPost?: Pick<BlogPost, "id" | "userId" | "images" | "updatedAt">, errors?: any}> {
+ 
+
+  const client = await arc.tables();
+  
+  //@ts-ignore
+  const reflect = await client.reflect()
+
+  
+  try {
+    const updatedAt = (new Date()).toISOString();
+
+    const result = await getBlogPostById({id});
+    if (!result) {
+      return {
+        errors: {
+          generic: "could not perform update. blog post id was not found."
+        }
+      }
+    }
+
+    
+    //@ts-ignore
+    await client._doc.transactWrite({
+      TransactItems: [
+        {
+          Update: {
+            Key: {
+              pk: `blog_post#${id}`,
+            },
+            UpdateExpression: "SET images = :images, updatedAt = :updatedAt",
+            ExpressionAttributeValues: {
+              ':images': images,
+              ':updatedAt': updatedAt
+            },
+            TableName: reflect.blog_post
+          }
+        }
+      ]
+    }).promise();
+
+    return {
+      blogPost: {
+        id: id,
+        userId:  userId,
+        images: images,
+        updatedAt: updatedAt
+      }
+    };
+  } catch (err) {
+    console.log(err)
+    return {
+      errors: {
+        slug: "slug already exists"
+      }
+    }
+  }
+}
+
 export async function deleteBlogPost({
   id,
 }: {

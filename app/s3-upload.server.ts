@@ -187,51 +187,56 @@ import {
   UploadHandler,
 } from 'remix';
 
-export const s3UploadHandler: UploadHandler = async ({ name, filename, mimetype, encoding, stream }) => {
-  if (name !== "cover") {
-    stream.resume();
-    return;
-  }
 
-  const key = cuid(); // or filename or whatever fits your usecase 😉;
+export const createUserBlogPostS3UploadHandler: ({userId, blogPostId}: {userId: string, blogPostId: string}) => UploadHandler = ({userId, blogPostId}) => {
+  
+  
+  return async ({ name, filename, mimetype, encoding, stream }) => {
+    if (name !== "imageFile") {
+      stream.resume();
+      return;
+    }
 
-
-  const params: PutObjectCommandInput = {
-    Bucket: process.env.S3_BUCKET ?? "",
-    Key: key,
-    Body: stream,
-    ContentType: mimetype,
-    ContentEncoding: encoding,
-    Metadata: {
-      filename: filename,
-    },
-  };
-
-  try {
-
-
-  const client = new S3Client({
-    forcePathStyle: true,
-    endpoint: process.env.S3_ENDPOINT,
-    region: process.env.S3_REGION,
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? '',
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? '',
-    },
-  });
-
-
-
-    const upload = new Upload({ client, params });
-
-    upload.on("httpUploadProgress", (progress) => {
-      console.log({ progress });
+     // or filename or whatever fits your usecase 😉;
+    const key = `user-${userId}/blog-${blogPostId}/${cuid()}`;
+  
+    const params: PutObjectCommandInput = {
+      Bucket: process.env.S3_BUCKET ?? "",
+      Key: key,
+      Body: stream,
+      ContentType: mimetype,
+      ContentEncoding: encoding,
+      Metadata: {
+        filename: filename,
+      },
+    };
+  
+    try {
+  
+  
+    const client = new S3Client({
+      forcePathStyle: true,
+      endpoint: process.env.S3_ENDPOINT,
+      region: process.env.S3_REGION,
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? '',
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? '',
+      },
     });
-
-    await upload.done();
-  } catch (e) {
-    console.log(e);
+  
+  
+  
+      const upload = new Upload({ client, params });
+  
+      upload.on("httpUploadProgress", (progress) => {
+        console.log({ progress });
+      });
+  
+      await upload.done();
+    } catch (e) {
+      console.log(e);
+    }
+  
+    return JSON.stringify({ filename, key });
   }
-
-  return JSON.stringify({ filename, key });
-};
+}

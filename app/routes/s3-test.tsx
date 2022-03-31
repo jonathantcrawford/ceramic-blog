@@ -7,31 +7,31 @@ import {
   Form
 } from 'remix';
 import { useEffect } from "react";
-import { s3UploadHandler } from '~/s3-upload.server';
+//import { s3UploadHandler } from '~/s3-upload.server';
 
 
-export const action: ActionFunction = async ({ request, context, params }) => {
-  console.log(request.headers)
-  console.log(params)
-  let formData = await parseMultipartFormData(request, s3UploadHandler);
+// export const action: ActionFunction = async ({ request, context, params }) => {
+//   console.log(request.headers)
+//   console.log(params)
+//   let formData = await parseMultipartFormData(request, s3UploadHandler);
 
-  // let formData;
-  // try {
-  //   formData = await parseMultipartFormData(request, s3UploadHandler);
-  // } catch (error) {
-  //   console.log('Caught: ', error);
-  //   return json({ error }, { status: 400 });
-  // }
+//   // let formData;
+//   // try {
+//   //   formData = await parseMultipartFormData(request, s3UploadHandler);
+//   // } catch (error) {
+//   //   console.log('Caught: ', error);
+//   //   return json({ error }, { status: 400 });
+//   // }
 
-  let cover = JSON.parse(formData.get('cover') as string);
+//   let cover = JSON.parse(formData.get('cover') as string);
 
-  return json(
-    {
-      fields: { cover },
-    },
-    { status: cover.error ? 400 : 200 }
-  );
-};
+//   return json(
+//     {
+//       fields: { cover },
+//     },
+//     { status: cover.error ? 400 : 200 }
+//   );
+// };
 export default function S3Test() {
 
   const actionData = useActionData();
