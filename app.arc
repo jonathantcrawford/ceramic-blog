@@ -9,6 +9,7 @@ blog
 @ws
 
 @static
+fingerprint true
 
 @tables
 arc-session
