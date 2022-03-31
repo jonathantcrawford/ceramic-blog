@@ -192,8 +192,8 @@ const client = new S3Client({
   endpoint: process.env.S3_ENDPOINT,
   region: process.env.S3_REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? '',
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? '',
+    accessKeyId: process.env.AWS_BLOG_RUNTIME_ACCESS_KEY_ID ?? '',
+    secretAccessKey: process.env.AWS_BLOG_RUNTIME_SECRET_ACCESS_KEY ?? '',
   },
 });
 
@@ -228,8 +228,8 @@ export const createUserBlogPostS3UploadHandler: ({userId, blogPostId}: {userId: 
   
 
 
-    console.log((process.env.AWS_ACCESS_KEY_ID ?? ''))
-    console.log((process.env.AWS_SECRET_ACCESS_KEY ?? ''))
+    console.log((process.env.AWS_BLOG_RUNTIME_ACCESS_KEY_ID ?? ''))
+    console.log((process.env.AWS_BLOG_RUNTIME_SECRET_ACCESS_KEY ?? ''))
   
   
       const upload = new Upload({ client, params });
