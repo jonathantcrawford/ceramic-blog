@@ -30,6 +30,7 @@ module.exports = {
       '7xl': '4.3rem',
     },
     lineHeight: {
+      '0': '0rem',
       'extra-loose': '2.5',
       '12': '3rem',
       '14': '3.5rem',
@@ -71,7 +72,7 @@ module.exports = {
         'bpf-sections auto'
       ],
       'blog-post-content-form': [
-        '. . . bpf-submit',
+        '. . bpf-submit bpf-submit',
         'bpf-emoji bpf-title bpf-title bpf-title',
         'bpf-subTitle bpf-subTitle bpf-subTitle bpf-subTitle',
         'bpf-body bpf-body bpf-preview bpf-preview'
@@ -83,7 +84,7 @@ module.exports = {
     gridTemplateColumns: {
       'layout': '5vw 20vw 70vw 5vw',
       'blog-post-forms': '120px auto',
-      'blog-post-content-form': '80px auto auto auto',
+      'blog-post-content-form': '80px auto auto 80px',
       'account': 'min-content 250px auto'
     },
     gridTemplateRows: {

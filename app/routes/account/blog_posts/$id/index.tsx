@@ -5,7 +5,7 @@ import { redirect } from "remix";
 import { json, useLoaderData, useCatch, Form, useFetcher, useActionData, Outlet, Link } from "remix";
 import invariant from "tiny-invariant";
 import type { BlogPost } from "~/models/blog_post.server";
-import { deleteBlogPost, getBlogPostById, updateBlogPost, createBlogPost } from "~/models/blog_post.server";
+import { deleteBlogPost, getBlogPostById, updateBlogPostContent } from "~/models/blog_post.server";
 import { requireUserId } from "~/session.server";
 import Alert from "@reach/alert";
 
@@ -25,11 +25,10 @@ import {
 
 
 type ActionData = {
-  blogPost?: Omit<BlogPost, "createdAt" | "images">,
+  blogPost?: Pick<BlogPost, "title" | "subTitle" | "emoji" | "body">,
   errors?: {
     title?: string;
     subTitle?: string;
-    slug?: string;
     emoji?: string;
     body?: string;
   };
@@ -179,7 +178,7 @@ const BodyField = React.forwardRef(({actionData, autoSizeTextArea, fetcher, defa
     <div className="grid-in-bpf-body">
       <label className="flex w-full flex-col gap-1 h-full">
         <span className="text-base text-yellow-100 font-saygon">Body: </span>
-        <div className="autoresize-textarea w-full text-base font-mono bg-black-100 text-yellow-100 h-full">
+        <div className="autoresize-textarea w-full text-tiny font-mono bg-black-100 text-yellow-100 h-full">
           <textarea
             ref={ref}
             onChange={e => {
@@ -261,8 +260,15 @@ export const action: ActionFunction = async ({ request, context, params }) => {
         return redirect("/account");
     case 'save':
     case 'publish':
-    case 'create':
     default:
+
+      if (typeof emoji !== "string" || emoji.length === 0) {
+        return json<ActionData>(
+          { errors: { emoji: "Emoji is required" } },
+          { status: 400 }
+        );
+      }
+
       if (typeof title !== "string" || title.length === 0) {
         return json<ActionData>(
           { errors: { title: "Title is required" } },
@@ -273,20 +279,6 @@ export const action: ActionFunction = async ({ request, context, params }) => {
       if (typeof subTitle !== "string" || subTitle.length === 0) {
         return json<ActionData>(
           { errors: { subTitle: "Sub Title is required" } },
-          { status: 400 }
-        );
-      }
-    
-      if (typeof slug !== "string" || slug.length === 0) {
-        return json<ActionData>(
-          { errors: { slug: "Slug is required" } },
-          { status: 400 }
-        );
-      }
-    
-      if (typeof emoji !== "string" || emoji.length === 0) {
-        return json<ActionData>(
-          { errors: { emoji: "Emoji is required" } },
           { status: 400 }
         );
       }
@@ -305,41 +297,28 @@ export const action: ActionFunction = async ({ request, context, params }) => {
         );
       }
 
-      if (_action === 'create') {
-        const result = await createBlogPost({ title, body, subTitle, slug, emoji, userId, status: 'draft' });
-        if (result.errors) {
-          return json<ActionData>(
-            { errors: result?.errors },
-            { status: 400 }
-          );
-        } else {
-          return redirect(`/account/blog_posts/${result?.blogPost?.id}`)
-        }
+      const result = await updateBlogPostContent({ id: params.id, title, body, subTitle, emoji, userId, status: _action === 'publish' ? 'published' : status });
+      if (result.errors) {
+        return json<ActionData>(
+          { errors: result?.errors },
+          { status: 400 }
+        );
       } else {
-        const result = await updateBlogPost({ id: params.id, title, body, subTitle, slug, emoji, userId, status: _action === 'publish' ? 'published' : status });
-        if (result.errors) {
-          return json<ActionData>(
-            { errors: result?.errors },
-            { status: 400 }
-          );
-        } else {
-          return json<ActionData>(
-            { blogPost: result.blogPost},
-            { status: 200 }
-          )
-        }
+        return json<ActionData>(
+          { blogPost: result.blogPost},
+          { status: 200 }
+        )
       }
       
   }
 };
 
 export default function EditBlogPostPage() {
-  const {formType, blogPost} = useLoaderData();
+  const {blogPost} = useLoaderData();
 
   const actionData = useActionData() as ActionData;
   const titleRef = React.useRef<HTMLInputElement>(null);
   const subTitleRef = React.useRef<HTMLInputElement>(null);
-  const slugRef = React.useRef<HTMLInputElement>(null);
   const emojiRef = React.useRef<HTMLInputElement>(null);
   const bodyRef = React.useRef<HTMLTextAreaElement>(null);
   const formPropagationBypassRef = React.useRef<HTMLDivElement>(null);
@@ -350,8 +329,6 @@ export default function EditBlogPostPage() {
       titleRef.current?.focus();
     } else if (actionData?.errors?.subTitle) {
       subTitleRef.current?.focus();
-    } else if (actionData?.errors?.slug) {
-      slugRef.current?.focus();
     } else if (actionData?.errors?.emoji) {
       emojiRef.current?.focus();
     } else if (actionData?.errors?.body) {
@@ -370,7 +347,6 @@ export default function EditBlogPostPage() {
   React.useEffect(() => { 
     titleRef.current?.setAttribute("value", blogPost?.title);
     subTitleRef.current?.setAttribute("value", blogPost?.subTitle);
-    slugRef.current?.setAttribute("value", blogPost?.slug);
     emojiRef.current?.setAttribute("value", blogPost?.emoji);
     autoSizeTextArea(blogPost?.body);
     fetcher.submit({mdxSource: blogPost?.body}, {method: 'post', action: '/mdx'});
@@ -404,18 +380,7 @@ export default function EditBlogPostPage() {
       <div className="grid-in-bpf-preview mt-6 markdown" ref={formPropagationBypassRef}></div>
 
       <div className="grid-in-bpf-submit flex items-center w-full justify-end">
-        {formType === 'create' 
-        ?
-        <button
-              key="create"
-              name="_action"
-              value="create"
-              type="submit"
-              className="btn"
-            >
-            Create
-        </button>
-        : <MultiActionButton
+        <MultiActionButton
             primary={({className}: any) => (
               <button
                 key="save"
@@ -448,7 +413,6 @@ export default function EditBlogPostPage() {
               </button>),
             ]}
           />
-        }
       </div>
       
 

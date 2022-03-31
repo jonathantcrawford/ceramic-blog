@@ -178,8 +178,8 @@
 //   }
 // };
 
-import type { PutObjectCommandInput } from '@aws-sdk/client-s3';
-import { S3Client } from '@aws-sdk/client-s3';
+import { PutObjectCommandInput, ObjectIdentifier, DeleteObjectsCommandInput } from '@aws-sdk/client-s3';
+import { S3Client, DeleteObjectCommand, DeleteObjectsCommand } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import cuid from 'cuid';
 
@@ -238,5 +238,44 @@ export const createUserBlogPostS3UploadHandler: ({userId, blogPostId}: {userId: 
     }
   
     return JSON.stringify({ filename, key });
+  }
+}
+
+
+export const deleteObjectsFromS3 = async ({keys}: {keys: string[]}) => {
+
+
+  const objectIdentifiers: ObjectIdentifier[] = keys.map(key => ({Key: `${process.env.S3_BUCKET}/${key}`}));
+  
+  const params: DeleteObjectsCommandInput = {
+    Bucket: process.env.S3_BUCKET ?? "",
+    Delete: {
+      Objects: objectIdentifiers
+    }
+  };
+
+  try {
+
+
+  const client = new S3Client({
+    forcePathStyle: true,
+    endpoint: process.env.S3_ENDPOINT,
+    region: process.env.S3_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? '',
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? '',
+    },
+  });
+
+  const results = await client.send(new DeleteObjectsCommand(params));
+
+  return results
+
+  } catch (err) {
+    return {
+      errors: {
+        generic: 'could not delete file'
+      }
+    }
   }
 }
