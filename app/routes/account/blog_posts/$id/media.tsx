@@ -7,18 +7,51 @@ import {
     useLoaderData,
     Form
   } from 'remix';
-  import { useEffect } from "react";
-  import { requireUserId } from "~/session.server";
-  import { updateBlogPostImages, getBlogPostById } from "~/models/blog_post.server";
-  import { createUserBlogPostS3UploadHandler, deleteObjectsFromS3 } from '~/s3-upload.server';
-  
+import { useEffect } from "react";
+import { requireUserId } from "~/session.server";
+
+import { updateBlogPostImages, getBlogPostById } from "~/models/blog_post.server";
+import { PutObjectCommandInput } from '@aws-sdk/client-s3';
+
+import { deleteObjectsFromS3, uploadToS3 } from '~/s3-upload.server';
+import cuid from 'cuid';
   
   export const action: ActionFunction = async ({ request, context, params }) => {
     const userId = await requireUserId(request);
     const blogPostId = params.id;
     if (!blogPostId) return json(null, {status: 500});
 
-    const uploadHandler = createUserBlogPostS3UploadHandler({userId, blogPostId});
+
+    const uploadHandler: UploadHandler = async ({ name, filename, mimetype, encoding, stream }) => {
+      if (name !== "imageFile") {
+        stream.resume();
+        return;
+      }
+      const key = `${process.env.S3_ENV_PREFIX}/user-${userId}/blog-${blogPostId}/${cuid()}`;
+
+      const params: PutObjectCommandInput = {
+        Bucket: process.env.S3_BUCKET ?? "",
+        Key: key,
+        Body: stream,
+        ContentType: mimetype,
+        ContentEncoding: encoding,
+        Metadata: {
+          filename: filename,
+        },
+      };
+
+    
+      try {
+        
+        await uploadToS3({params});
+
+      } catch (e) {
+        console.log(e);
+      }
+    
+      return JSON.stringify({ filename, key });
+    }
+
     let formData = await parseMultipartFormData(request, uploadHandler);
     let action = formData.get('_action');
     let images = formData.getAll("images");

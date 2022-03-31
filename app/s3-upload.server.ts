@@ -188,60 +188,28 @@ import {
 } from 'remix';
 
 
-export const createUserBlogPostS3UploadHandler: ({userId, blogPostId}: {userId: string, blogPostId: string}) => UploadHandler = ({userId, blogPostId}) => {
+export const uploadToS3 = async ({params}: any) => {
+  // or filename or whatever fits your usecase 😉;
   
-  
-  return async ({ name, filename, mimetype, encoding, stream }) => {
-    if (name !== "imageFile") {
-      stream.resume();
-      return;
-    }
+  const client = new S3Client({
+    forcePathStyle: true,
+    endpoint: process.env.S3_ENDPOINT,
+    region: process.env.S3_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_BLOG_RUNTIME_ACCESS_KEY_ID ?? '',
+      secretAccessKey: process.env.AWS_BLOG_RUNTIME_SECRET_ACCESS_KEY ?? '',
+    },
+  });
 
-     // or filename or whatever fits your usecase 😉;
-    const key = `${process.env.S3_ENV_PREFIX}/user-${userId}/blog-${blogPostId}/${cuid()}`;
-  
-    const params: PutObjectCommandInput = {
-      Bucket: process.env.S3_BUCKET ?? "",
-      Key: key,
-      Body: stream,
-      ContentType: mimetype,
-      ContentEncoding: encoding,
-      Metadata: {
-        filename: filename,
-      },
-    };
-  
-    try {
-  
-      const client = new S3Client({
-        forcePathStyle: true,
-        endpoint: process.env.S3_ENDPOINT,
-        region: process.env.S3_REGION,
-        credentials: {
-          accessKeyId: process.env.AWS_BLOG_RUNTIME_ACCESS_KEY_ID ?? '',
-          secretAccessKey: process.env.AWS_BLOG_RUNTIME_SECRET_ACCESS_KEY ?? '',
-        },
-      });
+  const upload = new Upload({ client, params });
 
+  upload.on("httpUploadProgress", (progress) => {
+    console.log({ progress });
+  });
 
-    console.log((process.env.AWS_BLOG_RUNTIME_ACCESS_KEY_ID ?? ''))
-    console.log((process.env.AWS_BLOG_RUNTIME_SECRET_ACCESS_KEY ?? ''))
-  
-  
-      const upload = new Upload({ client, params });
-  
-      upload.on("httpUploadProgress", (progress) => {
-        console.log({ progress });
-      });
-  
-      await upload.done();
-    } catch (e) {
-      console.log(e);
-    }
-  
-    return JSON.stringify({ filename, key });
-  }
+  await upload.done();
 }
+
 
 
 export const deleteObjectsFromS3 = async ({keys}: {keys: string[]}) => {
