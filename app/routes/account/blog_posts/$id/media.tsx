@@ -18,12 +18,13 @@ import {
     const blogPostId = params.id;
     if (!blogPostId) return json(null, {status: 500});
 
-    let formData = await request.formData();
+    const uploadHandler = createUserBlogPostS3UploadHandler({userId, blogPostId});
+    let formData = await parseMultipartFormData(request, uploadHandler);
     let action = formData.get('_action');
     let images = formData.getAll("images");
     let currentImages = formData.getAll("_images");
+
     if (action === 'upload'){
-      formData = await parseMultipartFormData(request, createUserBlogPostS3UploadHandler({userId, blogPostId}));
       let imageFile = JSON.parse(formData.get('imageFile') as string);
       const results = await updateBlogPostImages({id:blogPostId, userId, images: [...currentImages, imageFile.key]})
       if (results?.errors) return json(null, {status: 400});
