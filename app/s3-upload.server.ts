@@ -225,7 +225,9 @@ export const createUserBlogPostS3UploadHandler: ({userId, blogPostId}: {userId: 
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? '',
       },
     });
-  
+
+    console.log((process.env.AWS_ACCESS_KEY_ID ?? '').length)
+    console.log((process.env.AWS_SECRET_ACCESS_KEY ?? '').length)
   
   
       const upload = new Upload({ client, params });

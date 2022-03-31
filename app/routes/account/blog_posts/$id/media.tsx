@@ -53,12 +53,12 @@ export const loader = async ({request, params}: any) => {
     const id = params.id;
     if (!id) return json(null, {status: 500});
     const blogPost = await getBlogPostById({id});
-
-    return json(blogPost, {status: 200});
+    const envPrefix = process.env.S3_ENV_PREFIX;
+    return json({blogPost, envPrefix}, {status: 200});
 }
 
 export default function S3Test() {
-    const blogPost = useLoaderData();
+    const data = useLoaderData();
     const actionData = useActionData();
   
     useEffect(() => {
@@ -73,7 +73,7 @@ export default function S3Test() {
               <button type="submit" className="btn" name="_action" value={'upload'}>upload</button>
               <button type="submit" className="btn" name="_action" value={'delete'}>delete</button>
               <div className="grid auto-rows-min grid-flow-row gap-6 my-6">
-                {blogPost?.images && blogPost?.images?.map((imageKey: any, idx: any) => (
+                {data?.blogPost?.images && data?.blogPost?.images?.map((imageKey: any, idx: any) => (
                   <div key={imageKey} className="flex items-center">
                     <div className="border-2 border-yellow-100 rounded-xl">
                       <img  
@@ -81,7 +81,7 @@ export default function S3Test() {
                         alt={imageKey} 
                         src={`https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/blog-assets-84c274eb/${imageKey}`}/>
                       <code className="font-mono text-pink-200 bg-gray-100">
-                        {`<img src='https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/blog-assets-84c274eb/${process.env.S3_ENV_PREFIX}/${imageKey}'/>`}
+                        {`<img src='https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/blog-assets-84c274eb/${data?.envPrefix}/${imageKey}'/>`}
                       </code>
                     </div>
                     <label className="checkbox text-base font-saygon text-yellow-100 flex items-center">
