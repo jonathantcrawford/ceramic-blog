@@ -11,8 +11,7 @@ import { useEffect } from "react";
 import { requireUserId } from "~/session.server";
 
 import { updateBlogPostImages, getBlogPostById } from "~/models/blog_post.server";
-import { PutObjectCommandInput } from '@aws-sdk/client-s3';
-
+import type { PutObjectCommandInput } from '@aws-sdk/client-s3';
 import { deleteObjectsFromS3, uploadToS3 } from '~/s3-upload.server';
 import cuid from 'cuid';
   
