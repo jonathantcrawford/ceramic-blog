@@ -210,8 +210,6 @@ export const createUserBlogPostS3UploadHandler: ({userId, blogPostId}: {userId: 
         filename: filename,
       },
     };
-
-    console.log(params);
   
     try {
   
