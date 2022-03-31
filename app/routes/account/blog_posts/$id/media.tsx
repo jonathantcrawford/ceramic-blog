@@ -69,7 +69,7 @@ export default function S3Test() {
       return (
         <div>
           <Form method="post" encType="multipart/form-data">
-              <input type="file" name="imageFile" accept='image/png'/>
+              <input type="file" name="imageFile" accept='image/png,image/webp'/>
               <button type="submit" className="btn" name="_action" value={'upload'}>upload</button>
               <button type="submit" className="btn" name="_action" value={'delete'}>delete</button>
               <div className="grid auto-rows-min grid-flow-row gap-6 my-6">
