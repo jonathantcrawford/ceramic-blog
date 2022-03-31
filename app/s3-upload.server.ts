@@ -198,7 +198,7 @@ export const createUserBlogPostS3UploadHandler: ({userId, blogPostId}: {userId: 
     }
 
      // or filename or whatever fits your usecase 😉;
-    const key = `user-${userId}/blog-${blogPostId}/${cuid()}`;
+    const key = `${process.env.S3_ENV_PREFIX}/user-${userId}/blog-${blogPostId}/${cuid()}`;
   
     const params: PutObjectCommandInput = {
       Bucket: process.env.S3_BUCKET ?? "",
@@ -210,6 +210,8 @@ export const createUserBlogPostS3UploadHandler: ({userId, blogPostId}: {userId: 
         filename: filename,
       },
     };
+
+    console.log(params);
   
     try {
   
@@ -245,7 +247,7 @@ export const createUserBlogPostS3UploadHandler: ({userId, blogPostId}: {userId: 
 export const deleteObjectsFromS3 = async ({keys}: {keys: string[]}) => {
 
 
-  const objectIdentifiers: ObjectIdentifier[] = keys.map(key => ({Key: `${process.env.S3_BUCKET}/${key}`}));
+  const objectIdentifiers: ObjectIdentifier[] = keys.map(key => ({Key: `${process.env.S3_BUCKET}/${process.env.S3_ENV_PREFIX}/${key}`}));
   
   const params: DeleteObjectsCommandInput = {
     Bucket: process.env.S3_BUCKET ?? "",

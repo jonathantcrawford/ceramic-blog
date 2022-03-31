@@ -22,7 +22,7 @@ import {
     let action = formData.get('_action');
     let images = formData.getAll("images");
     let currentImages = formData.getAll("_images");
-    if (action == 'upload'){
+    if (action === 'upload'){
       formData = await parseMultipartFormData(request, createUserBlogPostS3UploadHandler({userId, blogPostId}));
       let imageFile = JSON.parse(formData.get('imageFile') as string);
       const results = await updateBlogPostImages({id:blogPostId, userId, images: [...currentImages, imageFile.key]})
@@ -34,7 +34,7 @@ import {
         { status: results?.errors ? 400 : 200 }
       );
     }  else {
-      if (action ==='delete') currentImages = currentImages.filter(image => !images.includes(image));
+      if (action === 'delete') currentImages = currentImages.filter(image => !images.includes(image));
       const results = await updateBlogPostImages({id:blogPostId, userId, images: currentImages as string[]})
       if (results?.errors) return json(null, {status: 400});
       await deleteObjectsFromS3({keys: images as string[]})
@@ -81,7 +81,7 @@ export default function S3Test() {
                         alt={imageKey} 
                         src={`https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/blog-assets-84c274eb/${imageKey}`}/>
                       <code className="font-mono text-pink-200 bg-gray-100">
-                        {`<img src='https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/blog-assets-84c274eb/${imageKey}'/>`}
+                        {`<img src='https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/blog-assets-84c274eb/${process.env.S3_ENV_PREFIX}/${imageKey}'/>`}
                       </code>
                     </div>
                     <label className="checkbox text-base font-saygon text-yellow-100 flex items-center">
