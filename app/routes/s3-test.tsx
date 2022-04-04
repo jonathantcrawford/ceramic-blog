@@ -12,6 +12,8 @@ import type { PutObjectCommandInput } from '@aws-sdk/client-s3';
 import { deleteObjectsFromS3, uploadToS3 } from '~/s3-upload.server';
 import cuid from 'cuid';
 
+import { PassThrough } from 'stream';
+
 export const action: ActionFunction = async ({ request, context, params }) => {
   const uploadHandler: UploadHandler = async ({ name, filename, mimetype, encoding, stream }) => {
     if (name !== "imageFile") {
@@ -20,16 +22,20 @@ export const action: ActionFunction = async ({ request, context, params }) => {
     }
     const key = `${process.env.S3_ENV_PREFIX}/test`;
 
+    const pass = new PassThrough();
+
     const params: PutObjectCommandInput = {
       Bucket: process.env.S3_BUCKET ?? "",
       Key: key,
-      Body: stream,
+      Body: pass,
       ContentType: mimetype,
       ContentEncoding: encoding,
       Metadata: {
         filename: filename,
       },
     };
+
+    stream.pipe(pass);
 
   
     try {
