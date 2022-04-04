@@ -7,47 +7,11 @@ import {
   Form
 } from 'remix';
 import { useEffect } from "react";
-import { updateBlogPostImages, getBlogPostById } from "~/models/blog_post.server";
-import type { PutObjectCommandInput } from '@aws-sdk/client-s3';
-import { deleteObjectsFromS3, uploadToS3 } from '~/s3-upload.server';
-import cuid from 'cuid';
+import { uploadHandler } from '~/s3-upload.server';
 
-import { PassThrough } from 'stream';
 
 export const action: ActionFunction = async ({ request, context, params }) => {
-  const uploadHandler: UploadHandler = async ({ name, filename, mimetype, encoding, stream }) => {
-    if (name !== "imageFile") {
-      stream.resume();
-      return;
-    }
-    const key = `${process.env.S3_ENV_PREFIX}/test`;
 
-    const pass = new PassThrough();
-
-    const params: PutObjectCommandInput = {
-      Bucket: process.env.S3_BUCKET ?? "",
-      Key: key,
-      Body: pass,
-      ContentType: mimetype,
-      ContentEncoding: encoding,
-      Metadata: {
-        filename: filename,
-      },
-    };
-
-    stream.pipe(pass);
-
-  
-    try {
-      
-      await uploadToS3({params});
-
-    } catch (e) {
-      console.log(e);
-    }
-  
-    return JSON.stringify({ filename, key });
-  }
   let formData = await parseMultipartFormData(request, uploadHandler);
 
   // let formData;

@@ -12,7 +12,7 @@ import { requireUserId } from "~/session.server";
 
 import { updateBlogPostImages, getBlogPostById } from "~/models/blog_post.server";
 import type { PutObjectCommandInput } from '@aws-sdk/client-s3';
-import { deleteObjectsFromS3, uploadToS3 } from '~/s3-upload.server';
+import { deleteObjectsFromS3, uploadHandler } from '~/s3-upload.server';
 import cuid from 'cuid';
   
   export const action: ActionFunction = async ({ request, context, params }) => {
@@ -20,36 +20,6 @@ import cuid from 'cuid';
     const blogPostId = params.id;
     if (!blogPostId) return json(null, {status: 500});
 
-
-    const uploadHandler: UploadHandler = async ({ name, filename, mimetype, encoding, stream }) => {
-      if (name !== "imageFile") {
-        stream.resume();
-        return;
-      }
-      const key = `${process.env.S3_ENV_PREFIX}/user-${userId}/blog-${blogPostId}/${cuid()}`;
-
-      const params: PutObjectCommandInput = {
-        Bucket: process.env.S3_BUCKET ?? "",
-        Key: key,
-        Body: stream,
-        ContentType: mimetype,
-        ContentEncoding: encoding,
-        Metadata: {
-          filename: filename,
-        },
-      };
-
-    
-      try {
-        
-        await uploadToS3({params});
-
-      } catch (e) {
-        console.log(e);
-      }
-    
-      return JSON.stringify({ filename, key });
-    }
 
     let formData = await parseMultipartFormData(request, uploadHandler);
     let action = formData.get('_action');

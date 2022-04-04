@@ -178,7 +178,7 @@
 //   }
 // };
 
-import { PutObjectCommandInput, ObjectIdentifier, DeleteObjectsCommandInput } from '@aws-sdk/client-s3';
+import { PutObjectCommandInput, ObjectIdentifier, DeleteObjectsCommandInput, PutObjectCommand } from '@aws-sdk/client-s3';
 import { S3Client, DeleteObjectCommand, DeleteObjectsCommand } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import cuid from 'cuid';
@@ -187,10 +187,27 @@ import {
   UploadHandler,
 } from 'remix';
 
+import type { Stream } from 'stream';
 
-export const uploadToS3 = async ({params}: any) => {
-  // or filename or whatever fits your usecase 😉;
+
+async function streamToBuffer(stream: Stream): Promise<Buffer> {
+  return new Promise<Buffer>((resolve, reject) => {
+    const _buf: any[] = [];
+
+    stream.on('data', (chunk) => _buf.push(chunk));
+    stream.on('end', () => resolve(Buffer.concat(_buf)));
+    stream.on('error', (err) => reject(err));
+  });
+}
+
+export const uploadHandler: UploadHandler = async ({ name, filename, mimetype, encoding, stream }) => {
+  if (name !== "imageFile") {
+    stream.resume();
+    return;
+  }
   
+
+
   const client = new S3Client({
     forcePathStyle: true,
     endpoint: process.env.S3_ENDPOINT,
@@ -201,15 +218,31 @@ export const uploadToS3 = async ({params}: any) => {
     },
   });
 
-  const upload = new Upload({ client, params });
+  const key = `${process.env.S3_ENV_PREFIX}/test`;
+  try {
 
-  upload.on("httpUploadProgress", (progress) => {
-    console.log({ progress });
-  });
+    
+    const buffer = await streamToBuffer(stream)
+    const output = await client.send(
+      new PutObjectCommand({
+        Bucket: process.env.S3_BUCKET ?? "",
+        Key: key,
+        Body: buffer,
+        ContentType: mimetype,
+        ContentEncoding: encoding,
+        Metadata: {
+          filename: filename,
+        },
+      })
+    );
 
-  await upload.done();
+  } catch (e) {
+    console.log(e);
+    JSON.stringify({ error: e});
+  }
+
+  return JSON.stringify({ filename, key });
 }
-
 
 
 export const deleteObjectsFromS3 = async ({keys}: {keys: string[]}) => {
