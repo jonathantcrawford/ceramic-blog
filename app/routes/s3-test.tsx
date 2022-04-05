@@ -22,13 +22,13 @@ export const action: ActionFunction = async ({ request, context, params }) => {
   //   return json({ error }, { status: 400 });
   // }
 
-  let cover = JSON.parse(formData.get('imageFile') as string);
+  let {key, url, error} = JSON.parse(formData.get('imageFile') as string);
 
   return json(
     {
-      fields: { cover },
+      key, url
     },
-    { status: cover.error ? 400 : 200 }
+    { status: error ? 400 : 200 }
   );
 };
 export default function S3Test() {
@@ -46,7 +46,7 @@ export default function S3Test() {
             <input type="file" name="imageFile" accept='image/png'/>
             <button type="submit" className="btn">submit</button>
         </Form>
-        {actionData && <img src={`https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/${actionData.fields.cover.key}`}/>}
+        {actionData && <img src={actionData.url}/>}
       </>
     )
 }

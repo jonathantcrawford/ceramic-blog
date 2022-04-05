@@ -27,8 +27,8 @@ import cuid from 'cuid';
     let currentImages = formData.getAll("_images");
 
     if (action === 'upload'){
-      let imageFile = JSON.parse(formData.get('imageFile') as string);
-      const results = await updateBlogPostImages({id:blogPostId, userId, images: [...currentImages, imageFile.key]})
+      let {key, url, error} = JSON.parse(formData.get('imageFile') as string);
+      const results = await updateBlogPostImages({id:blogPostId, userId, images: [...currentImages, key]})
       if (results?.errors) return json(null, {status: 400});
       return json(
         {

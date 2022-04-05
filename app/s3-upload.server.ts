@@ -182,22 +182,13 @@ import { PutObjectCommandInput, ObjectIdentifier, DeleteObjectsCommandInput, Put
 import { S3Client, DeleteObjectCommand, DeleteObjectsCommand } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import cuid from 'cuid';
+import S3 from "aws-sdk/clients/s3";
 
 import {
   UploadHandler,
 } from 'remix';
 
-import { Readable } from 'stream';
 
-
-async function streamToBuffer(stream: Readable): Promise<Buffer> {
-  return new Promise<Buffer>((resolve, reject) => {
-    const _buf: any[] = [];
-    stream.on('data', (chunk) => _buf.push(chunk));
-    stream.on('end', () => resolve(Buffer.concat(_buf)));
-    stream.on('error', (err) => reject(err));
-  });
-}
 
 export const createUploadHandler: () => UploadHandler = () => {
   return async ({ name, filename, mimetype, encoding, stream }) => {
@@ -208,38 +199,36 @@ export const createUploadHandler: () => UploadHandler = () => {
     
 
 
-    const client = new S3Client({
+    const client = new S3({
       region: process.env.S3_REGION,
       credentials: {
         accessKeyId: process.env.AWS_BLOG_RUNTIME_ACCESS_KEY_ID ?? '',
         secretAccessKey: process.env.AWS_BLOG_RUNTIME_SECRET_ACCESS_KEY ?? '',
-      },
-      tls: false
+      }
     });
 
     const key = `${process.env.S3_ENV_PREFIX}/test`;
+    let output: any;
     try {
 
       
-      const buffer = await streamToBuffer(stream)
-      const output = await client.send(
-        new PutObjectCommand({
-          Bucket: process.env.S3_BUCKET ?? "",
-          Key: key,
-          Body: buffer,
-          ContentType: mimetype,
-          ContentEncoding: encoding,
-          Metadata: {
-            filename: filename,
-          },
-        })
-      );
+      output = await client.upload({
+        Bucket: process.env.S3_BUCKET ?? "",
+        Key: key,
+        Body: stream,
+        ContentType: mimetype,
+        ContentEncoding: encoding,
+        Metadata: {
+          filename: filename,
+        },
+      }).promise();
+
 
     } catch (e) {
-      console.log(e);
+      return JSON.stringify({ error: 'error' });
     }
 
-    return JSON.stringify({ filename, key });
+    return JSON.stringify({ key: output.key, url: output.Location });
   }
 }
 
