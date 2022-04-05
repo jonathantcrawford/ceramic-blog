@@ -7,12 +7,12 @@ import {
   Form
 } from 'remix';
 import { useEffect } from "react";
-import { createUploadHandler } from '~/s3-upload.server';
+import { s3UploadHandler } from '~/s3-upload.server';
 
 
 export const action: ActionFunction = async ({ request, context, params }) => {
 
-  let formData = await parseMultipartFormData(request, createUploadHandler());
+  let formData = await parseMultipartFormData(request, s3UploadHandler);
 
   // let formData;
   // try {
@@ -22,13 +22,13 @@ export const action: ActionFunction = async ({ request, context, params }) => {
   //   return json({ error }, { status: 400 });
   // }
 
-  let {key, url, error} = JSON.parse(formData.get('imageFile') as string);
+  let result = JSON.parse(formData.get('imageFile') as string);
 
   return json(
     {
-      key, url
+     ...result
     },
-    { status: error ? 400 : 200 }
+    { status: result ? 400 : 200 }
   );
 };
 export default function S3Test() {
@@ -46,7 +46,7 @@ export default function S3Test() {
             <input type="file" name="imageFile" accept='image/png'/>
             <button type="submit" className="btn">submit</button>
         </Form>
-        {actionData && <img src={actionData.url}/>}
+        {actionData && actionData.files.map((file: any) => (<img src={file.url}/>))}
       </>
     )
 }

@@ -12,7 +12,7 @@ import { requireUserId } from "~/session.server";
 
 import { updateBlogPostImages, getBlogPostById } from "~/models/blog_post.server";
 import type { PutObjectCommandInput } from '@aws-sdk/client-s3';
-import { deleteObjectsFromS3, createUploadHandler } from '~/s3-upload.server';
+import { deleteObjectsFromS3, s3UploadHandler } from '~/s3-upload.server';
 import cuid from 'cuid';
   
   export const action: ActionFunction = async ({ request, context, params }) => {
@@ -21,7 +21,7 @@ import cuid from 'cuid';
     if (!blogPostId) return json(null, {status: 500});
 
 
-    let formData = await parseMultipartFormData(request, createUploadHandler());
+    let formData = await parseMultipartFormData(request, s3UploadHandler);
     let action = formData.get('_action');
     let images = formData.getAll("images");
     let currentImages = formData.getAll("_images");
