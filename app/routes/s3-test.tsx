@@ -30,6 +30,8 @@ export const action: ActionFunction = async ({ request, context, params }) => {
     },
     { status: result ? 400 : 200 }
   );
+
+  return null
 };
 export default function S3Test() {
 

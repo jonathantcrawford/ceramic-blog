@@ -181,6 +181,8 @@ import { S3Client, DeleteObjectCommand, DeleteObjectsCommand } from '@aws-sdk/cl
 import { Upload } from '@aws-sdk/lib-storage';
 import cuid from 'cuid';
 
+import { S3 } from "aws-sdk";
+
 import {
   UploadHandler,
 } from 'remix';
@@ -247,6 +249,33 @@ export const createUploadHandler: () => UploadHandler = () => {
 
     
   }
+}
+
+export const createPresignedS3Upload = async ({mimetype, filename}: any) => {
+  const client = new S3({
+    endpoint: process.env.S3_ENDPOINT,
+    region: process.env.S3_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_BLOG_RUNTIME_ACCESS_KEY_ID ?? '',
+      secretAccessKey: process.env.AWS_BLOG_RUNTIME_SECRET_ACCESS_KEY ?? '',
+    },
+  });
+
+  //const randomID = Math.random() * 10000000
+  const Key = `${process.env.S3_ENV_PREFIX}/${filename}.png`
+
+  const params = {
+    Bucket: process.env.S3_BUCKET ?? "",
+    Key,
+    Expires: 300,
+    ContentType: mimetype
+  }
+
+  const uploadURL = await client.getSignedUrlPromise('putObject', params);
+  return JSON.stringify({
+    uploadURL: uploadURL,
+    Key
+  })
 }
 
 
