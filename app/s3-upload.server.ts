@@ -206,13 +206,13 @@ export const createUploadHandler: () => UploadHandler = () => {
       }
     });
 
-    const key = `${process.env.S3_ENV_PREFIX}/test`;
+    const key = `${process.env.S3_ENV_PREFIX}/${filename}`;
 
     const params = {
       Bucket: process.env.S3_BUCKET ?? "",
       Key: key,
       Body: stream,
-      ContentEncoding: encoding,
+      ContentEncoding: 'base64',
       ContentType: mimetype,
       Metadata: {
         filename: filename,
@@ -238,7 +238,7 @@ export const createUploadHandler: () => UploadHandler = () => {
 
       await uploader.done()
 
-      return JSON.stringify({ ...result });
+      return JSON.stringify({ ...result});
 
     } catch (e) {
       console.log(e)
