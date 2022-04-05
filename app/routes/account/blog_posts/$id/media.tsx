@@ -12,7 +12,7 @@ import { requireUserId } from "~/session.server";
 
 import { updateBlogPostImages, getBlogPostById } from "~/models/blog_post.server";
 import type { PutObjectCommandInput } from '@aws-sdk/client-s3';
-import { deleteObjectsFromS3, uploadHandler } from '~/s3-upload.server';
+import { deleteObjectsFromS3, createUploadHandler } from '~/s3-upload.server';
 import cuid from 'cuid';
   
   export const action: ActionFunction = async ({ request, context, params }) => {
@@ -21,7 +21,7 @@ import cuid from 'cuid';
     if (!blogPostId) return json(null, {status: 500});
 
 
-    let formData = await parseMultipartFormData(request, uploadHandler);
+    let formData = await parseMultipartFormData(request, createUploadHandler());
     let action = formData.get('_action');
     let images = formData.getAll("images");
     let currentImages = formData.getAll("_images");
@@ -82,9 +82,9 @@ export default function S3Test() {
                       <img  
                         className="max-w-[200px] max-h-[200px]"
                         alt={imageKey} 
-                        src={`https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/blog-assets-84c274eb/${imageKey}`}/>
+                        src={`https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/${imageKey}`}/>
                       <code className="font-mono text-pink-200 bg-gray-100">
-                        {`<img src='https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/blog-assets-84c274eb/${data?.envPrefix}/${imageKey}'/>`}
+                        {`<img src='https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/${data?.envPrefix}/${imageKey}'/>`}
                       </code>
                     </div>
                     <label className="checkbox text-base font-saygon text-yellow-100 flex items-center">

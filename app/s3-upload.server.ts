@@ -200,49 +200,50 @@ async function streamToBuffer(stream: Stream): Promise<Buffer> {
   });
 }
 
-export const uploadHandler: UploadHandler = async ({ name, filename, mimetype, encoding, stream }) => {
-  if (name !== "imageFile") {
-    stream.resume();
-    return;
-  }
-  
-
-
-  const client = new S3Client({
-    forcePathStyle: true,
-    endpoint: process.env.S3_ENDPOINT,
-    region: process.env.S3_REGION,
-    credentials: {
-      accessKeyId: process.env.AWS_BLOG_RUNTIME_ACCESS_KEY_ID ?? '',
-      secretAccessKey: process.env.AWS_BLOG_RUNTIME_SECRET_ACCESS_KEY ?? '',
-    },
-  });
-
-  const key = `${process.env.S3_ENV_PREFIX}/test`;
-  try {
-
+export const createUploadHandler: () => UploadHandler = () => {
+  return async ({ name, filename, mimetype, encoding, stream }) => {
+    if (name !== "imageFile") {
+      stream.resume();
+      return;
+    }
     
-    const buffer = await streamToBuffer(stream)
-    const output = await client.send(
-      new PutObjectCommand({
-        Bucket: process.env.S3_BUCKET ?? "",
-        Key: key,
-        Body: buffer,
-        ContentType: mimetype,
-        ContentEncoding: encoding,
-        Metadata: {
-          filename: filename,
-        },
-      })
-    );
 
-  } catch (e) {
-    console.log(e);
-    JSON.stringify({ error: e});
+
+    const client = new S3Client({
+      region: process.env.S3_REGION,
+      credentials: {
+        accessKeyId: process.env.AWS_BLOG_RUNTIME_ACCESS_KEY_ID ?? '',
+        secretAccessKey: process.env.AWS_BLOG_RUNTIME_SECRET_ACCESS_KEY ?? '',
+      },
+      tls: false
+    });
+
+    const key = `${process.env.S3_ENV_PREFIX}/test`;
+    try {
+
+      
+      const buffer = await streamToBuffer(stream)
+      const output = await client.send(
+        new PutObjectCommand({
+          Bucket: process.env.S3_BUCKET ?? "",
+          Key: key,
+          Body: buffer,
+          ContentType: mimetype,
+          ContentEncoding: encoding,
+          Metadata: {
+            filename: filename,
+          },
+        })
+      );
+
+    } catch (e) {
+      console.log(e);
+    }
+
+    return JSON.stringify({ filename, key });
   }
-
-  return JSON.stringify({ filename, key });
 }
+
 
 
 export const deleteObjectsFromS3 = async ({keys}: {keys: string[]}) => {
