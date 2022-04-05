@@ -178,6 +178,7 @@
 
 import { PutObjectCommandInput, ObjectIdentifier, DeleteObjectsCommandInput, PutObjectCommand } from '@aws-sdk/client-s3';
 import { S3Client, DeleteObjectCommand, DeleteObjectsCommand } from '@aws-sdk/client-s3';
+import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import { Upload } from '@aws-sdk/lib-storage';
 import cuid from 'cuid';
 
@@ -210,7 +211,6 @@ export const createUploadHandler: () => UploadHandler = () => {
     });
 
     const client = new S3Client({
-      forcePathStyle: true,
       endpoint: process.env.S3_ENDPOINT,
       region: process.env.S3_REGION,
       credentials: {
@@ -221,29 +221,31 @@ export const createUploadHandler: () => UploadHandler = () => {
 
     const key = `${process.env.S3_ENV_PREFIX}/${filename}`;
 
-    const params = {
-      Bucket: process.env.S3_BUCKET ?? "",
-      Key: key,
-      Body: buffer,
-      ContentLength: Buffer.byteLength(buffer),
-      ContentEncoding: encoding,
-      ContentType: mimetype,
-      Metadata: {
-        filename: filename,
-      },
-    }
 
-    
 
     try {
 
 
-      const result: {[key: string]: string | undefined} = {};
-      
-      await client.send(new PutObjectCommand({
-        ...params
-      }));
+      const {url, fields} = await createPresignedPost(client, {
+        Bucket: process.env.S3_BUCKET ?? "",
+        Expires: 300,
+        Key: key
+      })
 
+      const formData = new FormData();
+
+
+      Object.entries(fields).forEach(([k,v]) => {
+        formData.append(k,v);
+      })
+
+
+      const response = await fetch(url, {
+        method: 'POST', 
+        body: formData
+      });
+     
+      console.log(response)
 
       return JSON.stringify({key, url: `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${key}`});
 

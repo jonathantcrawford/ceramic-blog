@@ -900,6 +900,17 @@
     "@aws-sdk/types" "3.55.0"
     tslib "^2.3.1"
 
+"@aws-sdk/s3-presigned-post@^3.58.0":
+  version "3.58.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/s3-presigned-post/-/s3-presigned-post-3.58.0.tgz#b94120e1808481ec9e610ebc50367cc7bf673f41"
+  integrity sha512-YCFtzzTXA/EbnpClez6S0m7/46OEvBAYd0cNkiD4ta0jyblO5MAZbpBzQIv9VzSGZyH3rGQi4gJOfN7jnttIuw==
+  dependencies:
+    "@aws-sdk/signature-v4" "3.58.0"
+    "@aws-sdk/types" "3.55.0"
+    "@aws-sdk/util-format-url" "3.58.0"
+    "@aws-sdk/util-hex-encoding" "3.58.0"
+    tslib "^2.3.1"
+
 "@aws-sdk/service-error-classification@3.55.0":
   version "3.55.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/service-error-classification/-/service-error-classification-3.55.0.tgz#4a85d2d947102c50076bd2af295f62abd74e26ab"
@@ -1017,6 +1028,15 @@
     "@aws-sdk/credential-provider-imds" "3.58.0"
     "@aws-sdk/node-config-provider" "3.58.0"
     "@aws-sdk/property-provider" "3.55.0"
+    "@aws-sdk/types" "3.55.0"
+    tslib "^2.3.1"
+
+"@aws-sdk/util-format-url@3.58.0":
+  version "3.58.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/util-format-url/-/util-format-url-3.58.0.tgz#eed1eebddf124ce05fd376d4416f825d892777be"
+  integrity sha512-nhxomsG+OIBqpIyc2AU88J3+dTap0H5R1D2lNAsSZk07kuu2B1H4qAXIlWPkXyxTi9uL9aykBMuCosECD062NA==
+  dependencies:
+    "@aws-sdk/querystring-builder" "3.55.0"
     "@aws-sdk/types" "3.55.0"
     tslib "^2.3.1"
 

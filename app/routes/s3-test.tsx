@@ -1,16 +1,20 @@
 import {
 
   useActionData,
-  Form
+  Form,
+  useFetcher,
+  useLoaderData
 } from '@remix-run/react';
 import {
   json,
   unstable_parseMultipartFormData as parseMultipartFormData,
 } from '@remix-run/node';
-import type { ActionFunction } from "@remix-run/node";
-import { useEffect } from "react";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { useEffect, useState, useRef } from "react";
 import { createUploadHandler } from '~/s3-upload.server';
-
+import { createPresignedPost } from '@aws-sdk/s3-presigned-post';
+import { S3Client } from '@aws-sdk/client-s3';
+import cuid from 'cuid';
 
 export const action: ActionFunction = async ({ request, context, params }) => {
 
@@ -34,22 +38,52 @@ export const action: ActionFunction = async ({ request, context, params }) => {
   );
 
 };
+
+export const loader = async ({request}: any) => {
+
+  const key = `${process.env.S3_ENV_PREFIX}/${cuid()}`;
+
+  try {
+
+    const client = new S3Client({
+        region: process.env.S3_REGION,
+        credentials: {
+          accessKeyId: process.env.AWS_BLOG_RUNTIME_ACCESS_KEY_ID ?? '',
+          secretAccessKey: process.env.AWS_BLOG_RUNTIME_SECRET_ACCESS_KEY ?? '',
+        }
+      });
+
+
+      const {url, fields} = await createPresignedPost(client, {
+        Bucket: process.env.S3_BUCKET ?? "",
+        Expires: 300,
+        Key: key,
+        Fields: {
+          'Content-Type': 'image/png'
+        }
+      })
+
+    return {url, fields}
+  } catch {
+    return {error: 'Invalid element or syntax.'}
+  }
+}
 export default function S3Test() {
 
-  const actionData = useActionData();
+    const {url, fields} = useLoaderData();
 
-  useEffect(() => {
-    console.log(actionData)
-  }, [actionData])
 
 
     return (
       <>
-        <Form method="post" encType="multipart/form-data">
-            <input type="file" name="imageFile" accept='image/png'/>
+        <form method="post" action={`${url}`} encType="multipart/form-data">
+
+            {fields && Object.entries(fields).map(([k,v]: any) => (<input key={k} type="hidden" name={k} value={v}/>))}
+            <input type="file" name="file" accept='image/png'/>
             <button type="submit" className="btn">submit</button>
-        </Form>
-        {actionData?.key && <img src={`https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/blog-assets-84c274eb/${actionData?.key}`}/>}
+        </form>
+        {/* {fetcher?.data?.fields && Object.entries(fetcher?.data?.fields).map(([k,v]) => (<div className="text-yellow-100">{k}{v}</div>))} */}
+        {/* {actionData?.key && <img src={`https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/blog-assets-84c274eb/${actionData?.key}`}/>} */}
       </>
     )
 }
