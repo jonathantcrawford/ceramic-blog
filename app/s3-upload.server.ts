@@ -196,15 +196,11 @@ export const createUploadHandler: () => UploadHandler = () => {
       return;
     }
     
-    const buff = await new Promise<Buffer>(async (resolve, reject) => {
+    const buffer = await new Promise<Buffer>(async (resolve, reject) => {
       const chunks: any = [];
 
-      stream.on("readable", () => {
-        let chunk;
-        while (null !== (chunk = stream.read())) {
-          console.log('chunk...', chunk);
-          chunks.push(chunk);
-        }
+      stream.on("data", (chunk: any) => {
+        chunks.push(chunk);
       });
 
       stream.on("end", () => {
@@ -228,7 +224,8 @@ export const createUploadHandler: () => UploadHandler = () => {
     const params = {
       Bucket: process.env.S3_BUCKET ?? "",
       Key: key,
-      Body: buff,
+      Body: buffer,
+      ContentLength: Buffer.byteLength(buffer),
       ContentEncoding: encoding,
       ContentType: mimetype,
       Metadata: {
