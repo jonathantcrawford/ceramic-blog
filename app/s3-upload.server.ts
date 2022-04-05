@@ -196,7 +196,22 @@ export const createUploadHandler: () => UploadHandler = () => {
       return;
     }
     
+    const buff = await new Promise<Buffer>(async (resolve, reject) => {
+      const chunks: any = [];
 
+      stream.on("readable", () => {
+        let chunk;
+        while (null !== (chunk = stream.read())) {
+          console.log('chunk...', chunk);
+          chunks.push(chunk);
+        }
+      });
+
+      stream.on("end", () => {
+        console.log('end');
+        return resolve(Buffer.concat(chunks));
+      });
+    });
 
     const client = new S3Client({
       forcePathStyle: true,
@@ -213,8 +228,8 @@ export const createUploadHandler: () => UploadHandler = () => {
     const params = {
       Bucket: process.env.S3_BUCKET ?? "",
       Key: key,
-      Body: stream,
-      ContentEncoding: 'base64',
+      Body: buff,
+      ContentEncoding: encoding,
       ContentType: mimetype,
       Metadata: {
         filename: filename,
@@ -228,19 +243,12 @@ export const createUploadHandler: () => UploadHandler = () => {
 
       const result: {[key: string]: string | undefined} = {};
       
-      const uploader = new Upload({client, params});
+      await client.send(new PutObjectCommand({
+        ...params
+      }));
 
-      uploader.on("httpUploadProgress", (progress) => {
-        console.log(progress);
 
-        if (progress.loaded === progress.total) {
-          result['key'] = progress.Key
-        }
-      });
-
-      await uploader.done()
-
-      return JSON.stringify({ ...result});
+      return JSON.stringify({key, url: `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${key}`});
 
     } catch (e) {
       console.log(e)
