@@ -7,12 +7,12 @@ import {
   Form
 } from 'remix';
 import { useEffect } from "react";
-import { s3UploadHandler } from '~/s3-upload.server';
+import { createUploadHandler } from '~/s3-upload.server';
 
 
 export const action: ActionFunction = async ({ request, context, params }) => {
 
-  let formData = await parseMultipartFormData(request, s3UploadHandler);
+  let formData = await parseMultipartFormData(request, createUploadHandler());
 
   // let formData;
   // try {
@@ -46,7 +46,7 @@ export default function S3Test() {
             <input type="file" name="imageFile" accept='image/png'/>
             <button type="submit" className="btn">submit</button>
         </Form>
-        {actionData?.files && actionData.files.map((file: any) => (<img src={file.url}/>))}
+        {actionData?.key && <img src={`https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/blog-assets-84c274eb/${actionData?.key}`}/>}
       </>
     )
 }
