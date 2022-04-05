@@ -46,7 +46,7 @@ export default function S3Test() {
             <input type="file" name="imageFile" accept='image/png'/>
             <button type="submit" className="btn">submit</button>
         </Form>
-        {actionData && actionData.files.map((file: any) => (<img src={file.url}/>))}
+        {actionData?.files && actionData.files.map((file: any) => (<img src={file.url}/>))}
       </>
     )
 }
