@@ -1,11 +1,13 @@
 import {
-  ActionFunction,
-  json,
-  unstable_parseMultipartFormData as parseMultipartFormData,
-  UploadHandler,
+
   useActionData,
   Form
-} from 'remix';
+} from '@remix-run/react';
+import {
+  json,
+  unstable_parseMultipartFormData as parseMultipartFormData,
+} from '@remix-run/node';
+import type { ActionFunction } from "@remix-run/node";
 import { useEffect } from "react";
 import { createUploadHandler } from '~/s3-upload.server';
 

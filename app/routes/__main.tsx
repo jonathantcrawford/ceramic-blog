@@ -1,8 +1,8 @@
 
 import {
     Outlet,
-  } from "remix";
-import type { LinksFunction, LoaderFunction } from "remix";
+  } from "@remix-run/react";
+import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 
 import { Header } from "~/components/Header/Header";
 import { Footer } from "~/components/Footer/Footer";

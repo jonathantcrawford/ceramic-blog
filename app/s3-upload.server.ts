@@ -185,7 +185,7 @@ import { S3 } from "aws-sdk";
 
 import {
   UploadHandler,
-} from 'remix';
+} from '@remix-run/node';
 
 
 

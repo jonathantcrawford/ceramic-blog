@@ -1,4 +1,4 @@
-import { NavLink } from "remix";
+import { NavLink } from "@remix-run/react";
 
 export const Header = () => {
   const navLinkClasses = [

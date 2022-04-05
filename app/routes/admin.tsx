@@ -1,8 +1,9 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 
-import type { LoaderFunction } from "remix";
+import type { LoaderFunction } from "@remix-run/node";
 
-import { Outlet, redirect } from "remix";
+import { Outlet } from "@remix-run/react";
+import { redirect } from "@remix-run/node";
 
 import type { SelfID } from "@self.id/web";
 
@@ -40,7 +41,9 @@ export default function Admin() {
 
       //@ts-ignore
       const authProvider = new module.default.EthereumAuthProvider(
+        //@ts-ignore
         window.ethereum,
+        //@ts-ignore
         window.ethereum.selectedAddress
       );
 

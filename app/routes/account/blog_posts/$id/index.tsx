@@ -1,8 +1,8 @@
-import { LoaderFunction, ActionFunction, useFormAction } from "remix";
+import type { LoaderFunction, ActionFunction } from "@remix-run/node";
+import { useFormAction, useLoaderData, useCatch, Form, useFetcher, useActionData, Outlet, Link } from "@remix-run/react";
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { redirect } from "remix";
-import { json, useLoaderData, useCatch, Form, useFetcher, useActionData, Outlet, Link } from "remix";
+import { redirect, json } from "@remix-run/node";
 import invariant from "tiny-invariant";
 import type { BlogPost } from "~/models/blog_post.server";
 import { deleteBlogPost, getBlogPostById, updateBlogPostContent } from "~/models/blog_post.server";

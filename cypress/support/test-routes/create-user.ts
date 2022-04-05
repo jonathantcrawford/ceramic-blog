@@ -1,5 +1,5 @@
-import type { ActionFunction } from "remix";
-import { redirect } from "remix";
+import type { ActionFunction } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { createUser } from "~/models/user.server";
 import { createUserSession } from "~/session.server";
 

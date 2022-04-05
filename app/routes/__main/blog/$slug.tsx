@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 
-import { json, useLoaderData, NavLink } from "remix";
-import type { LinksFunction, LoaderFunction, MetaFunction } from "remix";
-
+import { useLoaderData, NavLink } from "@remix-run/react";
+import type { LinksFunction, LoaderFunction, MetaFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
+ 
 import { compileMDX } from "~/compile-mdx.server";
 import invariant from "tiny-invariant";
 import { getMDXComponent, mdxComponents } from "~/mdx";

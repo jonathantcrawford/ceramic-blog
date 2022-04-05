@@ -1,5 +1,6 @@
-import type { LoaderFunction, LinksFunction } from "remix";
-import { json, useLoaderData } from "remix";
+import type { LoaderFunction, LinksFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 
 import { compileMDX } from "~/compile-mdx.server";
 

@@ -1,4 +1,4 @@
-import type { LinksFunction } from "remix";
+import type { LinksFunction } from "@remix-run/node";
 import { useFetcher, useOutletContext, Link } from "@remix-run/react";
 import { useEffect, useRef, useState, useMemo } from "react";
 

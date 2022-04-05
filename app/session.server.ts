@@ -1,4 +1,4 @@
-import { redirect } from "remix";
+import { redirect } from "@remix-run/server-runtime";
 import { createArcTableSessionStorage } from "@remix-run/architect"
 
 import invariant from "tiny-invariant";

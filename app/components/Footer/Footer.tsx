@@ -1,5 +1,3 @@
-import { LoaderFunction, useLoaderData } from "remix";
-
 import "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {

@@ -1,4 +1,4 @@
-import { Outlet, Link, Form } from "remix";
+import { Outlet, Link, Form } from "@remix-run/react";
 
 
 export default function Account() {

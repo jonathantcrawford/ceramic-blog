@@ -1,17 +1,17 @@
 diff --git a/node_modules/@remix-run/architect/server.js b/node_modules/@remix-run/architect/server.js
-index 98aa0f1..10b93df 100644
+index 9d4e9b6..d2beee0 100644
 --- a/node_modules/@remix-run/architect/server.js
 +++ b/node_modules/@remix-run/architect/server.js
 @@ -37,7 +37,7 @@ function createRequestHandler({
-   let handleRequest = serverRuntime.createRequestHandler(build, platform, mode);
-   return async (event, _context) => {
+   /*, context*/
+   ) => {
      let abortController = new node.AbortController();
 -    let request = createRemixRequest(event, abortController);
 +    let request = await createRemixRequest(event, abortController);
      let loadContext = typeof getLoadContext === "function" ? getLoadContext(event) : undefined;
      let response = await handleRequest(request, loadContext);
      return sendRemixResponse(response, abortController);
-@@ -47,10 +47,15 @@ function createRemixRequest(event, abortController) {
+@@ -47,10 +47,14 @@ function createRemixRequest(event, abortController) {
    let host = event.headers["x-forwarded-host"] || event.headers.host;
    let search = event.rawQueryString.length ? `?${event.rawQueryString}` : "";
    let url = new URL(event.rawPath + search, `https://${host}`);
@@ -19,7 +19,6 @@ index 98aa0f1..10b93df 100644
 +  if (event.headers["content-type"] && event.headers["content-type"].includes("multipart/form-data")) {
 +    isFormData = true;
 +  }
-+
    return new node.Request(url.href, {
      method: event.requestContext.http.method,
      headers: createRemixHeaders(event.headers, event.cookies),
