@@ -1,81 +1,107 @@
 import {
-
-    useActionData,
-    useLoaderData,
-    Form
-  } from '@remix-run/react';
-import {
-  json,
-  unstable_parseMultipartFormData as parseMultipartFormData,
-} from "@remix-run/node"
-import type { ActionFunction, UploadHandler } from "@remix-run/node"
-import { useEffect } from "react";
+  Form,
+  useFetcher,
+  useLoaderData
+} from '@remix-run/react';
+import { json } from '@remix-run/node';
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { useMemo, useCallback } from "react";
 import { requireUserId } from "~/session.server";
+import { createPresignedS3Upload, deleteObjectsFromS3} from '~/s3-upload.server';
+import { getBlogPostById, updateBlogPostImages } from "~/models/blog_post.server";
 
-import { updateBlogPostImages, getBlogPostById } from "~/models/blog_post.server";
-import type { PutObjectCommandInput } from '@aws-sdk/client-s3';
-import { deleteObjectsFromS3, createUploadHandler } from '~/s3-upload.server';
-import cuid from 'cuid';
+export const action: ActionFunction = async ({ request, params }) => {
+  const userId = await requireUserId(request);
+  const blogPostId = params.id;
+  if (!blogPostId) return json(null, {status: 500});
+
+  let formData = await request.formData();
+  let action = formData.get('_action');
+
+  if (action === 'delete') {
+    let images = formData.getAll("_images");
+    let imagesToDelete = formData.getAll("imagesToDelete");
+    let newImages = images.filter(image => !imagesToDelete.includes(image));
+    const results = await updateBlogPostImages({id: blogPostId, userId, images: newImages as string[]})
+    if (results?.errors) return json(null, {status: 400});
+    await deleteObjectsFromS3({keys: images as string[]})
+    return json(
+      {
+        images: results?.blogPost?.images
+      },
+      { status: results?.errors ? 400 : 200 }
+    );
+  } else if (action === 'upload') {
+    let key = formData.get('key') as string ?? '';
+    let images = JSON.parse(formData.get("_images") as string ) as string[];
+    const results = await updateBlogPostImages({id:blogPostId, userId, images: [...images, key]})
+    if (results?.errors) return json(null, {status: 400});
+    return json(
+      {
+        images: results?.blogPost?.images
+      },
+      { status: results?.errors ? 400 : 200 }
+    );
+  } else {
+    let name = formData.get('name');
+    let mimetype = (formData.get('mimetype') as string ?? '');
   
-  export const action: ActionFunction = async ({ request, context, params }) => {
-    const userId = await requireUserId(request);
-    const blogPostId = params.id;
-    if (!blogPostId) return json(null, {status: 500});
-
-
-    let formData = await parseMultipartFormData(request, createUploadHandler());
-    let action = formData.get('_action');
-    let images = formData.getAll("images");
-    let currentImages = formData.getAll("_images");
-
-    if (action === 'upload'){
-      let { key } = JSON.parse(formData.get('imageFile') as string);
-      const results = await updateBlogPostImages({id:blogPostId, userId, images: [...currentImages, key]})
-      if (results?.errors) return json(null, {status: 400});
-      return json(
-        {
-          images: results?.blogPost?.images
-        },
-        { status: results?.errors ? 400 : 200 }
-      );
-    }  else {
-      if (action === 'delete') currentImages = currentImages.filter(image => !images.includes(image));
-      const results = await updateBlogPostImages({id:blogPostId, userId, images: currentImages as string[]})
-      if (results?.errors) return json(null, {status: 400});
-      await deleteObjectsFromS3({keys: images as string[]})
-      return json(
-        {
-          images: results?.blogPost?.images
-        },
-        { status: results?.errors ? 400 : 200 }
-      );
-    }
+    const key = `${process.env.S3_ENV_PREFIX}/user-${userId}/blogPost-${blogPostId}/${name}`;
+  
+    const result = await createPresignedS3Upload({key, mimetype})
+  
+    return json({...result}, {status: result?.error ? 400 : 200})
+  }
 
 };
 
-export const loader = async ({request, params}: any) => {
+
+export const loader: LoaderFunction = async ({request, params}: any) => {
     await requireUserId(request);
     const id = params.id;
     if (!id) return json(null, {status: 500});
     const blogPost = await getBlogPostById({id});
     const envPrefix = process.env.S3_ENV_PREFIX;
-    return json({blogPost, envPrefix}, {status: 200});
+    return {blogPost, envPrefix}
 }
 
 export default function S3Test() {
+
     const data = useLoaderData();
-    const actionData = useActionData();
-  
-    useEffect(() => {
-      console.log(actionData)
-    }, [actionData])
-  
-  
-      return (
-        <div>
-          <Form method="post" encType="multipart/form-data">
-              <input type="file" name="imageFile" accept='image/png,image/webp'/>
-              <button type="submit" className="btn" name="_action" value={'upload'}>upload</button>
+    const fetcher = useFetcher();
+
+    const {url, fields} = useMemo(() => fetcher?.data ? ({url: fetcher?.data?.url, fields: fetcher?.data?.fields}) : ({url: null, fields: null}), [fetcher?.data]);
+
+    const handleChange = (e: any) => {
+      if (e?.target?.files?.length && e.target.files.length > 0) {
+        fetcher.submit({
+          name: e.target.files[0].name,
+          mimetype: e.target.files[0].type
+        }, {method: 'post'})
+      }
+    }
+
+    const handleSubmit = useCallback((e: any) => {
+      fetcher.submit({
+        _action: 'upload',
+        key: fields?.key,
+        _images: JSON.stringify(data?.blogPost?.images),
+      }, {method: 'post'})
+    }, [fetcher, fields, data])
+
+    return (
+      <>        
+        <form action={url} method="post" encType='multipart/form-data' onChange={handleChange} onSubmit={handleSubmit}>
+            {fields && Object.entries(fields).map(([k,v]: any, idx) => (<input key={idx} type="hidden" name={k} value={v}/>))}
+            <input 
+              type="file" 
+              name="file" 
+              accept='image/png,image/webp'/>
+            <button type="submit" className="btn">submit</button>
+        </form>
+
+
+        <Form method="post" reloadDocument>
               <button type="submit" className="btn" name="_action" value={'delete'}>delete</button>
               <div className="grid auto-rows-min grid-flow-row gap-6 my-6">
                 {data?.blogPost?.images && data?.blogPost?.images?.map((imageKey: any, idx: any) => (
@@ -93,7 +119,7 @@ export default function S3Test() {
                       <input type="hidden" name="_images" value={imageKey}/>
                       <input 
                         type="checkbox"
-                        name="images"
+                        name="imagesToDelete"
                         value={imageKey}
                         />
                       <span className="checkmark"></span>
@@ -102,6 +128,6 @@ export default function S3Test() {
                 ))}
               </div>
           </Form>
-        </div>
-      )
-  }
+      </>
+    )
+}
