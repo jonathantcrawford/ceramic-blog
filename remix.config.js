@@ -11,9 +11,6 @@ module.exports = {
   serverBuildTarget: "arc",
   server: "./server.js",
   ignoredRouteFiles: [".*", "**/*.css", "**/*.test.{js,jsx,ts,tsx}"],
-  serverDependenciesToBundle: [
-    "busboy"
-  ],
   routes(defineRoutes) {
     return defineRoutes((route) => {
       if (process.env.NODE_ENV === "production") return;
