@@ -1,5 +1,13 @@
 import { Outlet, Link, Form } from "@remix-run/react";
+import { json } from "@remix-run/server-runtime";
+import type { LoaderFunction } from "@remix-run/server-runtime";
+import { requireUser } from "~/session.server";
 
+
+export const loader: LoaderFunction = async ({request}) => {
+    await requireUser(request);
+    return json(null, {status: 200});
+}
 
 export default function Account() {
     return (
