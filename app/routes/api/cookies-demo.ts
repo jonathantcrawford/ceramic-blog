@@ -3,8 +3,8 @@ import type {
     LinksFunction,
     LoaderFunction,
     MetaFunction,
-  } from "@remix-run/node";
-import { json } from "@remix-run/node";
+  } from "@remix-run/server-runtime";
+import { json } from "@remix-run/server-runtime";
 import { getSession, sessionStorage } from "~/session.server";
 
 let SESSION_TOKEN_ID = "SESSION_TOKEN_ID";

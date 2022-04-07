@@ -3,8 +3,8 @@ import {
   useFetcher,
   useLoaderData
 } from '@remix-run/react';
-import { json } from '@remix-run/node';
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { json } from '@remix-run/server-runtime';
+import type { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
 import { useMemo, useCallback } from "react";
 import { requireUserId } from "~/session.server";
 import { createPresignedS3Upload, deleteObjectsFromS3} from '~/s3-upload.server';

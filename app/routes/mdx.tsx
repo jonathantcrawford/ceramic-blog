@@ -1,5 +1,5 @@
-import type { ActionFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { ActionFunction } from "@remix-run/server-runtime";
+import { json } from "@remix-run/server-runtime";
 
 import { compileMDX } from "~/compile-mdx.server";
 

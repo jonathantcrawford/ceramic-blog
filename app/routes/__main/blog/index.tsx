@@ -1,6 +1,6 @@
-import type { LinksFunction, MetaFunction, LoaderFunction } from "@remix-run/node";
+import type { LinksFunction, MetaFunction, LoaderFunction } from "@remix-run/server-runtime";
 import { useLoaderData } from "@remix-run/react";
-import { json } from "@remix-run/node"
+import { json } from "@remix-run/server-runtime"
 
 
 import { PostLinks } from "~/components/PostLinks/PostLinks";

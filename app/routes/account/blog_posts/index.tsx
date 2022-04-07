@@ -1,7 +1,7 @@
 import { Form, useLoaderData, Outlet, Link, NavLink } from "@remix-run/react";
 
-import { json, redirect } from "@remix-run/node"
-import type { LoaderFunction, ActionFunction } from "@remix-run/node";
+import { json, redirect } from "@remix-run/server-runtime"
+import type { LoaderFunction, ActionFunction } from "@remix-run/server-runtime";
 
 import { PostLinks } from "~/components/PostLinks/PostLinks";
  

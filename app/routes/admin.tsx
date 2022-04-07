@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 
-import type { LoaderFunction } from "@remix-run/node";
+import type { LoaderFunction } from "@remix-run/server-runtime";
 
 import { Outlet } from "@remix-run/react";
-import { redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/server-runtime";
 
 import type { SelfID } from "@self.id/web";
 
