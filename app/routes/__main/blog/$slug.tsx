@@ -14,7 +14,7 @@ import { BlogPost, getBlogPostBySlug } from "~/models/blog_post.server";
 
 type LoaderData = {
   code: string;
-  blogPost: Pick<BlogPost, "title" | "subTitle" | "updatedAt" | "emoji" | "slug">;
+  blogPost: Pick<BlogPost, "title" | "subTitle" | "updatedAt" | "emoji" | "slug" | "previewImageUrl">;
 };
 
 
@@ -28,13 +28,13 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   }
 
   const { code } = await compileMDX({mdxSource: blogPost.body});
-  return json<LoaderData>({ code, blogPost: {title: blogPost.title, subTitle: blogPost.subTitle, updatedAt: blogPost.updatedAt, emoji: blogPost.emoji, slug: params.slug} });
+  return json<LoaderData>({ code, blogPost });
 };
 
 export const meta: MetaFunction = ({data}) => {
   
   if (data) {
-    const { blogPost: {title, subTitle: description, slug} } = data;
+    const { blogPost: {title, subTitle: description, slug, previewImageUrl} } = data;
     return {
       title,
       description,
@@ -44,8 +44,8 @@ export const meta: MetaFunction = ({data}) => {
       "og:title": title,
       "og:description": description,
       "og:image:type": "image/png",
-      "og:image": "https://joncrawford.me/static/images/blog/og-preview.png",
-      "twitter:image": "https://joncrawford.me/static/images/blog/og-preview.png",
+      "og:image": previewImageUrl,
+      "twitter:image": previewImageUrl,
       "twitter:url": `https://joncrawford.me/blog/${slug}`,
       "twitter:card": "summary_large_image",
       "twitter:creator": "@jon_t_craw",

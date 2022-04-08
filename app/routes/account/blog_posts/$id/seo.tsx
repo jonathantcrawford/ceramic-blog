@@ -1,11 +1,11 @@
 import type { LoaderFunction, ActionFunction } from "@remix-run/server-runtime";
-import { useFormAction, useLoaderData, useCatch, Form, useFetcher, useActionData, Outlet, Link } from "@remix-run/react";
-import React, { useEffect, useState } from "react";
+import { useFormAction, useLoaderData, useCatch, Form, useFetcher, useActionData, Outlet, Link, useSubmit } from "@remix-run/react";
+import React, { useEffect, useState, useCallback } from "react";
 import ReactDOM from "react-dom";
 import { redirect, json } from "@remix-run/server-runtime";
 import invariant from "tiny-invariant";
 import type { BlogPost } from "~/models/blog_post.server";
-import { deleteBlogPost, getBlogPostById, updateBlogPostContent } from "~/models/blog_post.server";
+import { deleteBlogPost, getBlogPostById, updateBlogPost } from "~/models/blog_post.server";
 import { requireUserId } from "~/session.server";
 import Alert from "@reach/alert";
 
@@ -22,6 +22,9 @@ import {
   faChevronDown
 } from "@fortawesome/free-solid-svg-icons";
 
+// import * as htmlToImage from 'html-to-image';
+import { toPng, getFontEmbedCSS, toJpeg } from 'html-to-image';
+
 
 
 type ActionData = {
@@ -33,12 +36,13 @@ type ActionData = {
     body?: string;
     slug?: string;
     previewImageMDX?: string;
+    previewImageUrl?: string;
   };
 };
 
 type LoaderData = {
-  formType?: 'create'| 'update';
-  blogPost?: Pick<BlogPost, "body" | "title" | "subTitle" | "slug" | "emoji" | "status">;
+  userId?: string;
+  blogPost?: Pick<BlogPost, "previewImageMDX">;
   error?: string;
 };
 
@@ -48,7 +52,7 @@ const PreviewImageMDXField = React.forwardRef(({actionData, autoSizeTextArea, fe
   const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
-    if (actionData?.errors?.body) setDirty(false)
+    if (actionData?.errors?.previewImageMDX) setDirty(false)
   }, [actionData]);
 
   return (
@@ -62,22 +66,22 @@ const PreviewImageMDXField = React.forwardRef(({actionData, autoSizeTextArea, fe
               if(!dirty) setDirty(true)
               autoSizeTextArea(e.target.value);
               fetcher.submit({
-                mdxSource: `<MetaData blogPostId={'${blogPostId}'} render={({title, subTitle, emoji}) => (<>${e.target.value}</>)}/>`
+                mdxSource: `<MetaData blogPostId={'${blogPostId}'} render={({title, subTitle, emoji, updatedAt}) => (<>${e.target.value}</>)}/>`
                 }, {method: 'post', action: '/mdx'})
             }}
-            name="body"
+            name="previewImageMDX"
             rows={8}
             defaultValue={defaultValue}
-            aria-invalid={actionData?.errors?.body ? true : undefined}
+            aria-invalid={actionData?.errors?.previewImageMDX ? true : undefined}
             aria-errormessage={
-              actionData?.errors?.body ? "body-error" : undefined
+              actionData?.errors?.previewImageMDX ? "body-error" : undefined
             }
           />
         </div>
         </label>
-        {!dirty && actionData?.errors?.body && (
-            <Alert className="pt-1 text-red-100 font-saygon text-base" id="body=error">
-            {actionData.errors.body}
+        {!dirty && actionData?.errors?.previewImageMDX && (
+            <Alert className="pt-1 text-red-100 font-saygon text-base" id="previewImageMDX=error">
+            {actionData.errors.previewImageMDX}
             </Alert>
         )}
     </div>
@@ -103,8 +107,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     if (!blogPost) {
       throw new Response("Not Found", { status: 404 });
     }
+
+    //const ogPreviewURL = `${process.env.S3_ENDPOINT}/${process.env.S3_ENV_PREFIX}/user-${userId}/blogPost-${blogPost?.id}/og-preview.png`;
   
-    return json<LoaderData>({ formType: 'update', blogPost });
+    return json<LoaderData>({ blogPost });
   } else {
     return json<LoaderData>({
         error: 'error'
@@ -114,60 +120,22 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export const action: ActionFunction = async ({ request, context, params }) => {
   const userId = await requireUserId(request);
-  invariant(params.id, "blog_post_id not found");
+  const id = params.id
+  invariant(id, "blog_post_id not found");
 
   const formData = await request.formData();
   const _action = formData.get("_action");
-  const title = formData.get("title");
-  const subTitle = formData.get("subTitle");
-  const status = formData.get("status");
-  const emoji = formData.get("emoji");
-  const body = formData.get("body");
+  
 
-  switch (_action) {
-    case 'delete':
-        await deleteBlogPost({ id: params.id });
-        return redirect("/account");
-    case 'save':
-    case 'publish':
-    default:
-
-      if (typeof emoji !== "string" || emoji.length === 0) {
+  if (_action === 'save') {
+    const previewImageMDX = formData.get("previewImageMDX");
+    if (typeof previewImageMDX !== "string" || previewImageMDX.length === 0) {
         return json<ActionData>(
-          { errors: { emoji: "Emoji is required" } },
+          { errors: { previewImageMDX: "Generate a og preview using MDX." } },
           { status: 400 }
         );
-      }
-
-      if (typeof title !== "string" || title.length === 0) {
-        return json<ActionData>(
-          { errors: { title: "Title is required" } },
-          { status: 400 }
-        );
-      }
-    
-      if (typeof subTitle !== "string" || subTitle.length === 0) {
-        return json<ActionData>(
-          { errors: { subTitle: "Sub Title is required" } },
-          { status: 400 }
-        );
-      }
-    
-      if (typeof body !== "string" || body.length === 0) {
-        return json<ActionData>(
-          { errors: { body: "Body is required" } },
-          { status: 400 }
-        );
-      }
-
-      if (typeof status !== "string" || status.length === 0) {
-        return json<ActionData>(
-          { errors: { body: "Invalid status" } },
-          { status: 400 }
-        );
-      }
-
-      const result = await updateBlogPostContent({ id: params.id, title, body, subTitle, emoji, userId, status: _action === 'publish' ? 'published' : status });
+    }
+      const result = await updateBlogPost({id, userId, previewImageMDX});
       if (result.errors) {
         return json<ActionData>(
           { errors: result?.errors },
@@ -179,8 +147,31 @@ export const action: ActionFunction = async ({ request, context, params }) => {
           { status: 200 }
         )
       }
-      
+  } else if (_action === 'sync') {
+    const previewImageUrl = formData.get("previewImageUrl");
+    if (typeof previewImageUrl !== "string" || previewImageUrl.length === 0) {
+        return json<ActionData>(
+            { errors: { previewImageUrl: 'unable to sync preview image url' } },
+            { status: 400 }
+          );
+    }
+
+    const result = await updateBlogPost({id, userId, previewImageUrl});
+    if (result.errors) {
+      return json<ActionData>(
+        { errors: result?.errors },
+        { status: 400 }
+      );
+    } else {
+      return json<ActionData>(
+        { blogPost: result.blogPost},
+        { status: 200 }
+      )
+    }
   }
+
+
+
 };
 
 export default function PostPageSEO() {
@@ -205,10 +196,13 @@ export default function PostPageSEO() {
 
   const fetcher = useFetcher();
 
+  const syncImagePreview = useSubmit();
+
+
   React.useEffect(() => {
     previewImageMDXRef.current?.setAttribute("value", blogPost?.previewImageMDX);
-    autoSizeTextArea(blogPost?.body);
-    fetcher.submit({mdxSource: blogPost?.body}, {method: 'post', action: '/mdx'});
+    autoSizeTextArea(blogPost?.previewImageMDX);
+    fetcher.submit({mdxSource: `<MetaData blogPostId={'${blogPost?.id}'} render={({title, subTitle, emoji, updatedAt}) => (<>${blogPost?.previewImageMDX}</>)}/>`}, {method: 'post', action: '/mdx'});
   }, []);
 
   
@@ -223,62 +217,74 @@ export default function PostPageSEO() {
     , [fetcher?.data?.code, fetcher?.data?.error]);
 
 
+  const submitHandler = async () => {
+    const livePreview = document.getElementById('og-image-live-preview');
+    if (livePreview) {
+        const dataUrl = await toPng(livePreview, {height: 630, width: 1200, backgroundColor: '#000000'})
+
+        const formData = new FormData();
+        formData.append('mimetype', 'image/png');
+        formData.append('blogPostId', blogPost?.id);
+        formData.append('name', 'og-preview.png');
+        formData.append('content-encoding', 'base64');
+        const presignedResponse = await fetch('/api/s3/create-presigned-request',{
+            method: 'POST',
+            body: formData
+        });
+        const {url, fields} = await presignedResponse.json();
+        console.log(url, fields);
+        const uploadFormData = new FormData();
+        Object.entries(fields).map(([k,v]: any, idx) => uploadFormData.append(k,v));
+        
+        const blob = await (await fetch(dataUrl)).blob();
+
+        uploadFormData.append('file',blob);
+        await fetch(url, {
+            method: 'POST',
+            body: uploadFormData
+        });
+        syncImagePreview({previewImageUrl: `${url}/${fields?.key}`, _action: 'sync'}, {method: 'post'});
+    }
+  }
+
   return (
     <>
     <Form
       method="post"
       className="min-h-screen p-6 w-full grid grid-areas-blog-post-seo-form grid-cols-blog-post-seo-form grid-rows-blog-post-seo-form gap-6"
-    >
-      <input name="status" value={blogPost?.status} type="hidden"/>
-
-      <PreviewImageMDXField ref={previewImageMDXRef} blogPostId={blogPost?.id} actionData={actionData} autoSizeTextArea={autoSizeTextArea} fetcher={fetcher} defaultValue={blogPost?.body}/>
+      onSubmit={submitHandler}
+    >   
+        <div className="grid-in-bpf-og-img grid">
+            <img alt="og-preview" src={blogPost?.previewImageUrl} style={{width: '600px', height: '315px'}}/>
+        </div>
+        
+      <PreviewImageMDXField ref={previewImageMDXRef} blogPostId={blogPost?.id} actionData={actionData} autoSizeTextArea={autoSizeTextArea} fetcher={fetcher} defaultValue={blogPost?.previewImageMDX}/>
       <div className="grid-in-bpf-preview-img mt-6 markdown grid" >
-        <div id="og-image-preview" className="border-2 border-white-100 w-[1200px] h-[630px] place-self-center" ref={formPropagationBypassRef}></div>
+          <div className="border-2 border-white-100 place-self-center">
+            <div id="og-image-live-preview" style={{width: '1200px', height: '630px'}} ref={formPropagationBypassRef}></div>
+          </div>
       </div>
-
+    
       <div className="grid-in-bpf-submit flex items-center w-full justify-end">
-        <MultiActionButton
-            primary={({className}: any) => (
-              <button
-                key="save"
+            <button
                 name="_action"
                 value="save"
                 type="submit"
-                className={className}
+                className="btn"
               >
               Save
             </button>
-            )}
-            options={({className}: any) => [
-              (blogPost?.status === 'draft' ? [(<button
-                key="publish"
-                name="_action"
-                value="publish"
-                type="submit"
-                className={className}
-              >
-              Publish
-              </button>)] : []),
-              (<button
-                key="delete"
-                name="_action"
-                value="delete"
-                type="submit"
-                className={className}
-                >
-                Delete
-              </button>),
-            ]}
-          />
       </div>
       
 
     </Form>
     {formPropagationBypassRef?.current && ReactDOM.createPortal(
+    <>
       <ComponentErrorBoundary
         FallbackComponent={ErrorFallback}>
         <Component components={mdxComponents}/>
       </ComponentErrorBoundary>
+    </>
     , formPropagationBypassRef?.current)}
     </>
   );

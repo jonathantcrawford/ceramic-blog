@@ -23,7 +23,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export const action: ActionFunction = async ({request}) => {
   const userId = await requireUserId(request);
-  const result = await createBlogPost({userId, slug: cuid(), title: '', subTitle: '', emoji: '', body: '', status: 'draft'});
+  const result = await createBlogPost({userId});
   if (result?.blogPost) {
     return redirect(`/account/blog_posts/${result?.blogPost?.id}`)
   } else {

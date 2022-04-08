@@ -61,8 +61,7 @@ export const loader: LoaderFunction = async ({request, params}: any) => {
     const id = params.id;
     if (!id) return json(null, {status: 500});
     const blogPost = await getBlogPostById({id});
-    const envPrefix = process.env.S3_ENV_PREFIX;
-    return {blogPost, envPrefix}
+    return {blogPost}
 }
 
 export default function BlogPostMedia() {
@@ -112,7 +111,7 @@ export default function BlogPostMedia() {
                         alt={imageKey} 
                         src={`https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/${imageKey}`}/>
                       <code className="font-mono text-pink-200 bg-gray-100">
-                        {`<img src='https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/${data?.envPrefix}/${imageKey}'/>`}
+                        {`<img src='https://blog-assets-84c274eb.s3.us-west-2.amazonaws.com/${imageKey}'/>`}
                       </code>
                     </div>
                     <label className="checkbox text-base font-saygon text-yellow-100 flex items-center">

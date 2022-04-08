@@ -3,7 +3,7 @@ import { S3Client, DeleteObjectsCommand } from '@aws-sdk/client-s3';
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 
 
-export const createPresignedS3Upload = async ({key, mimetype}: any) => {
+export const createPresignedS3Upload = async ({key, mimetype, contentEncoding}: any) => {
   try {
 
     const client = new S3Client({
@@ -20,7 +20,8 @@ export const createPresignedS3Upload = async ({key, mimetype}: any) => {
         Expires: 300,
         Key: key,
         Fields: {
-          'Content-Type': mimetype
+          'Content-Type': mimetype,
+          ...(contentEncoding ? {'Content-Encoding': contentEncoding} : {}) 
         }
       })
 

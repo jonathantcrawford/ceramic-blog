@@ -13,6 +13,8 @@ export type BlogPost = {
   updatedAt: string;
   body: string;
   images: string[];
+  previewImageMDX: string;
+  previewImageUrl: string;
 };
 
 
@@ -36,6 +38,8 @@ export async function getBlogPostById({
       updatedAt: result.updatedAt,
       images: result.images,
       body: result.body,
+      previewImageMDX: result.previewImageMDX,
+      previewImageUrl: result.previewImageUrl
     };
   }
   return null;
@@ -67,6 +71,8 @@ export async function getBlogPostBySlug({
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
       body: record.body,
+      previewImageMDX: record.previewImageMDX,
+      previewImageUrl: record.previewImageUrl
     };
   }
   return null;
@@ -125,22 +131,10 @@ export async function getPublishedBlogPostItems()
 }
 
 export async function createBlogPost({
-  title,
-  subTitle,
-  emoji,
-  slug,
-  body,
   userId,
-  status
 }: {
-  title: string,
-  subTitle: string,
-  emoji: string,
-  slug: string,
-  body: string,
   userId: string,
-  status: string
-}): Promise<{blogPost?: Omit<BlogPost, "images">, errors?: any}> {
+}): Promise<{blogPost?: Pick<BlogPost, "id">, errors?: any}> {
  
 
   const client = await arc.tables();
@@ -154,32 +148,26 @@ export async function createBlogPost({
     const createdAt = (new Date()).toISOString();
     const updatedAt = createdAt;
 
+    const newSlug = `slug#${cuid()}`;
+
+
     //@ts-ignore
     await client._doc.transactWrite({
       TransactItems: [
         {
           Put: {
-            TableName: reflect.blog_post,
-            Item: {
-              pk: `slug#${slug}`,
-              userId: `user#${userId}`,
-            },
-            ConditionExpression: 'attribute_not_exists(pk)'
-          }
-        },
-        {
-          Put: {
             Item: {
               pk: `blog_post#${newCuid}`,
               userId:  `user#${userId}`,
-              title: title,
-              subTitle: subTitle,
-              emoji: emoji,
-              slug: `slug#${slug}`,
-              status: status,
+              title: '',
+              subTitle: '',
+              emoji: '',
+              slug: newSlug,
+              status: 'draft',
               createdAt: createdAt,
               updatedAt: updatedAt,
-              body: body,
+              body: '',
+              previewImageMDX: ''
             },
             TableName: reflect.blog_post
           }
@@ -189,23 +177,14 @@ export async function createBlogPost({
 
     return {
       blogPost: {
-        id: newCuid,
-        userId:  userId,
-        title: title,
-        subTitle: subTitle,
-        emoji: emoji,
-        slug: slug,
-        status: status,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
-        body: body,
+        id: newCuid
       }
     };
   } catch (err) {
     console.log(err)
     return {
       errors: {
-        slug: "slug already exists"
+        generic: "unknown error"
       }
     }
   }
@@ -227,7 +206,7 @@ export async function updateBlogPostContent({
   body: string,
   id: string,
   userId: string;
-}): Promise<{blogPost?: Omit<BlogPost, "createdAt" | "images" | "slug">, errors?: any}> {
+}): Promise<{blogPost?: Pick<BlogPost, "id" | "userId" | "title" | "subTitle" | "emoji" | "status" | "updatedAt" | "body">, errors?: any}> {
  
 
   const client = await arc.tables();
@@ -305,15 +284,19 @@ export async function updateBlogPost({
   body,
   id,
   userId,
+  previewImageMDX,
+  previewImageUrl
 }: {
-  title: string,
-  subTitle: string,
-  emoji: string,
-  slug: string,
-  status: string,
-  body: string,
+  title?: string,
+  subTitle?: string,
+  emoji?: string,
+  slug?: string,
+  status?: string,
+  body?: string,
   id: string,
   userId: string;
+  previewImageMDX?: string;
+  previewImageUrl?: string;
 }): Promise<{blogPost?: Omit<BlogPost, "createdAt" | "images">, errors?: any}> {
  
 
@@ -338,7 +321,7 @@ export async function updateBlogPost({
     const {slug: oldSlug} = result;
 
 
-    const slugUpdates = slug === oldSlug ? [] : [
+    const slugUpdates = slug === oldSlug || slug === undefined ? [] : [
       {
         Put: {
           TableName: reflect.blog_post,
@@ -362,6 +345,63 @@ export async function updateBlogPost({
         }
       },
     ];
+
+    const updateExpression = [];
+    const expressionAttributeValues: any = {};
+    const expressionAttributeNames: any = {};
+    if (title) {
+      updateExpression.push('title = :title');
+      expressionAttributeValues[':title'] = title;
+    }
+
+    if (subTitle) {
+      updateExpression.push('subTitle = :subTitle');
+      expressionAttributeValues[':subTitle'] = subTitle;
+    }
+
+    if (emoji) {
+      updateExpression.push('emoji = :emoji');
+      expressionAttributeValues[':emoji'] = emoji;
+    }
+
+    if (slug) {
+      updateExpression.push('slug = :slug');
+      expressionAttributeValues[':slug'] = `slug#${slug}`;
+    }
+
+    if (body) {
+      updateExpression.push('body = :body');
+      expressionAttributeValues[':body'] = body;
+    }
+
+    if (previewImageMDX) {
+      updateExpression.push('previewImageMDX = :previewImageMDX')
+      expressionAttributeValues[':previewImageMDX'] = previewImageMDX;
+    }
+
+    if (previewImageUrl) {
+      updateExpression.push('previewImageUrl = :previewImageUrl')
+      expressionAttributeValues[':previewImageUrl'] = previewImageUrl;
+    }
+
+    if (status) {
+      updateExpression.push('#status = :status')
+      expressionAttributeValues[':status'] = status;
+      expressionAttributeNames['#status'] = 'status';
+    }
+
+    if (updateExpression.length === 0) {
+      return {
+        errors: {
+          generic: 'no fields were provided'
+        }
+      }
+    }
+
+    updateExpression.push('updatedAt = :updatedAt');
+    expressionAttributeValues[':updatedAt'] = updatedAt;
+
+    
     
     //@ts-ignore
     await client._doc.transactWrite({
@@ -372,19 +412,9 @@ export async function updateBlogPost({
             Key: {
               pk: `blog_post#${id}`,
             },
-            UpdateExpression: "SET title = :title, subTitle = :subTitle, emoji = :emoji, slug = :slug, updatedAt = :updatedAt, body = :body, #status = :status",
-            ExpressionAttributeNames: {
-              '#status': 'status'
-            },
-            ExpressionAttributeValues: {
-              ':title': title,
-              ':subTitle': subTitle,
-              ':emoji': emoji,
-              ':status': status,
-              ':slug': `slug#${slug}`,
-              ':updatedAt': updatedAt,
-              ':body': body,
-            },
+            UpdateExpression: `SET ${updateExpression.join(', ')}`,
+            ...(Object.keys(expressionAttributeNames).length > 0 ? {ExpressionAttributeNames: expressionAttributeNames } : {}),
+            ExpressionAttributeValues: expressionAttributeValues,
             TableName: reflect.blog_post
           }
         }
@@ -395,13 +425,15 @@ export async function updateBlogPost({
       blogPost: {
         id: id,
         userId:  userId,
-        title: title,
-        subTitle: subTitle,
-        emoji: emoji,
-        slug: slug,
-        status: status,
+        title: title ?? result.title,
+        subTitle: subTitle ?? result.subTitle,
+        emoji: emoji ?? result.emoji,
+        slug: slug ?? result.slug,
+        status: status ?? result.slug, 
         updatedAt: updatedAt,
-        body: body,
+        previewImageMDX: previewImageMDX ?? result.previewImageMDX,
+        previewImageUrl: previewImageUrl ?? result.previewImageUrl,
+        body: body ?? result.body,
       }
     };
   } catch (err) {

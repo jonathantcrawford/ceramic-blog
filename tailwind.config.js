@@ -80,13 +80,9 @@ module.exports = {
         'bpf-body bpf-body bpf-preview bpf-preview'
       ],
       'blog-post-seo-form': [
-        'bpf-slug bpf-slug bpf-submit bpf-submit',
-        'bpf-emoji bpf-title bpf-title bpf-title',
-        'bpf-subTitle bpf-subTitle bpf-subTitle bpf-subTitle',
+        'bpf-og-img bpf-og-img bpf-submit bpf-submit',
         'bpf-preview-img-mdx bpf-preview-img-mdx bpf-preview-img-mdx bpf-preview-img-mdx',
         'bpf-preview-img bpf-preview-img bpf-preview-img bpf-preview-img',
-        
-        
       ],
       'account': [
         'acc-sidebar-min acc-sidebar-max acc-route',
@@ -103,7 +99,7 @@ module.exports = {
       'layout': '5vh min-content 5vh auto 5vh min-content',
       'blog-post-forms': 'auto',
       'blog-post-content-form': 'min-content min-content min-content auto',
-      'blog-post-seo-form': 'min-content min-content min-content auto auto',
+      'blog-post-seo-form': 'min-content auto auto',
       'account': 'auto'
     },
   },
