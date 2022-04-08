@@ -33,7 +33,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     );
   } else if (action === 'upload') {
     let key = formData.get('key') as string ?? '';
-    let images = JSON.parse(formData.get("_images") as string ) as string[];
+    let images = JSON.parse(formData.get("_images") as string ?? []) as string[];
     const results = await updateBlogPostImages({id:blogPostId, userId, images: [...images, key]})
     if (results?.errors) return json(null, {status: 400});
     return json(
