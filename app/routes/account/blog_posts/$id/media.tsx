@@ -65,7 +65,7 @@ export const loader: LoaderFunction = async ({request, params}: any) => {
     return {blogPost, envPrefix}
 }
 
-export default function S3Test() {
+export default function BlogPostMedia() {
 
     const data = useLoaderData();
     const fetcher = useFetcher();
