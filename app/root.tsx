@@ -41,9 +41,10 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json<LoaderData>({
     user: await getUser(request),
     ENV: {
-      HTTP_PROTOCOL: process.env.NODE_ENV === "development" ? "http:" : "https:",
-      WS_PROTOCOL: process.env.NODE_ENV === "development" ? "ws:" : "wss:",
+      HTTP_PROTOCOL: process.env.NODE_ENV === "development" ? "http://" : "https://",
+      WS_PROTOCOL: process.env.NODE_ENV === "development" ? "ws://" : "wss://",
       HOST: url.host,
+      WS_HOST: process.env.NODE_ENV === "development" ? url.host : `oorro52r0j.execute-api.us-west-2.amazonaws.com/staging`,
       NODE_ENV: process.env.NODE_ENV,
     },
   });

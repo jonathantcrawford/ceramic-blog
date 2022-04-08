@@ -6,7 +6,7 @@ let arc = require('@architect/functions')
 exports.handler = async function ws(event) {
 
 
-  console.log('ws-default called with', event)
+  // console.log('ws-default called with', event)
 
   let connectionId = event.requestContext.connectionId
 
