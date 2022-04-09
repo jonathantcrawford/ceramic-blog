@@ -144,7 +144,16 @@ jobs:
 
       - name: 🚀 Staging Deploy
         if: github.ref == 'refs/heads/dev'
-        run: arc deploy --staging --prune
+        run: |
+          arc env --add --env staging ARC_APP_SECRET ${{ secrets.STAGING_ARC_APP_SECRET }}
+          arc env --add --env staging AWS_BLOG_RUNTIME_ACCESS_KEY_ID ${{ secrets.STAGING_AWS_BLOG_RUNTIME_ACCESS_KEY_ID }}
+          arc env --add --env staging AWS_BLOG_RUNTIME_SECRET_ACCESS_KEY ${{ secrets.STAGING_AWS_BLOG_RUNTIME_SECRET_ACCESS_KEY }}
+          arc env --add --env staging NFT_PORT_TOKEN ${{ secrets.STAGING_NFT_PORT_TOKEN }}
+          arc env --add --env staging S3_BUCKET ${{ secrets.STAGING_S3_BUCKET }}
+          arc env --add --env staging S3_ENDPOINT ${{ secrets.STAGING_S3_ENDPOINT }}
+          arc env --add --env staging S3_ENV_PREFIX ${{ secrets.STAGING_S3_ENV_PREFIX }}
+          arc env --add --env staging S3_REGION ${{ secrets.STAGING_S3_REGION }}
+          arc deploy --staging --prune
         env:
           CI: true
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
