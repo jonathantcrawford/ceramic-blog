@@ -167,7 +167,8 @@ export async function createBlogPost({
               createdAt: createdAt,
               updatedAt: updatedAt,
               body: '',
-              previewImageMDX: ''
+              previewImageMDX: '',
+              images: []
             },
             TableName: reflect.blog_post
           }
