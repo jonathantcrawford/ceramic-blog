@@ -15,7 +15,7 @@ blog
 @static
 
 @tables
-arc-session
+arc-sessions
   _idx *String
   _ttl TTL
 
