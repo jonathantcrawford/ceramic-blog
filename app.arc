@@ -1,3 +1,7 @@
+@aws
+region us-east-1
+apigateway httpv2
+
 @app
 blog
 
