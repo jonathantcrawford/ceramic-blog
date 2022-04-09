@@ -107,8 +107,6 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     if (!blogPost) {
       throw new Response("Not Found", { status: 404 });
     }
-
-    //const ogPreviewURL = `${process.env.S3_ENDPOINT}/${process.env.S3_ENV_PREFIX}/user-${userId}/blogPost-${blogPost?.id}/og-preview.png`;
   
     return json<LoaderData>({ blogPost });
   } else {

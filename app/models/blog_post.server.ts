@@ -447,12 +447,12 @@ export async function updateBlogPost({
 }
 
 export async function updateBlogPostImages({
-  images,
+  update,
   id,
   userId,
 }: {
-  images: string[],
-  id: string,
+  update: { image: string; } | { images: string[]};
+  id: string;
   userId: string;
 }): Promise<{blogPost?: Pick<BlogPost, "id" | "userId" | "images" | "updatedAt">, errors?: any}> {
  
@@ -475,6 +475,16 @@ export async function updateBlogPostImages({
       }
     }
 
+    const images = (update as {images: string[]})?.images;
+    const image = (update as {image: string})?.image;
+    let imageUpdates: string[] = [];
+    if (images) {
+      imageUpdates = [...images];
+    } else if (image) {
+      imageUpdates = [...result.images, image];
+    }
+    
+
     
     //@ts-ignore
     await client._doc.transactWrite({
@@ -486,7 +496,7 @@ export async function updateBlogPostImages({
             },
             UpdateExpression: "SET images = :images, updatedAt = :updatedAt",
             ExpressionAttributeValues: {
-              ':images': images,
+              ':images': imageUpdates,
               ':updatedAt': updatedAt
             },
             TableName: reflect.blog_post
@@ -499,7 +509,7 @@ export async function updateBlogPostImages({
       blogPost: {
         id: id,
         userId:  userId,
-        images: images,
+        images: imageUpdates,
         updatedAt: updatedAt
       }
     };

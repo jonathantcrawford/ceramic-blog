@@ -22,7 +22,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     let images = formData.getAll("_images");
     let imagesToDelete = formData.getAll("imagesToDelete");
     let newImages = images.filter(image => !imagesToDelete.includes(image));
-    const results = await updateBlogPostImages({id: blogPostId, userId, images: newImages as string[]})
+    const results = await updateBlogPostImages({id: blogPostId, userId, update: {images: newImages as string[]}})
     if (results?.errors) return json(null, {status: 400});
     await deleteObjectsFromS3({keys: images as string[]})
     return json(
@@ -33,8 +33,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     );
   } else if (action === 'upload') {
     let key = formData.get('key') as string ?? '';
-    let images = JSON.parse(formData.get("_images") as string ?? []) as string[];
-    const results = await updateBlogPostImages({id:blogPostId, userId, images: [...images, key]})
+    const results = await updateBlogPostImages({id:blogPostId, userId, update: {image: key}})
     if (results?.errors) return json(null, {status: 400});
     return json(
       {
@@ -84,9 +83,8 @@ export default function BlogPostMedia() {
       fetcher.submit({
         _action: 'upload',
         key: fields?.key,
-        _images: JSON.stringify(data?.blogPost?.images),
       }, {method: 'post'})
-    }, [fetcher, fields, data])
+    }, [fetcher, fields])
 
     return (
       <>        
@@ -96,7 +94,7 @@ export default function BlogPostMedia() {
               type="file" 
               name="file" 
               accept='image/png,image/webp'/>
-            <button type="submit" className="btn">submit</button>
+            <button type="submit" className="btn" disabled={fetcher.state !== 'idle'}>submit</button>
         </form>
 
 
