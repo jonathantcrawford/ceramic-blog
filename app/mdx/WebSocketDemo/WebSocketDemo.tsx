@@ -12,7 +12,7 @@ export function WebSocketDemo() {
 
     webSocket.current = new WebSocket(
       //@ts-ignore
-      `${window.ENV.WS_URL}/connect`
+      `${window.ENV.WS_PROTOCOL}//${window.ENV.HOST}/connect`
 
     );
     webSocket.current.addEventListener("message", (message) => {
