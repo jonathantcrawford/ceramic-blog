@@ -13,6 +13,9 @@ export default function handleRequest(
   );
 
   responseHeaders.set("Content-Type", "text/html");
+  responseHeaders.set("Access-Control-Allow-Origin", "*");
+  responseHeaders.set("Access-Control-Allow-Headers", "*");
+  responseHeaders.set("Access-Control-Allow-Methods", "*");
 
   return new Response("<!DOCTYPE html>" + markup, {
     status: responseStatusCode,
