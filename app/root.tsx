@@ -11,10 +11,18 @@ import {
 import {
   json
 } from "@remix-run/server-runtime"
-import type { LinksFunction, MetaFunction, LoaderFunction } from "@remix-run/node";
+import type { LinksFunction, MetaFunction, LoaderFunction, HeadersFunction } from "@remix-run/node";
 
 import tailwindStylesheetUrl from "./styles/tailwind.css";
 import { getUser } from "./session.server";
+
+export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "*",
+    "Access-Control-Allow-Methods": "*"
+  };
+}
 
 export const links: LinksFunction = () => {
   return [
