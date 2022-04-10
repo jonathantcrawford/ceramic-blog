@@ -43,7 +43,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     user: await getUser(request),
     ENV: {
       HTTP_PROTOCOL: process.env.NODE_ENV === "development" ? "http://" : "https://",
-      WS_PROTOCOL: process.env.NODE_ENV === "development" ? "ws:" : "wss:",
+      WS_URL: process.env.NODE_ENV === "development" ? `ws://${url.host}` : process.env.ARC_WS_URL,
       HOST: url.host,
       NODE_ENV: process.env.NODE_ENV,
     },
