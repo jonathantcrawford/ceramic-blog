@@ -157,6 +157,15 @@ export async function createBlogPost({
         {
           Put: {
             Item: {
+              pk: newSlug,
+              userId:  `user#${userId}`,
+            },
+            TableName: reflect.blog_post
+          }
+        },
+        {
+          Put: {
+            Item: {
               pk: `blog_post#${newCuid}`,
               userId:  `user#${userId}`,
               title: '',
@@ -346,6 +355,8 @@ export async function updateBlogPost({
         }
       },
     ];
+
+    console.log(JSON.stringify(slugUpdates))
 
     const updateExpression = [];
     const expressionAttributeValues: any = {};

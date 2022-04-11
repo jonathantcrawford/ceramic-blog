@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import { redirect, json } from "@remix-run/server-runtime";
 import invariant from "tiny-invariant";
 import type { BlogPost } from "~/models/blog_post.server";
-import { deleteBlogPost, getBlogPostById, updateBlogPostContent } from "~/models/blog_post.server";
+import { deleteBlogPost, getBlogPostById, updateBlogPost } from "~/models/blog_post.server";
 import { requireUserId } from "~/session.server";
 import Alert from "@reach/alert";
 
@@ -136,36 +136,6 @@ const SubTitleField = React.forwardRef<any, any>(({actionData}: any, ref: any) =
   )
 });
 
-const SlugField = React.forwardRef<any, any>(({actionData}: any, ref: any) => {
-  const [dirty, setDirty] = useState(false);
-
-  useEffect(() => {
-    if (actionData?.errors?.slug) setDirty(false)
-  }, [actionData]);
-
-  return (
-    <div className="grid-in-bpf-slug">
-    <label className="flex w-full flex-col gap-1">
-      <span className="text-base text-yellow-100 font-saygon">Slug: </span>
-      <input
-        ref={ref}
-        name="slug"
-        onChange={() => {if(!dirty) setDirty(true)}}
-        className="bg-black-100 text-yellow-100 font-saygon text-base focus:text-pink-200 focus:outline-none border-2 border-yellow-100  focus-visible:border-pink-200 rounded-lg p-2"
-        aria-invalid={actionData?.errors?.slug ? true : undefined}
-        aria-errormessage={
-          actionData?.errors?.slug ? "slug-error" : undefined
-        }
-      />
-    </label>
-    {!dirty && actionData?.errors?.slug && (
-      <Alert className="pt-1 text-red-100 font-saygon text-base" id="slug=error">
-        {actionData.errors.slug}
-      </Alert>
-    )}
-  </div>
-  )
-})
 
 const BodyField = React.forwardRef(({actionData, autoSizeTextArea, fetcher, defaultValue}: any, ref: any) => {
   const [dirty, setDirty] = useState(false);
@@ -249,17 +219,11 @@ export const action: ActionFunction = async ({ request, context, params }) => {
   const _action = formData.get("_action");
   const title = formData.get("title");
   const subTitle = formData.get("subTitle");
-  const slug = formData.get("slug");
-  const status = formData.get("status");
   const emoji = formData.get("emoji");
   const body = formData.get("body");
 
   switch (_action) {
-    case 'delete':
-        await deleteBlogPost({ id: params.id });
-        return redirect("/account");
     case 'save':
-    case 'publish':
     default:
 
       if (typeof emoji !== "string" || emoji.length === 0) {
@@ -290,14 +254,7 @@ export const action: ActionFunction = async ({ request, context, params }) => {
         );
       }
 
-      if (typeof status !== "string" || status.length === 0) {
-        return json<ActionData>(
-          { errors: { body: "Invalid status" } },
-          { status: 400 }
-        );
-      }
-
-      const result = await updateBlogPostContent({ id: params.id, title, body, subTitle, emoji, userId, status: _action === 'publish' ? 'published' : status });
+      const result = await updateBlogPost({ id: params.id, title, body, subTitle, emoji, userId });
       if (result.errors) {
         return json<ActionData>(
           { errors: result?.errors },
@@ -370,49 +327,23 @@ export default function EditBlogPostPage() {
       method="post"
       className="min-h-screen p-6 w-full grid grid-areas-blog-post-content-form grid-cols-blog-post-content-form grid-rows-blog-post-content-form gap-6"
     >
-      <input name="status" value={blogPost?.status} type="hidden"/>
       <EmojiField ref={emojiRef} actionData={actionData}/>
       <TitleField ref={titleRef} actionData={actionData}/>
-      {/* <SlugField ref={slugRef} actionData={actionData}/> */}
       <SubTitleField ref={subTitleRef} actionData={actionData}/>
 
       <BodyField ref={bodyRef} actionData={actionData} autoSizeTextArea={autoSizeTextArea} fetcher={fetcher} defaultValue={blogPost?.body}/>
       <div className="grid-in-bpf-preview mt-6 markdown" ref={formPropagationBypassRef}></div>
 
       <div className="grid-in-bpf-submit flex items-center w-full justify-end">
-        <MultiActionButton
-            primary={({className}: any) => (
-              <button
-                key="save"
-                name="_action"
-                value="save"
-                type="submit"
-                className={className}
+      <button
+          key="save"
+          name="_action"
+          value="save"
+          type="submit"
+          className="btn"
               >
               Save
             </button>
-            )}
-            options={({className}: any) => [
-              (blogPost?.status === 'draft' ? [(<button
-                key="publish"
-                name="_action"
-                value="publish"
-                type="submit"
-                className={className}
-              >
-              Publish
-              </button>)] : []),
-              (<button
-                key="delete"
-                name="_action"
-                value="delete"
-                type="submit"
-                className={className}
-                >
-                Delete
-              </button>),
-            ]}
-          />
       </div>
       
 

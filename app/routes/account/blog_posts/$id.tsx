@@ -8,8 +8,8 @@ export default function BlogPostEntry () {
           <Link to={``} className="text-yellow-100 font-saygon">Content</Link>{/* title, subtitle, emoji, body  */}
           <Link to={`media`}  className="text-yellow-100 font-saygon">Media</Link>{/* images  */}
           <Link to={`seo`}  className="text-yellow-100 font-saygon">Seo</Link>{/* og-tags, description, title, keywords */}
-          <Link to={`analytics`}  className="text-yellow-100 font-saygon">Analytics</Link>{/* og-tags, description, title, keywords */}
           <Link to={`publish`}  className="text-yellow-100 font-saygon">Publish</Link>{/* slug, publish date, hooks */}
+          <Link to={`analytics`}  className="text-yellow-100 font-saygon">Analytics</Link>{/* og-tags, description, title, keywords */}
         </div>
       </div>
       <Outlet/>

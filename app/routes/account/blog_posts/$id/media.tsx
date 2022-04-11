@@ -87,7 +87,7 @@ export default function BlogPostMedia() {
     }, [fetcher, fields])
 
     return (
-      <>        
+      <div>        
         <form action={url} method="post" encType='multipart/form-data' onChange={handleChange} onSubmit={handleSubmit}>
             {fields && Object.entries(fields).map(([k,v]: any, idx) => (<input key={idx} type="hidden" name={k} value={v}/>))}
             <input 
@@ -125,6 +125,6 @@ export default function BlogPostMedia() {
                 ))}
               </div>
           </Form>
-      </>
+      </div>
     )
 }

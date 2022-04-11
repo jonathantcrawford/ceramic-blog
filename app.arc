@@ -28,6 +28,9 @@ password
 blog_post
   pk *String
 
+analytics
+  pk *String
+
 @tables-indexes
 user
   email *String
@@ -40,3 +43,7 @@ blog_post
 blog_post
   slug *String
   name bySlug
+
+analytics
+  blogPostId *String
+  name byBlogPostId

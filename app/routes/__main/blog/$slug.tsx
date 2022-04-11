@@ -10,6 +10,7 @@ import { getMDXComponent, mdxComponents } from "~/mdx";
 
 import { PostHeader } from "~/components/PostHeader/PostHeader";
 import { BlogPost, getBlogPostBySlug } from "~/models/blog_post.server";
+import { logPageView } from "~/models/analytics.server";
 
 
 type LoaderData = {
@@ -26,6 +27,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   if (!blogPost) {
     throw new Response("Not Found", { status: 404 });
   }
+  
+  const url = new URL(request.url);
+  const utm_source = url.searchParams.get("utm_source") ?? '';
+  logPageView({blogPostId: blogPost?.id, utm_source});
 
   const { code } = await compileMDX({mdxSource: blogPost.body});
   return json<LoaderData>({ code, blogPost });
