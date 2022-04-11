@@ -169,6 +169,10 @@ export default function EditBlogPostPage() {
     } 
   }, [actionData]);
 
+  React.useEffect(() => { 
+    slugRef.current?.setAttribute("value", blogPost?.slug);
+  }, []);
+
 
   return (
     <>

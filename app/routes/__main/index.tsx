@@ -4,8 +4,9 @@ import type { MetaFunction, LinksFunction } from "@remix-run/server-runtime";
 import { About } from "~/components/About/About";
 
 export const links: LinksFunction = () => {
-  return [{ rel: "icon", href: "/static/images/favicon.png" }];
+  return [{ rel: "icon", href: "/_static/favicon.png" }];
 };
+
 
 export const meta: MetaFunction = () => {
   const description = "My own dev blog for various topics.";
@@ -19,8 +20,8 @@ export const meta: MetaFunction = () => {
     "og:title": title,
     "og:description": description,
     "og:image:type": "image/png",
-    "og:image": "https://joncrawford.me/static/images/og-preview.png",
-    "twitter:image": "https://joncrawford.me/static/images/og-preview.png",
+    "og:image": "https://joncrawford.me/_static/og-preview.png",
+    "twitter:image": "https://joncrawford.me/_static/og-preview.png",
     "twitter:url": "https://joncrawford.me/",
     "twitter:card": "summary_large_image",
     "twitter:creator": "@jon_t_craw",
