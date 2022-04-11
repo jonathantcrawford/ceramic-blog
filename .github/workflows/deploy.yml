@@ -163,7 +163,17 @@ jobs:
 
       - name: 🚀 Production Deploy
         if: github.ref == 'refs/heads/main'
-        run: arc deploy --production --prune
+        run: |
+          arc env --add --env production ARC_APP_SECRET ${{ secrets.PRODUCTION_ARC_APP_SECRET }}
+          arc env --add --env production AWS_BLOG_RUNTIME_ACCESS_KEY_ID ${{ secrets.PRODUCTION_AWS_BLOG_RUNTIME_ACCESS_KEY_ID }}
+          arc env --add --env production AWS_BLOG_RUNTIME_SECRET_ACCESS_KEY ${{ secrets.PRODUCTION_AWS_BLOG_RUNTIME_SECRET_ACCESS_KEY }}
+          arc env --add --env production NFT_PORT_TOKEN ${{ secrets.PRODUCTION_NFT_PORT_TOKEN }}
+          arc env --add --env production S3_BUCKET ${{ secrets.PRODUCTION_S3_BUCKET }}
+          arc env --add --env production S3_ENDPOINT ${{ secrets.PRODUCTION_S3_ENDPOINT }}
+          arc env --add --env production S3_ENV_PREFIX ${{ secrets.PRODUCTION_S3_ENV_PREFIX }}
+          arc env --add --env production S3_REGION ${{ secrets.PRODUCTION_S3_REGION }}
+          arc env --add --env production SESSION_SECRET ${{ secrets.PRODUCTION_SESSION_SECRET }}
+          arc deploy --production --prune
         env:
           CI: true
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
