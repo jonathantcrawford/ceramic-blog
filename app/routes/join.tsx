@@ -14,6 +14,7 @@ import { createUser, getUserByEmail } from "~/models/user.server";
 import { validateEmail } from "~/utils";
 
 export const loader: LoaderFunction = async ({ request }) => {
+  if (process.env.ARC_ENV === 'production') return redirect("/");
   const userId = await getUserId(request);
   if (userId) return redirect("/");
   return json({});
