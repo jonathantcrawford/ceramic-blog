@@ -15,7 +15,7 @@ export const sessionStorage = createArcTableSessionStorage({
   cookie: {
     name: "__session",
     httpOnly: true,
-    maxAge: 0,
+    maxAge: 3600,
     path: "/",
     sameSite: "lax",
     secrets: [process.env.SESSION_SECRET],
