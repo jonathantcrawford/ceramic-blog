@@ -93,7 +93,7 @@ export default function BlogPostMedia() {
             <input 
               type="file" 
               name="file" 
-              accept='image/png,image/webp'/>
+              accept='image/png,image/webp,image/svg'/>
             <button type="submit" className="btn" disabled={fetcher.state !== 'idle'}>submit</button>
         </form>
 
