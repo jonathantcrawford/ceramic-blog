@@ -61,7 +61,11 @@ export const PostLinks = ({title, linkPrefix, linkAttribute, posts}: {title: str
         {title}
       </div>
       <div className="grid auto-rows-min grid-flow-row gap-6 mb-6">
-        {posts.map((post: any) => (
+        {posts.sort((a,b) => {
+          const aDate: any = new Date(a.createdAt);
+          const bDate: any = new Date(b.createdAt);
+          return bDate.getTime() - aDate.getTime();
+        } ).map((post: any) => (
           <PendingNavLink
             key={post.slug}
             prefetch="intent"
