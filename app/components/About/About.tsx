@@ -29,7 +29,7 @@ export const About = () => {
       </div>
       <div className={divClasses}>
         Feel free to check out my{" "}
-        <NavLink prefetch="intent" to="/blog"  className={navLinkClasses}>
+        <NavLink prefetch="render" to="/blog"  className={navLinkClasses}>
           blog
         </NavLink>
         .
