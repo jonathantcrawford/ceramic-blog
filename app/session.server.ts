@@ -1,4 +1,5 @@
-import { redirect } from "@remix-run/server-runtime";
+import { redirect, } from "@remix-run/server-runtime";
+import { createCookieSessionStorage } from "@remix-run/node";
 import { createArcTableSessionStorage } from "@remix-run/architect"
 
 import invariant from "tiny-invariant";
@@ -14,6 +15,18 @@ export const sessionStorage = createArcTableSessionStorage({
   ttl: '_ttl',
   cookie: {
     name: "__session",
+    httpOnly: true,
+    maxAge: 3600,
+    path: "/",
+    sameSite: "lax",
+    secrets: [process.env.SESSION_SECRET],
+    secure: process.env.NODE_ENV === "production",
+  },
+});
+
+export const themeStorage = createCookieSessionStorage({
+  cookie: {
+    name: "__theme",
     httpOnly: true,
     maxAge: 3600,
     path: "/",

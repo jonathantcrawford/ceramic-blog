@@ -5,14 +5,16 @@ import type {
     MetaFunction,
   } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
-import { getSession, sessionStorage } from "~/session.server";
+import { themeStorage } from "~/session.server";
 
 let SESSION_TOKEN_ID = "SESSION_TOKEN_ID";
 
 let SESSION_CONTRACT_ADDR = "SESSION_CONTRACT_ADDR";
 
+
 export let action: ActionFunction = async ({ request }) => {
-    let session = await getSession(request)
+    const cookie = request.headers.get("Cookie");
+    let session = await themeStorage.getSession(cookie);
   
     let formData = new URLSearchParams(await request.text());
     let contract = formData.get("contract");
@@ -40,7 +42,7 @@ export let action: ActionFunction = async ({ request }) => {
   
     return json({metadata, contract, tokenId}, {
         headers: {
-            "Set-Cookie": await sessionStorage.commitSession(session, {
+            "Set-Cookie": await themeStorage.commitSession(session, {
               maxAge: 60 * 60 * 24 * 7 // 7 days
             }),
         }
@@ -48,10 +50,12 @@ export let action: ActionFunction = async ({ request }) => {
   };
   
   export let loader: LoaderFunction = async ({ request }) => {
-    let session = await getSession(request);
+    const cookie = request.headers.get("Cookie");
+    let session = await themeStorage.getSession(cookie);
   
     let tokenId = session.get(SESSION_TOKEN_ID);
     let contract = session.get(SESSION_CONTRACT_ADDR);
+
   
     if (typeof contract !== "string" && typeof tokenId !== "string") {
       const random =
@@ -88,12 +92,14 @@ export let action: ActionFunction = async ({ request }) => {
     const {
       nft: { metadata },
     } = data;
+
+    
   
     return json(
       { metadata, contract, tokenId },
       {
         headers: {
-            "Set-Cookie": await sessionStorage.commitSession(session, {
+            "Set-Cookie": await themeStorage.commitSession(session, {
               maxAge: 60 * 60 * 24 * 7 // 7 days
             }),
         }
