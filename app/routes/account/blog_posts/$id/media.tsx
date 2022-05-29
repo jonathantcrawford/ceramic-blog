@@ -7,7 +7,7 @@ import { json } from '@remix-run/server-runtime';
 import type { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
 import { useMemo, useCallback } from "react";
 import { requireUserId } from "~/session.server";
-import { createPresignedS3Upload, deleteObjectsFromS3} from '~/s3-upload.server';
+import { createPresignedS3Upload, deleteObjectsFromS3} from '~/aws/s3-upload.server';
 import { getBlogPostById, updateBlogPostImages } from "~/models/blog_post.server";
 
 export const action: ActionFunction = async ({ request, params }) => {

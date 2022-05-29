@@ -1,6 +1,8 @@
 import cuid from "cuid";
 import arc from "@architect/functions";
 
+import { createCloudfrontInvalidation } from "~/aws/invalidate-cloudfront.server";
+
 export type BlogPost = {
   id: string;
   userId: string;
@@ -200,91 +202,6 @@ export async function createBlogPost({
   }
 }
 
-export async function updateBlogPostContent({
-  title,
-  subTitle,
-  emoji,
-  status,
-  body,
-  id,
-  userId,
-}: {
-  title: string,
-  subTitle: string,
-  emoji: string,
-  status: string,
-  body: string,
-  id: string,
-  userId: string;
-}): Promise<{blogPost?: Pick<BlogPost, "id" | "userId" | "title" | "subTitle" | "emoji" | "status" | "updatedAt" | "body">, errors?: any}> {
- 
-
-  const client = await arc.tables();
-  
-  //@ts-ignore
-  const reflect = await client.reflect()
-
-  
-  try {
-    const updatedAt = (new Date()).toISOString();
-
-    const result = await getBlogPostById({id});
-    if (!result) {
-      return {
-        errors: {
-          generic: "could not perform update. blog post id was not found."
-        }
-      }
-    }
-    
-    //@ts-ignore
-    await client._doc.transactWrite({
-      TransactItems: [
-        {
-          Update: {
-            Key: {
-              pk: `blog_post#${id}`,
-            },
-            UpdateExpression: "SET title = :title, subTitle = :subTitle, emoji = :emoji, updatedAt = :updatedAt, body = :body, #status = :status",
-            ExpressionAttributeNames: {
-              '#status': 'status'
-            },
-            ExpressionAttributeValues: {
-              ':title': title,
-              ':subTitle': subTitle,
-              ':emoji': emoji,
-              ':status': status,
-              ':updatedAt': updatedAt,
-              ':body': body,
-            },
-            TableName: reflect.blog_post
-          }
-        }
-      ]
-    }).promise();
-
-    return {
-      blogPost: {
-        id: id,
-        userId:  userId,
-        title: title,
-        subTitle: subTitle,
-        emoji: emoji,
-        status: status,
-        updatedAt: updatedAt,
-        body: body,
-      }
-    };
-  } catch (err) {
-    console.log(err)
-    return {
-      errors: {
-        slug: "slug already exists"
-      }
-    }
-  }
-}
-
 export async function updateBlogPost({
   title,
   subTitle,
@@ -355,8 +272,6 @@ export async function updateBlogPost({
         }
       },
     ];
-
-    console.log(JSON.stringify(slugUpdates))
 
     const updateExpression = [];
     const expressionAttributeValues: any = {};
@@ -432,6 +347,8 @@ export async function updateBlogPost({
         }
       ]
     }).promise();
+
+    await createCloudfrontInvalidation({paths: [`/blog/${slug}*`]});
 
     return {
       blogPost: {
