@@ -14,7 +14,7 @@ export const Footer = () => {
     "flex-row",
     "justify-evenly",
     "items-center",
-    "pb-16",
+    "pb-24",
   ].join(" ");
 
   const iconClasses = [
