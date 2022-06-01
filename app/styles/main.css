@@ -168,6 +168,7 @@
 
   .markdown p {
     @apply text-white-100 font-saygon text-lg mb-4 leading-14;
+    @apply mobile:text-base
   }
 
   .markdown ol,

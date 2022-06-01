@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
-import { useLoaderData, NavLink } from "@remix-run/react";
+import { useLoaderData, NavLink, useFetcher } from "@remix-run/react";
 import type { LinksFunction, LoaderFunction, MetaFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
  
@@ -10,12 +10,12 @@ import { getMDXComponent, mdxComponents } from "~/mdx";
 
 import { PostHeader } from "~/components/PostHeader/PostHeader";
 import { BlogPost, getBlogPostBySlug } from "~/models/blog_post.server";
-import { logPageView } from "~/models/analytics.server";
+
 
 
 type LoaderData = {
   code: string;
-  blogPost: Pick<BlogPost, "title" | "subTitle" | "updatedAt" | "emoji" | "slug" | "previewImageUrl">;
+  blogPost: Pick<BlogPost, "id"| "title" | "subTitle" | "updatedAt" | "emoji" | "slug" | "previewImageUrl">;
 };
 
 
@@ -27,10 +27,6 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   if (!blogPost) {
     throw new Response("Not Found", { status: 404 });
   }
-  
-  const url = new URL(request.url);
-  const utm_source = url.searchParams.get("utm_source") ?? '';
-  logPageView({blogPostId: blogPost?.id, utm_source});
 
   const { code } = await compileMDX({mdxSource: blogPost.body});
   return json<LoaderData>({ code, blogPost });
@@ -91,7 +87,22 @@ export const links: LinksFunction = () => {
 };
 
 export default function Slug() {
-    const { code, blogPost: {title, subTitle, updatedAt, emoji} } = useLoaderData();
+    const { code, blogPost: {id, title, subTitle, updatedAt, emoji} } = useLoaderData<LoaderData>();
+
+    const fetcher = useFetcher();
+
+
+
+
+    useEffect(() => {
+      if (typeof document !== "undefined") {
+        const params = new Proxy(new URLSearchParams(window.location.search), {
+          get: (searchParams: any, prop: any) => searchParams.get(prop) ?? '',
+        });
+        fetcher.submit({id, utm_source: params.utm_source}, {method: 'post', action: '/api/blog_posts/analytics'})
+      }
+    }, [])
+
 
     const Component = useMemo(() => getMDXComponent(code), [code]);
 

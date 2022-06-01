@@ -44,7 +44,6 @@ export const loader: LoaderFunction = async ({ request }) => {
     ENV: {
       HTTP_PROTOCOL: process.env.NODE_ENV === "development" ? "http://" : "https://",
       WS_URL: process.env.NODE_ENV === "development" ? `ws://${url.host}` : process.env.ARC_WSS_URL,
-      HOST: url.host,
       NODE_ENV: process.env.NODE_ENV,
     },
   });

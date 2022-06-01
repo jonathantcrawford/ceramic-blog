@@ -16,6 +16,7 @@ export default function handleRequest(
   responseHeaders.set("Access-Control-Allow-Origin", "*");
   responseHeaders.set("Access-Control-Allow-Headers", "*");
   responseHeaders.set("Access-Control-Allow-Methods", "*");
+  responseHeaders.set("Cache-Control", `no-cache="Set-Cookie"`);
 
   return new Response("<!DOCTYPE html>" + markup, {
     status: responseStatusCode,

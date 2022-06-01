@@ -1,6 +1,6 @@
 import type { LoaderFunction, ActionFunction } from "@remix-run/server-runtime";
 import { useFormAction, useLoaderData, useCatch, Form, useFetcher, useActionData, Outlet, Link } from "@remix-run/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import ReactDOM from "react-dom";
 import { redirect, json } from "@remix-run/server-runtime";
 import invariant from "tiny-invariant";
@@ -9,7 +9,7 @@ import { deleteBlogPost, getBlogPostById, updateBlogPost } from "~/models/blog_p
 import { requireUserId } from "~/session.server";
 import Alert from "@reach/alert";
 
-import { useMemo } from "react";
+
 import { getMDXComponent, mdxComponents } from "~/mdx";
 import {ErrorBoundary as ComponentErrorBoundary} from "react-error-boundary";
 
@@ -21,6 +21,8 @@ import {
   faChevronRight,
   faChevronDown
 } from "@fortawesome/free-solid-svg-icons";
+
+import debounce  from "lodash.debounce";
 
 
 
@@ -144,6 +146,10 @@ const BodyField = React.forwardRef(({actionData, autoSizeTextArea, fetcher, defa
     if (actionData?.errors?.body) setDirty(false)
   }, [actionData]);
 
+  const debouncedCompileMDX = useMemo(() => debounce((value) => {
+    fetcher.submit({mdxSource: value}, {method: 'post', action: '/api/compile-mdx'})
+  }, 300),[])
+
   return (
     <div className="grid-in-bpf-body">
       <label className="flex w-full flex-col gap-1 h-full">
@@ -154,7 +160,7 @@ const BodyField = React.forwardRef(({actionData, autoSizeTextArea, fetcher, defa
             onChange={e => {
               if(!dirty) setDirty(true)
               autoSizeTextArea(e.target.value);
-              fetcher.submit({mdxSource: e.target.value}, {method: 'post', action: '/mdx'})
+              debouncedCompileMDX(e.target.value)
             }}
             name="body"
             rows={8}
@@ -306,7 +312,7 @@ export default function EditBlogPostPage() {
     subTitleRef.current?.setAttribute("value", blogPost?.subTitle);
     emojiRef.current?.setAttribute("value", blogPost?.emoji);
     autoSizeTextArea(blogPost?.body);
-    fetcher.submit({mdxSource: blogPost?.body}, {method: 'post', action: '/mdx'});
+    fetcher.submit({mdxSource: blogPost?.body}, {method: 'post', action: '/api/compile-mdx'});
   }, []);
 
   

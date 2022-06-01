@@ -7,7 +7,7 @@ import type { ActionFunction } from "@remix-run/server-runtime";
 
 import { json } from "@remix-run/server-runtime";
 import { requireUserId } from "~/session.server";
-import { createPresignedS3Upload } from '~/s3-upload.server';
+import { createPresignedS3Upload } from '~/aws/s3-upload.server';
 
 
 

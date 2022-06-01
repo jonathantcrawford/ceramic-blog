@@ -1,6 +1,6 @@
 import type { LoaderFunction, ActionFunction } from "@remix-run/server-runtime";
 import { useFormAction, useLoaderData, useCatch, Form, useFetcher, useActionData, Outlet, Link, useSubmit } from "@remix-run/react";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import ReactDOM from "react-dom";
 import { redirect, json } from "@remix-run/server-runtime";
 import invariant from "tiny-invariant";
@@ -9,7 +9,6 @@ import { deleteBlogPost, getBlogPostById, updateBlogPost } from "~/models/blog_p
 import { requireUserId } from "~/session.server";
 import Alert from "@reach/alert";
 
-import { useMemo } from "react";
 import { getMDXComponent, mdxComponents } from "~/mdx";
 import {ErrorBoundary as ComponentErrorBoundary} from "react-error-boundary";
 
@@ -21,6 +20,8 @@ import {
   faChevronRight,
   faChevronDown
 } from "@fortawesome/free-solid-svg-icons";
+
+import debounce from "lodash.debounce";
 
 // import * as htmlToImage from 'html-to-image';
 import { toPng, getFontEmbedCSS, toJpeg } from 'html-to-image';
@@ -55,6 +56,10 @@ const PreviewImageMDXField = React.forwardRef(({actionData, autoSizeTextArea, fe
     if (actionData?.errors?.previewImageMDX) setDirty(false)
   }, [actionData]);
 
+  const debouncedCompileMDX = useMemo(() => debounce((value) => {
+    fetcher.submit({mdxSource: value}, {method: 'post', action: '/api/compile-mdx'})
+  }, 300),[])
+
   return (
     <div className="grid-in-bpf-preview-img-mdx">
         <label className="flex w-full flex-col gap-1 h-full">
@@ -65,9 +70,7 @@ const PreviewImageMDXField = React.forwardRef(({actionData, autoSizeTextArea, fe
             onChange={e => {
               if(!dirty) setDirty(true)
               autoSizeTextArea(e.target.value);
-              fetcher.submit({
-                mdxSource: `<MetaData blogPostId={'${blogPostId}'} render={({title, subTitle, emoji, updatedAt}) => (<>${e.target.value}</>)}/>`
-                }, {method: 'post', action: '/mdx'})
+              debouncedCompileMDX(e.target.value);
             }}
             name="previewImageMDX"
             rows={8}
@@ -200,7 +203,7 @@ export default function PostPageSEO() {
   React.useEffect(() => {
     previewImageMDXRef.current?.setAttribute("value", blogPost?.previewImageMDX);
     autoSizeTextArea(blogPost?.previewImageMDX);
-    fetcher.submit({mdxSource: `<MetaData blogPostId={'${blogPost?.id}'} render={({title, subTitle, emoji, updatedAt}) => (<>${blogPost?.previewImageMDX}</>)}/>`}, {method: 'post', action: '/mdx'});
+    fetcher.submit({mdxSource: `<MetaData blogPostId={'${blogPost?.id}'} render={({title, subTitle, emoji, updatedAt}) => (<>${blogPost?.previewImageMDX}</>)}/>`}, {method: 'post', action: '/api/compile-mdx'});
   }, []);
 
   
