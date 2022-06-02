@@ -140,7 +140,7 @@ const SubTitleField = React.forwardRef<any, any>(({actionData}: any, ref: any) =
 });
 
 
-const BodyField = React.forwardRef(({actionData, syncScroll, fetcher, value}: any, ref: any) => {
+const BodyField = React.forwardRef(({actionData, syncScroll, fetcher, defaultValue}: any, ref: any) => {
   const [dirty, setDirty] = useState(false);
 
 
@@ -150,6 +150,7 @@ const BodyField = React.forwardRef(({actionData, syncScroll, fetcher, value}: an
     editor.onDidScrollChange((args: any) => syncScroll(args))
 
   }
+  
 
   useEffect(() => {
     if (actionData?.errors?.body) setDirty(false)
@@ -167,8 +168,7 @@ const BodyField = React.forwardRef(({actionData, syncScroll, fetcher, value}: an
         <Editor
               theme="vs-dark"
           defaultLanguage="html"
-          defaultValue={value}
-          value={value}
+          defaultValue={defaultValue}
           options={{
             minimap: {
               enabled: false
@@ -177,9 +177,19 @@ const BodyField = React.forwardRef(({actionData, syncScroll, fetcher, value}: an
           onChange={value  => {
             if(!dirty) setDirty(true)
             debouncedCompileMDX(value)
+            if(ref.current) ref.current.innerHTML = value;
           }}
           onMount={handleEditorDidMount}
         />
+        <textarea
+          hidden
+          ref={ref}
+          name="body"
+          aria-invalid={actionData?.errors?.body ? true : undefined}
+          aria-errormessage={
+            actionData?.errors?.body ? "body-error" : undefined
+          }
+        ></textarea>
         </div>
 
       </label>
@@ -316,6 +326,7 @@ export default function EditBlogPostPage() {
     titleRef.current?.setAttribute("value", blogPost?.title);
     subTitleRef.current?.setAttribute("value", blogPost?.subTitle);
     emojiRef.current?.setAttribute("value", blogPost?.emoji);
+    if (bodyRef.current) bodyRef.current.innerHTML = blogPost?.body;
     fetcher.submit({mdxSource: blogPost?.body}, {method: 'post', action: '/api/compile-mdx'});
   }, []);
 
@@ -348,7 +359,7 @@ export default function EditBlogPostPage() {
       <TitleField ref={titleRef} actionData={actionData}/>
       <SubTitleField ref={subTitleRef} actionData={actionData}/>
 
-      <BodyField ref={bodyRef} actionData={actionData} fetcher={fetcher} value={blogPost?.body} syncScroll={syncScroll}/>
+      <BodyField ref={bodyRef} actionData={actionData} fetcher={fetcher} syncScroll={syncScroll} defaultValue={blogPost?.body}/>
       <div className="grid-in-bpf-preview mt-6 markdown overflow-hidden max-h-[100%]">
         <div ref={formPropagationBypassRef}></div>
       </div>

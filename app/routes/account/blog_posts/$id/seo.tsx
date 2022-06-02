@@ -49,7 +49,7 @@ type LoaderData = {
 
 
 
-const PreviewImageMDXField = React.forwardRef(({actionData, fetcher, value, blogPostId}: any, ref: any) => {
+const PreviewImageMDXField = React.forwardRef(({actionData, fetcher, defaultValue, blogPostId}: any, ref: any) => {
   const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
@@ -69,8 +69,7 @@ const PreviewImageMDXField = React.forwardRef(({actionData, fetcher, value, blog
           <Editor
                 theme="vs-dark"
             defaultLanguage="html"
-            defaultValue={value}
-            value={value}
+            defaultValue={defaultValue}
             options={{
               minimap: {
                 enabled: false
@@ -79,8 +78,18 @@ const PreviewImageMDXField = React.forwardRef(({actionData, fetcher, value, blog
             onChange={value  => {
               if(!dirty) setDirty(true)
               debouncedCompileMDX(value)
+              if(ref.current) ref.current.innerHTML = value;
             }}
           />
+          <textarea
+            hidden
+            ref={ref}
+            name="previewImageMDX"
+            aria-invalid={actionData?.errors?.body ? true : undefined}
+            aria-errormessage={
+              actionData?.errors?.body ? "body-error" : undefined
+            }
+          ></textarea>
           </div>
   
         </label>
@@ -198,7 +207,7 @@ export default function PostPageSEO() {
 
 
   React.useEffect(() => {
-    previewImageMDXRef.current?.setAttribute("value", blogPost?.previewImageMDX);
+    if (previewImageMDXRef.current) previewImageMDXRef.current.innerHTML = blogPost?.previewImageMDX;
     fetcher.submit({mdxSource: `<MetaData blogPostId={'${blogPost?.id}'} render={({title, subTitle, emoji, updatedAt}) => (<>${blogPost?.previewImageMDX}</>)}/>`}, {method: 'post', action: '/api/compile-mdx'});
   }, []);
 
@@ -229,7 +238,6 @@ export default function PostPageSEO() {
             body: formData
         });
         const {url, fields} = await presignedResponse.json();
-        console.log(url, fields);
         const uploadFormData = new FormData();
         Object.entries(fields).map(([k,v]: any, idx) => uploadFormData.append(k,v));
         
@@ -255,7 +263,7 @@ export default function PostPageSEO() {
             <img alt="og-preview" src={blogPost?.previewImageUrl} style={{width: '600px', height: '315px'}}/>
         </div>
         
-      <PreviewImageMDXField ref={previewImageMDXRef} blogPostId={blogPost?.id} actionData={actionData}  fetcher={fetcher} value={blogPost?.previewImageMDX}/>
+      <PreviewImageMDXField ref={previewImageMDXRef} blogPostId={blogPost?.id} actionData={actionData}  fetcher={fetcher} defaultValue={blogPost?.previewImageMDX}/>
       <div className="grid-in-bpf-preview-img mt-6 markdown grid h-[30vh]" >
           <div className="border-2 border-white-100 place-self-center">
             <div id="og-image-live-preview" style={{width: '1200px', height: '630px'}} ref={formPropagationBypassRef}></div>
