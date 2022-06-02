@@ -26,7 +26,7 @@ import debounce from "lodash.debounce";
 // import * as htmlToImage from 'html-to-image';
 import { toPng, getFontEmbedCSS, toJpeg } from 'html-to-image';
 
-
+import Editor from "@monaco-editor/react";
 
 type ActionData = {
   blogPost?: Pick<BlogPost, "title" | "subTitle" | "emoji" | "body">,
@@ -60,34 +60,35 @@ const PreviewImageMDXField = React.forwardRef(({actionData, autoSizeTextArea, fe
     fetcher.submit({mdxSource: value}, {method: 'post', action: '/api/compile-mdx'})
   }, 300),[])
 
+
   return (
-    <div className="grid-in-bpf-preview-img-mdx">
-        <label className="flex w-full flex-col gap-1 h-full">
-        <span className="text-base text-yellow-100 font-saygon">Preview Image MDX: </span>
-        <div className="autoresize-textarea w-full text-tiny font-mono bg-black-100 text-yellow-100 h-full">
-          <textarea
-            ref={ref}
-            onChange={e => {
-              if(!dirty) setDirty(true)
-              autoSizeTextArea(e.target.value);
-              debouncedCompileMDX(e.target.value);
+        <div className="grid-in-bpf-preview-img-mdx">
+        <label className="flex w-full flex-col gap-1 max-h-[60vh] h-full">
+          <span className="text-base text-yellow-100 font-saygon">Body: </span>
+          <div className="mdx-editor w-full text-tiny font-mono bg-black-100 text-yellow-100 h-full">
+          <Editor
+                theme="vs-dark"
+            defaultLanguage="html"
+            value={defaultValue}
+            options={{
+              minimap: {
+                enabled: false
+              }
             }}
-            name="previewImageMDX"
-            rows={8}
-            defaultValue={defaultValue}
-            aria-invalid={actionData?.errors?.previewImageMDX ? true : undefined}
-            aria-errormessage={
-              actionData?.errors?.previewImageMDX ? "body-error" : undefined
-            }
+            onChange={value  => {
+              if(!dirty) setDirty(true)
+              debouncedCompileMDX(value)
+            }}
           />
-        </div>
+          </div>
+  
         </label>
-        {!dirty && actionData?.errors?.previewImageMDX && (
-            <Alert className="pt-1 text-red-100 font-saygon text-base" id="previewImageMDX=error">
-            {actionData.errors.previewImageMDX}
-            </Alert>
+        {!dirty && actionData?.errors?.body && (
+          <Alert className="pt-1 text-red-100 font-saygon text-base" id="previewImageMDX=error">
+            {actionData.errors.body}
+          </Alert>
         )}
-    </div>
+      </div>
   )
 })
 
@@ -260,7 +261,7 @@ export default function PostPageSEO() {
         </div>
         
       <PreviewImageMDXField ref={previewImageMDXRef} blogPostId={blogPost?.id} actionData={actionData} autoSizeTextArea={autoSizeTextArea} fetcher={fetcher} defaultValue={blogPost?.previewImageMDX}/>
-      <div className="grid-in-bpf-preview-img mt-6 markdown grid" >
+      <div className="grid-in-bpf-preview-img mt-6 markdown grid h-[30vh]" >
           <div className="border-2 border-white-100 place-self-center">
             <div id="og-image-live-preview" style={{width: '1200px', height: '630px'}} ref={formPropagationBypassRef}></div>
           </div>

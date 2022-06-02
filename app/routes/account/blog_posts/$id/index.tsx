@@ -1,6 +1,6 @@
 import type { LoaderFunction, ActionFunction } from "@remix-run/server-runtime";
 import { useFormAction, useLoaderData, useCatch, Form, useFetcher, useActionData, Outlet, Link } from "@remix-run/react";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import ReactDOM from "react-dom";
 import { redirect, json } from "@remix-run/server-runtime";
 import invariant from "tiny-invariant";
@@ -8,7 +8,7 @@ import type { BlogPost } from "~/models/blog_post.server";
 import { deleteBlogPost, getBlogPostById, updateBlogPost } from "~/models/blog_post.server";
 import { requireUserId } from "~/session.server";
 import Alert from "@reach/alert";
-
+import Editor from "@monaco-editor/react";
 
 import { getMDXComponent, mdxComponents } from "~/mdx";
 import {ErrorBoundary as ComponentErrorBoundary} from "react-error-boundary";
@@ -23,6 +23,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import debounce  from "lodash.debounce";
+
 
 
 
@@ -139,8 +140,16 @@ const SubTitleField = React.forwardRef<any, any>(({actionData}: any, ref: any) =
 });
 
 
-const BodyField = React.forwardRef(({actionData, autoSizeTextArea, fetcher, defaultValue}: any, ref: any) => {
+const BodyField = React.forwardRef(({actionData, syncScroll, fetcher, defaultValue}: any, ref: any) => {
   const [dirty, setDirty] = useState(false);
+
+
+  function handleEditorDidMount(editor: any, monaco: any) {
+    // here is the editor instance
+    // you can store it in `useRef` for further usage
+    editor.onDidScrollChange((args: any) => syncScroll(args))
+
+  }
 
   useEffect(() => {
     if (actionData?.errors?.body) setDirty(false)
@@ -152,25 +161,26 @@ const BodyField = React.forwardRef(({actionData, autoSizeTextArea, fetcher, defa
 
   return (
     <div className="grid-in-bpf-body">
-      <label className="flex w-full flex-col gap-1 h-full">
+      <label className="flex w-full flex-col gap-1 max-h-[60vh] h-full">
         <span className="text-base text-yellow-100 font-saygon">Body: </span>
-        <div className="autoresize-textarea w-full text-tiny font-mono bg-black-100 text-yellow-100 h-full">
-          <textarea
-            ref={ref}
-            onChange={e => {
-              if(!dirty) setDirty(true)
-              autoSizeTextArea(e.target.value);
-              debouncedCompileMDX(e.target.value)
-            }}
-            name="body"
-            rows={8}
-            defaultValue={defaultValue}
-            aria-invalid={actionData?.errors?.body ? true : undefined}
-            aria-errormessage={
-              actionData?.errors?.body ? "body-error" : undefined
+        <div className="mdx-editor w-full text-tiny font-mono bg-black-100 text-yellow-100 h-full">
+        <Editor
+              theme="vs-dark"
+          defaultLanguage="html"
+          value={defaultValue}
+          options={{
+            minimap: {
+              enabled: false
             }
-          />
+          }}
+          onChange={value  => {
+            if(!dirty) setDirty(true)
+            debouncedCompileMDX(value)
+          }}
+          onMount={handleEditorDidMount}
+        />
         </div>
+
       </label>
       {!dirty && actionData?.errors?.body && (
         <Alert className="pt-1 text-red-100 font-saygon text-base" id="body=error">
@@ -183,11 +193,11 @@ const BodyField = React.forwardRef(({actionData, autoSizeTextArea, fetcher, defa
 
 const ErrorFallback = ({ error, resetErrorBoundary }: any) => {
   return (
-    <div role="alert" className="flex flex-col justify-start">
+    <Alert className="flex flex-col justify-start">
       <div className="text-red-100 font-saygon text-lg whitespace-pre-wrap mb-3">{error.message}</div>
       <div className="text-white-100 font-saygon text-md mb-3">Check your syntax and try to recompile.</div>
       <button className="btn self-center m-8" onClick={resetErrorBoundary}>Recompile</button>
-    </div>
+    </Alert>
   );
 };
 
@@ -286,7 +296,6 @@ export default function EditBlogPostPage() {
   const bodyRef = React.useRef<HTMLTextAreaElement>(null);
   const formPropagationBypassRef = React.useRef<HTMLDivElement>(null);
 
-
   React.useEffect(() => {
     if (actionData?.errors?.title) {
       titleRef.current?.focus();
@@ -298,12 +307,7 @@ export default function EditBlogPostPage() {
       bodyRef.current?.focus();
     } 
   }, [actionData]);
-
-  const autoSizeTextArea = (replicatedValue: string) => {
-    if (bodyRef?.current) {
-      bodyRef?.current?.parentElement?.setAttribute('data-replicated-value', replicatedValue)
-    }
-  }
+  
 
   const fetcher = useFetcher();
 
@@ -311,8 +315,14 @@ export default function EditBlogPostPage() {
     titleRef.current?.setAttribute("value", blogPost?.title);
     subTitleRef.current?.setAttribute("value", blogPost?.subTitle);
     emojiRef.current?.setAttribute("value", blogPost?.emoji);
-    autoSizeTextArea(blogPost?.body);
     fetcher.submit({mdxSource: blogPost?.body}, {method: 'post', action: '/api/compile-mdx'});
+  }, []);
+
+
+  const syncScroll = useCallback(({scrollHeight, scrollTop}: any) => {
+    if (formPropagationBypassRef.current) {
+      formPropagationBypassRef.current.style.transform = `translateY(${-scrollTop}px)`
+    }
   }, []);
 
   
@@ -320,9 +330,9 @@ export default function EditBlogPostPage() {
     fetcher?.data?.code
     ? getMDXComponent(fetcher?.data?.code) 
     : () => (
-      <div className="h-full text-red-100 text-md font-saygon flex items-center justify-center">
+        <Alert className="h-full text-red-100 text-md font-saygon flex items-center justify-center">
           {fetcher?.data?.error}
-      </div>
+        </Alert>
       )
     , [fetcher?.data?.code, fetcher?.data?.error]);
 
@@ -337,8 +347,11 @@ export default function EditBlogPostPage() {
       <TitleField ref={titleRef} actionData={actionData}/>
       <SubTitleField ref={subTitleRef} actionData={actionData}/>
 
-      <BodyField ref={bodyRef} actionData={actionData} autoSizeTextArea={autoSizeTextArea} fetcher={fetcher} defaultValue={blogPost?.body}/>
-      <div className="grid-in-bpf-preview mt-6 markdown" ref={formPropagationBypassRef}></div>
+      <BodyField ref={bodyRef} actionData={actionData} fetcher={fetcher} defaultValue={blogPost?.body} syncScroll={syncScroll}/>
+      <div className="grid-in-bpf-preview mt-6 markdown overflow-hidden max-h-[100%]">
+        <div ref={formPropagationBypassRef}></div>
+      </div>
+      
 
       <div className="grid-in-bpf-submit flex items-center w-full justify-end">
       <button
