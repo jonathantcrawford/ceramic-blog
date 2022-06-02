@@ -49,7 +49,7 @@ type LoaderData = {
 
 
 
-const PreviewImageMDXField = React.forwardRef(({actionData, autoSizeTextArea, fetcher, defaultValue, blogPostId}: any, ref: any) => {
+const PreviewImageMDXField = React.forwardRef(({actionData, fetcher, value, blogPostId}: any, ref: any) => {
   const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const PreviewImageMDXField = React.forwardRef(({actionData, autoSizeTextArea, fe
   }, [actionData]);
 
   const debouncedCompileMDX = useMemo(() => debounce((value) => {
-    fetcher.submit({mdxSource: value}, {method: 'post', action: '/api/compile-mdx'})
+    fetcher.submit({mdxSource: `<MetaData blogPostId={'${blogPostId}'} render={({title, subTitle, emoji, updatedAt}) => (<>${value}</>)}/>`}, {method: 'post', action: '/api/compile-mdx'});
   }, 300),[])
 
 
@@ -69,7 +69,8 @@ const PreviewImageMDXField = React.forwardRef(({actionData, autoSizeTextArea, fe
           <Editor
                 theme="vs-dark"
             defaultLanguage="html"
-            value={defaultValue}
+            defaultValue={value}
+            value={value}
             options={{
               minimap: {
                 enabled: false
@@ -190,11 +191,6 @@ export default function PostPageSEO() {
     } 
   }, [actionData]);
 
-  const autoSizeTextArea = (replicatedValue: string) => {
-    if (previewImageMDXRef?.current) {
-        previewImageMDXRef?.current?.parentElement?.setAttribute('data-replicated-value', replicatedValue)
-    }
-  }
 
   const fetcher = useFetcher();
 
@@ -203,7 +199,6 @@ export default function PostPageSEO() {
 
   React.useEffect(() => {
     previewImageMDXRef.current?.setAttribute("value", blogPost?.previewImageMDX);
-    autoSizeTextArea(blogPost?.previewImageMDX);
     fetcher.submit({mdxSource: `<MetaData blogPostId={'${blogPost?.id}'} render={({title, subTitle, emoji, updatedAt}) => (<>${blogPost?.previewImageMDX}</>)}/>`}, {method: 'post', action: '/api/compile-mdx'});
   }, []);
 
@@ -212,9 +207,9 @@ export default function PostPageSEO() {
     fetcher?.data?.code
     ? getMDXComponent(fetcher?.data?.code) 
     : () => (
-      <div className="h-full text-red-100 text-md font-saygon flex items-center justify-center">
+      <Alert className="h-full text-red-100 text-md font-saygon flex items-center justify-center">
           {fetcher?.data?.error}
-      </div>
+      </Alert>
       )
     , [fetcher?.data?.code, fetcher?.data?.error]);
 
@@ -260,7 +255,7 @@ export default function PostPageSEO() {
             <img alt="og-preview" src={blogPost?.previewImageUrl} style={{width: '600px', height: '315px'}}/>
         </div>
         
-      <PreviewImageMDXField ref={previewImageMDXRef} blogPostId={blogPost?.id} actionData={actionData} autoSizeTextArea={autoSizeTextArea} fetcher={fetcher} defaultValue={blogPost?.previewImageMDX}/>
+      <PreviewImageMDXField ref={previewImageMDXRef} blogPostId={blogPost?.id} actionData={actionData}  fetcher={fetcher} value={blogPost?.previewImageMDX}/>
       <div className="grid-in-bpf-preview-img mt-6 markdown grid h-[30vh]" >
           <div className="border-2 border-white-100 place-self-center">
             <div id="og-image-live-preview" style={{width: '1200px', height: '630px'}} ref={formPropagationBypassRef}></div>

@@ -140,7 +140,7 @@ const SubTitleField = React.forwardRef<any, any>(({actionData}: any, ref: any) =
 });
 
 
-const BodyField = React.forwardRef(({actionData, syncScroll, fetcher, defaultValue}: any, ref: any) => {
+const BodyField = React.forwardRef(({actionData, syncScroll, fetcher, value}: any, ref: any) => {
   const [dirty, setDirty] = useState(false);
 
 
@@ -167,7 +167,8 @@ const BodyField = React.forwardRef(({actionData, syncScroll, fetcher, defaultVal
         <Editor
               theme="vs-dark"
           defaultLanguage="html"
-          value={defaultValue}
+          defaultValue={value}
+          value={value}
           options={{
             minimap: {
               enabled: false
@@ -347,7 +348,7 @@ export default function EditBlogPostPage() {
       <TitleField ref={titleRef} actionData={actionData}/>
       <SubTitleField ref={subTitleRef} actionData={actionData}/>
 
-      <BodyField ref={bodyRef} actionData={actionData} fetcher={fetcher} defaultValue={blogPost?.body} syncScroll={syncScroll}/>
+      <BodyField ref={bodyRef} actionData={actionData} fetcher={fetcher} value={blogPost?.body} syncScroll={syncScroll}/>
       <div className="grid-in-bpf-preview mt-6 markdown overflow-hidden max-h-[100%]">
         <div ref={formPropagationBypassRef}></div>
       </div>
