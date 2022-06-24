@@ -348,7 +348,14 @@ export async function updateBlogPost({
       ]
     }).promise();
 
-    await createCloudfrontInvalidation({paths: [`/blog/${slug ?? oldSlug}*`]});
+    await createCloudfrontInvalidation({
+      paths: [
+        '/blog',
+        '/blog?*',
+        `/blog/${slug ?? oldSlug}*`, 
+        ...(slug !== undefined && slug !== oldSlug ? [`/blog/${oldSlug}*`] : [])
+      ]
+    });
 
     return {
       blogPost: {
