@@ -91,7 +91,7 @@ module.exports = {
     gridTemplateColumns: {
       'layout': '5vw 20vw 70vw 5vw',
       'blog-post-forms': '120px auto',
-      'blog-post-content-form': '80px auto auto 80px',
+      'blog-post-content-form': '80px minmax(400px,700px) minmax(400px,auto) 80px',
       'blog-post-seo-form': '80px auto auto 80px',
       'account': 'min-content 250px auto'
     },

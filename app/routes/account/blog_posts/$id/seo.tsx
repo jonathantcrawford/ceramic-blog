@@ -26,7 +26,7 @@ import debounce from "lodash.debounce";
 // import * as htmlToImage from 'html-to-image';
 import { toPng, getFontEmbedCSS, toJpeg } from 'html-to-image';
 
-
+import Editor from "@monaco-editor/react";
 
 type ActionData = {
   blogPost?: Pick<BlogPost, "title" | "subTitle" | "emoji" | "body">,
@@ -49,7 +49,7 @@ type LoaderData = {
 
 
 
-const PreviewImageMDXField = React.forwardRef(({actionData, autoSizeTextArea, fetcher, defaultValue, blogPostId}: any, ref: any) => {
+const PreviewImageMDXField = React.forwardRef(({actionData, fetcher, defaultValue, blogPostId}: any, ref: any) => {
   const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
@@ -57,37 +57,48 @@ const PreviewImageMDXField = React.forwardRef(({actionData, autoSizeTextArea, fe
   }, [actionData]);
 
   const debouncedCompileMDX = useMemo(() => debounce((value) => {
-    fetcher.submit({mdxSource: value}, {method: 'post', action: '/api/compile-mdx'})
+    fetcher.submit({mdxSource: `<MetaData blogPostId={'${blogPostId}'} render={({title, subTitle, emoji, updatedAt}) => (<>${value}</>)}/>`}, {method: 'post', action: '/api/compile-mdx'});
   }, 300),[])
 
+
   return (
-    <div className="grid-in-bpf-preview-img-mdx">
-        <label className="flex w-full flex-col gap-1 h-full">
-        <span className="text-base text-yellow-100 font-saygon">Preview Image MDX: </span>
-        <div className="autoresize-textarea w-full text-tiny font-mono bg-black-100 text-yellow-100 h-full">
-          <textarea
-            ref={ref}
-            onChange={e => {
-              if(!dirty) setDirty(true)
-              autoSizeTextArea(e.target.value);
-              debouncedCompileMDX(e.target.value);
-            }}
-            name="previewImageMDX"
-            rows={8}
+        <div className="grid-in-bpf-preview-img-mdx">
+        <label className="flex w-full flex-col gap-1 max-h-[60vh] h-full">
+          <span className="text-base text-yellow-100 font-saygon">Body: </span>
+          <div className="mdx-editor w-full text-tiny font-mono bg-black-100 text-yellow-100 h-full">
+          <Editor
+                theme="vs-dark"
+            defaultLanguage="html"
             defaultValue={defaultValue}
-            aria-invalid={actionData?.errors?.previewImageMDX ? true : undefined}
-            aria-errormessage={
-              actionData?.errors?.previewImageMDX ? "body-error" : undefined
-            }
+            options={{
+              minimap: {
+                enabled: false
+              }
+            }}
+            onChange={value  => {
+              if(!dirty) setDirty(true)
+              debouncedCompileMDX(value)
+              if(ref.current) ref.current.innerHTML = value;
+            }}
           />
-        </div>
+          <textarea
+            hidden
+            ref={ref}
+            name="previewImageMDX"
+            aria-invalid={actionData?.errors?.body ? true : undefined}
+            aria-errormessage={
+              actionData?.errors?.body ? "body-error" : undefined
+            }
+          ></textarea>
+          </div>
+  
         </label>
-        {!dirty && actionData?.errors?.previewImageMDX && (
-            <Alert className="pt-1 text-red-100 font-saygon text-base" id="previewImageMDX=error">
-            {actionData.errors.previewImageMDX}
-            </Alert>
+        {!dirty && actionData?.errors?.body && (
+          <Alert className="pt-1 text-red-100 font-saygon text-base" id="previewImageMDX=error">
+            {actionData.errors.body}
+          </Alert>
         )}
-    </div>
+      </div>
   )
 })
 
@@ -189,11 +200,6 @@ export default function PostPageSEO() {
     } 
   }, [actionData]);
 
-  const autoSizeTextArea = (replicatedValue: string) => {
-    if (previewImageMDXRef?.current) {
-        previewImageMDXRef?.current?.parentElement?.setAttribute('data-replicated-value', replicatedValue)
-    }
-  }
 
   const fetcher = useFetcher();
 
@@ -201,8 +207,7 @@ export default function PostPageSEO() {
 
 
   React.useEffect(() => {
-    previewImageMDXRef.current?.setAttribute("value", blogPost?.previewImageMDX);
-    autoSizeTextArea(blogPost?.previewImageMDX);
+    if (previewImageMDXRef.current) previewImageMDXRef.current.innerHTML = blogPost?.previewImageMDX;
     fetcher.submit({mdxSource: `<MetaData blogPostId={'${blogPost?.id}'} render={({title, subTitle, emoji, updatedAt}) => (<>${blogPost?.previewImageMDX}</>)}/>`}, {method: 'post', action: '/api/compile-mdx'});
   }, []);
 
@@ -211,9 +216,9 @@ export default function PostPageSEO() {
     fetcher?.data?.code
     ? getMDXComponent(fetcher?.data?.code) 
     : () => (
-      <div className="h-full text-red-100 text-md font-saygon flex items-center justify-center">
+      <Alert className="h-full text-red-100 text-md font-saygon flex items-center justify-center">
           {fetcher?.data?.error}
-      </div>
+      </Alert>
       )
     , [fetcher?.data?.code, fetcher?.data?.error]);
 
@@ -233,7 +238,6 @@ export default function PostPageSEO() {
             body: formData
         });
         const {url, fields} = await presignedResponse.json();
-        console.log(url, fields);
         const uploadFormData = new FormData();
         Object.entries(fields).map(([k,v]: any, idx) => uploadFormData.append(k,v));
         
@@ -259,8 +263,8 @@ export default function PostPageSEO() {
             <img alt="og-preview" src={blogPost?.previewImageUrl} style={{width: '600px', height: '315px'}}/>
         </div>
         
-      <PreviewImageMDXField ref={previewImageMDXRef} blogPostId={blogPost?.id} actionData={actionData} autoSizeTextArea={autoSizeTextArea} fetcher={fetcher} defaultValue={blogPost?.previewImageMDX}/>
-      <div className="grid-in-bpf-preview-img mt-6 markdown grid" >
+      <PreviewImageMDXField ref={previewImageMDXRef} blogPostId={blogPost?.id} actionData={actionData}  fetcher={fetcher} defaultValue={blogPost?.previewImageMDX}/>
+      <div className="grid-in-bpf-preview-img mt-6 markdown grid h-[30vh]" >
           <div className="border-2 border-white-100 place-self-center">
             <div id="og-image-live-preview" style={{width: '1200px', height: '630px'}} ref={formPropagationBypassRef}></div>
           </div>
