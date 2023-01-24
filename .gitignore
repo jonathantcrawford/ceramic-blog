@@ -17,3 +17,5 @@ sam.yaml
 
 
 node_modules/.cache
+
+yarn-error.log
