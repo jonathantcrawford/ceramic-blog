@@ -13,7 +13,7 @@
     "build:css": "npm run generate:css -- --minify",
     "build:remix": "remix build",
     "dev": "npm run clean && run-p dev:*",
-    "dev:arc": "ARC_TABLES_PORT=8000 ARC_DB_EXTERNAL=true arc sandbox",
+    "dev:arc": "ARC_ENV=staging arc sandbox",
     "dev:css": "npm run generate:css -- --watch",
     "dev:remix": "remix watch",
     "format": "prettier --write .",
