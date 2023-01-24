@@ -32,6 +32,7 @@ export const About = () => {
         <NavLink prefetch="none" to="/blog"  className={navLinkClasses}>
           blog
         </NavLink>
+        😎
         .
       </div>
     </div>
