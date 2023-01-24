@@ -140,7 +140,7 @@ jobs:
         run:  yarn && yarn build 
 
       - name: 🛠 Install Arc
-        run: yarn global add @architect/architect aws-sdk
+        run: yarn global add @architect/architect @aws-sdk
 
       - name: 🚀 Staging Deploy
         if: github.ref == 'refs/heads/dev'
