@@ -28,11 +28,10 @@ export const About = () => {
         <br/>and web3 user experiences.
       </div>
       <div className={divClasses}>
-        Feel free to check out my{" "}
+        Check out my{" "}
         <NavLink prefetch="none" to="/blog"  className={navLinkClasses}>
           blog
         </NavLink>
-        😎
         .
       </div>
     </div>
