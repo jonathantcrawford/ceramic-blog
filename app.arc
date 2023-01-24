@@ -47,3 +47,7 @@ blog_post
 analytics
   blogPostId *String
   name byBlogPostId
+
+@sandbox
+env staging
+useAWS true
