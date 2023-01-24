@@ -1,6 +1,7 @@
 @aws
 region us-east-1
 apigateway httpv2
+runtime nodejs18.x
 
 @app
 blog

@@ -4,7 +4,6 @@ on:
     branches:
       - main
       - dev
-  pull_request: {}
 
 defaults:
   run:
@@ -107,20 +106,20 @@ jobs:
   #          PORT: "8811"
 
   deploy:
+    concurrency:
+      group: ${{ github.ref }}
+      cancel-in-progress: true
     #needs: [lint, typecheck, vitest, cypress]
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
-
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 
       - name: ⎔ Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 14.19.1
+          node-version: 18.13.0
 
       - name: 👀 Env
         run: |
@@ -140,7 +139,7 @@ jobs:
         run:  yarn && yarn build 
 
       - name: 🛠 Install Arc
-        run: yarn global add @architect/architect aws-sdk
+        run: yarn global add @architect/architect
 
       - name: 🚀 Staging Deploy
         if: github.ref == 'refs/heads/dev'

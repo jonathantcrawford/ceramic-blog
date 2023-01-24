@@ -2,11 +2,6 @@ import { useEffect, useState } from "react";
 
 import { NavLink, useResolvedPath, useTransition } from "@remix-run/react";
 
-import { Core, PublicID } from '@self.id/core';
-
-import publishedModel from "~ceramic/models/model.json";
-import type { ModelTypes, BlogPostItem } from "~ceramic/models/types";
-import type { ModelTypesToAliases } from "@glazed/types";
 
 import { BlogPost } from "~/models/blog_post.server";
 
