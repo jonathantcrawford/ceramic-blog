@@ -7,7 +7,7 @@ import invariant from "tiny-invariant";
 import type { BlogPost } from "~/models/blog_post.server";
 import { deleteBlogPost, getBlogPostById, updateBlogPost } from "~/models/blog_post.server";
 import { requireUserId } from "~/session.server";
-import { Alert } from "@reach/alert";
+import { Alert } from "~/components/Alert";
 
 import { getMDXComponent, mdxComponents } from "~/mdx";
 import {ErrorBoundary as ComponentErrorBoundary} from "react-error-boundary";
