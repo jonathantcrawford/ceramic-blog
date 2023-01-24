@@ -49,4 +49,5 @@ analytics
   name byBlogPostId
 
 @sandbox
+env staging
 useAWS true
