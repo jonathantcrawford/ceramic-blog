@@ -7,6 +7,7 @@ import { State } from "./State/State";
 import { MetaData } from "./MetaData/MetaData";
 
 
+
 const mdxComponents = {
     ExampleComponent,
     CodeSnippet,
@@ -16,7 +17,12 @@ const mdxComponents = {
     MetaData
 }
 
+const mdxComponentLinks = () => ([
+    
+]);
+
 export {
     getMDXComponent,
-    mdxComponents
+    mdxComponents,
+    mdxComponentLinks
 }
