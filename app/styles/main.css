@@ -141,6 +141,12 @@
     font-style: italic;
     font-display: swap;
   }
+
+  .markdown {
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
+  }
   
   .markdown h1 {
     @apply text-white-100 font-saygon text-6xl font-semibold mb-4;
@@ -167,7 +173,7 @@
   }
 
   .markdown p {
-    @apply text-white-100 font-saygon text-lg mb-4 leading-14;
+    @apply text-white-100 font-saygon text-lg mb-4 leading-8;
     @apply text-base
   }
 
