@@ -141,34 +141,40 @@
     font-style: italic;
     font-display: swap;
   }
+
+  .markdown {
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
+  }
   
   .markdown h1 {
-    @apply text-white-100 font-saygon text-6xl font-semibold mb-4;
+    @apply text-white-100 font-saygon text-5xl font-semibold mb-4;
   }
 
   .markdown h2 {
-    @apply text-white-100 font-saygon text-5xl mb-4;
-  }
-
-  .markdown h3 {
     @apply text-white-100 font-saygon text-4xl mb-4;
   }
 
-  .markdown h4 {
+  .markdown h3 {
     @apply text-white-100 font-saygon text-3xl mb-4;
   }
 
-  .markdown h5 {
+  .markdown h4 {
     @apply text-white-100 font-saygon text-2xl mb-4;
   }
 
-  .markdown h6 {
+  .markdown h5 {
     @apply text-white-100 font-saygon text-xl mb-4;
   }
 
+  .markdown h6 {
+    @apply text-white-100 font-saygon text-lg mb-4;
+  }
+
   .markdown p {
-    @apply text-white-100 font-saygon text-lg mb-4 leading-14;
-    @apply mobile:text-base
+    @apply text-white-100 font-saygon text-base mb-4 leading-8;
+    @apply text-base
   }
 
   .markdown ol,

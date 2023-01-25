@@ -65,7 +65,7 @@ export const PostLinks = ({title, linkPrefix, linkAttribute, posts}: {title: str
             key={post.slug}
             prefetch="intent"
             to={`${linkPrefix}${post[linkAttribute]}`}
-            className="p-5 rounded-[2vmin] border-[0.05vmin] no-underline flex mobile:flex-col md:flex-row md:items-center md:flex-wrap"
+            className="p-5 rounded-[2vmin] border-[0.05vmin] no-underline flex flex-col md:flex-row md:items-center md:flex-wrap"
           >
                 <span className="text-xl font-normal font-saygon mb-2 md:flex-[1_1_100%]">
                   {post.emoji} {`${post.title}`}

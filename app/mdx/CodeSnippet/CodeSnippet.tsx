@@ -1,20 +1,24 @@
-import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
-import json from "react-syntax-highlighter/dist/cjs/languages/hljs/json";
-import syntaxHighlighterTheme from "react-syntax-highlighter/dist/cjs/styles/hljs/gml";
+import Highlight, { defaultProps } from "prism-react-renderer";
+import theme from "prism-react-renderer/themes/vsDark";
 
-
-SyntaxHighlighter.registerLanguage("json", json);
-
-
-export const CodeSnippet = ({ string, fileName }: any) => {
-  
-
+export const CodeSnippet = ({ string, fileName, language = "json" }: any) => {
   return (
     <section className="code-snippet">
-      <code className="file-name">{fileName}</code>
-      <SyntaxHighlighter language="json" style={syntaxHighlighterTheme}>
-        {string}
-      </SyntaxHighlighter>
+      {fileName && <code className="file-name">{fileName}</code>}
+      <Highlight {...defaultProps} code={string} language="json" theme={theme}>
+        {({ className, style, tokens, getLineProps, getTokenProps }) => (
+          <pre className={className} style={style}>
+            {tokens.map((line, i) => (
+              <div {...getLineProps({ line })} key={i}>
+                {line.map((token, j) => (
+                  <span {...getTokenProps({ token })} key={j} />
+                ))}
+              </div>
+            ))}
+          </pre>
+        )}
+      </Highlight>
+
     </section>
   );
 };

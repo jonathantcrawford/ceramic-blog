@@ -14,7 +14,7 @@ export default function Main() {
 
 
     return (
-        <div className="grid grid-areas-layout grid-cols-layout grid-rows-layout min-h-screen bg-black-100">
+        <div className="grid grid-areas-layout grid-cols-layout grid-rows-layout md:grid-areas-desktop-layout md:grid-cols-desktop-layout md:grid-rows-desktop-layout min-h-screen bg-black-100">
         <div className="grid-in-ga-header w-full">
           <Header />
         </div>
