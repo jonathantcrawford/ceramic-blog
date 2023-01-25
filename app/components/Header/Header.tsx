@@ -26,7 +26,7 @@ export const Header = () => {
         <span className="w-min leading-8">Jon Crawford</span>
       </NavLink>
       <div className="mt-1 font-hamlin font-light text-base text-white-100">
-        <b>Software Engineer</b> <b>@</b>{" "}
+        <b>Sr. Software Engineer</b> <b>@</b>{" "}
         <a
           className="no-underline text-yellow-100 hover:text-yellow-200"
           rel="noreferrer"
