@@ -142,10 +142,14 @@
     font-display: swap;
   }
 
-  .markdown {
+  .hyphens {
     -webkit-hyphens: auto;
     -moz-hyphens: auto;
     hyphens: auto;
+  }
+
+  .markdown {
+    @apply hyphens;
   }
   
   .markdown h1 {
