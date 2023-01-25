@@ -1,13 +1,7 @@
 import Highlight, { defaultProps } from "prism-react-renderer";
 import theme from "prism-react-renderer/themes/vsDark";
 
-
-
-
 export const CodeSnippet = ({ string, fileName, language = "json" }: any) => {
-
-
-
   return (
     <section className="code-snippet">
       {fileName && <code className="file-name">{fileName}</code>}

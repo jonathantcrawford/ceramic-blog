@@ -24,11 +24,6 @@ import {
 
 import debounce  from "lodash.debounce";
 
-import {
-  mdxComponentLinks
-} from "~/mdx/index";
-
-
 
 
 type ActionData = {
@@ -46,10 +41,6 @@ type LoaderData = {
   blogPost: Pick<BlogPost, "body" | "title" | "subTitle" | "slug" | "emoji" | "status">;
 };
 
-
-export const links = () => [
-  ...mdxComponentLinks(),
-];
 
 
 const EmojiField = React.forwardRef<any, any>(({actionData}: any, ref) => {

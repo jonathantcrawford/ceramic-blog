@@ -17,12 +17,8 @@ const mdxComponents = {
     MetaData
 }
 
-const mdxComponentLinks = () => ([
-    
-]);
 
 export {
     getMDXComponent,
     mdxComponents,
-    mdxComponentLinks
 }

@@ -68,6 +68,16 @@ module.exports = {
         '. . . .',
         '. ga-header ga-header .',
         '. . . .',
+        '. ga-links ga-links .',
+        '. . . .',
+        '. ga-content ga-content .',
+        '. . . .',
+        '. ga-footer ga-footer .',
+      ],
+      'desktop-layout': [
+        '. . . .',
+        '. ga-header ga-header .',
+        '. . . .',
         '. ga-links ga-content .',
         '. . . .',
         '. ga-footer ga-footer .',
@@ -92,13 +102,15 @@ module.exports = {
     },
     gridTemplateColumns: {
       'layout': '5vw 20vw 70vw 5vw',
+      'desktop-layout': '5vw 20vw 70vw 5vw',
       'blog-post-forms': '120px auto',
       'blog-post-content-form': '80px minmax(400px,700px) minmax(400px,auto) 80px',
       'blog-post-seo-form': '80px auto auto 80px',
       'account': 'min-content 250px auto'
     },
     gridTemplateRows: {
-      'layout': '5vh min-content 5vh auto 5vh min-content',
+      'layout': '2rem min-content 1rem min-content 1rem auto 2rem min-content',
+      'desktop-layout': '2rem min-content 2rem auto 2rem min-content',
       'blog-post-forms': 'auto',
       'blog-post-content-form': 'min-content min-content min-content auto',
       'blog-post-seo-form': 'min-content auto auto',
