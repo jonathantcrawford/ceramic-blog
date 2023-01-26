@@ -387,6 +387,10 @@
     @apply font-saygon text-6xl pb-2 font-bold;
   }
 
+  .resume-template a {
+    @apply font-saygon text-yellow-100;
+  }
+
   .resume-template h2 {
     @apply font-saygon text-5xl pb-2;
   }

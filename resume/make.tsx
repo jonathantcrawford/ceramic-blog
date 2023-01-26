@@ -12,32 +12,13 @@ import htmlToPdfMake from "html-to-pdfmake";
 const { window } = new JSDOM("");
 
   
-const htmlString = renderToString(<ResumeTemplate includeHeader/>)
+const htmlString = renderToString(<ResumeTemplate pdfMake/>)
 
 
 
 const html = htmlToPdfMake(htmlString, { 
   window,
-  defaultStyles: {
-    h1: {
-      marginBottom: 10,
-      fontSize: 18
-    },
-    h2: {
-      marginBottom: 10,
-      fontSize: 16
-    },
-    h3: {
-      marginBottom: 10,
-      fontSize: 14
-    },
-    li: {
-      fontSize: 12
-    },
-    section: {
-      marginBottom: 200,
-    }
-  }
+  defaultStyles: {}
 });
 
 
@@ -46,6 +27,8 @@ const docDefinition = {
     html
   ]
 };
+
+console.log(JSON.stringify(docDefinition, null, 2));
 
 
 var pdfDocGenerator = pdfMake.createPdf(docDefinition, undefined, undefined, pdfFonts.pdfMake.vfs);
