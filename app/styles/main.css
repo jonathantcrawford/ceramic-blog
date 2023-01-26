@@ -427,7 +427,7 @@
   }
 
   .resume-template th {
-    @apply text-base text-left;
+    @apply text-xs text-left;
   }
 
   .resume-template tr {
@@ -435,7 +435,7 @@
   }
 
   .resume-template td {
-    @apply font-saygon text-sm text-left px-2;
+    @apply text-xs text-left pr-2;
   }
 
 }

@@ -1,24 +1,4 @@
 import * as React from "react";
-import "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFlask,
-  faComputer,
-  faBook,
-  faCode,
-  faGrip,
-  faLink,
-  type IconDefinition,
-} from "@fortawesome/free-solid-svg-icons";
-import { Link } from "@remix-run/react";
-
-const skill_type_icon_map: Record<typeof skills[number]["type"], IconDefinition>  = {
-  programming_language: faCode,
-  framework: faGrip,
-  library: faBook,
-  dev_tool: faComputer,
-  test_tool: faFlask
-};
 
 
 const skills = [
@@ -111,7 +91,7 @@ const degrees = [
 
 const Section = ({ id, title,  children}: any) => {
   return (
-    <section id={id} data-pdfmake={`{"marginBottom": 20}`}>
+    <section id={id} data-pdfmake={`{"marginBottom": 25}`}>
       <h1 data-pdfmake={`{"fontSize": 20}`}>{title}</h1>
       {children}
     </section>
@@ -176,19 +156,19 @@ const Skills = () => {
   let columnCount = [languages.length, dev_tools.length, frameworks.length].sort((a, b) => a - b).pop();
   columnCount = (columnCount ?? 0) + 1; // bump column for spacing
 
-  const language_columns = Array(columnCount).fill(null, 0).map((n, idx) => languages?.[idx] ? languages[idx] : null)
-  const dev_tool_columns = Array(columnCount).fill(null, 0).map((n, idx) => dev_tools?.[idx] ? dev_tools[idx] : null)
-  const framework_columns = Array(columnCount).fill(null, 0).map((n, idx) => frameworks?.[idx] ? frameworks[idx] : null)
-  const test_tool_columns = Array(columnCount).fill(null, 0).map((n, idx) => test_tools?.[idx] ? test_tools[idx] : null)
+  const language_columns = Array(columnCount).fill(null, 0).map((n, idx) => languages?.[idx] ? languages[idx] : null);
+  const dev_tool_columns = Array(columnCount).fill(null, 0).map((n, idx) => dev_tools?.[idx] ? dev_tools[idx] : null);
+  const framework_columns = Array(columnCount).fill(null, 0).map((n, idx) => frameworks?.[idx] ? frameworks[idx] : null);
+  const test_tool_columns = Array(columnCount).fill(null, 0).map((n, idx) => test_tools?.[idx] ? test_tools[idx] : null);
 
   return (
     <Section id="skills" title="Skills">
       <table data-pdfmake={`{"widths": ["25%", "25%", "25%", "25%"]}`}>
         <tr>
-          <th><span><FontAwesomeIcon icon={skill_type_icon_map["programming_language"]} width="10" height="10"/> languages</span></th>
-          <th><span><FontAwesomeIcon icon={skill_type_icon_map["dev_tool"]} width="10" height="10"/> dev tools</span></th>
-          <th><span><FontAwesomeIcon icon={skill_type_icon_map["framework"]} width="10" height="10"/> frameworks</span></th>
-          <th><span><FontAwesomeIcon icon={skill_type_icon_map["test_tool"]} width="10" height="10"/> test tools</span></th>
+          <th>languages</th>
+          <th>dev tools</th>
+          <th>frameworks</th>
+          <th>test tools</th>
         </tr>
         {Array(columnCount).fill(null, 0).map((n, idx) => {
           const language_column = language_columns[idx];
