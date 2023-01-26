@@ -153,11 +153,21 @@ jobs:
           arc env --add --env staging S3_ENV_PREFIX ${{ secrets.STAGING_S3_ENV_PREFIX }}
           arc env --add --env staging S3_REGION ${{ secrets.STAGING_S3_REGION }}
           arc env --add --env staging SESSION_SECRET ${{ secrets.STAGING_SESSION_SECRET }}
+          arc env --add --env staging AWS_CLOUDFRONT_DISTRIBUTION_ID ${{ secrets.STAGING_AWS_CLOUDFRONT_DISTRIBUTION_ID }}
           arc deploy --staging --prune
         env:
           CI: true
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Clear Cloudfront Cache
+        if: github.ref == 'refs/heads/dev'
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.STAGING_AWS_CLOUDFRONT_DISTRIBUTION_ID }} --paths '/*'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: 'us-east-1'
 
 
       - name: 🚀 Production Deploy
@@ -172,8 +182,18 @@ jobs:
           arc env --add --env production S3_ENV_PREFIX ${{ secrets.PRODUCTION_S3_ENV_PREFIX }}
           arc env --add --env production S3_REGION ${{ secrets.PRODUCTION_S3_REGION }}
           arc env --add --env production SESSION_SECRET ${{ secrets.PRODUCTION_SESSION_SECRET }}
+          arc env --add --env production AWS_CLOUDFRONT_DISTRIBUTION_ID ${{ secrets.PRODUCTION_AWS_CLOUDFRONT_DISTRIBUTION_ID }}
           arc deploy --production --prune
         env:
           CI: true
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Clear Cloudfront Cache
+        if: github.ref == 'refs/heads/main'
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.PRODUCTION_AWS_CLOUDFRONT_DISTRIBUTION_ID }} --paths '/*'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: 'us-east-1'
