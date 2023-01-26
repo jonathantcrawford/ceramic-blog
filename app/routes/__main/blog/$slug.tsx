@@ -111,7 +111,7 @@ export default function Slug() {
         <NavLink
           prefetch="intent"
           to="/blog"
-          className="grid-in-ga-links no-underline text-yellow-100 hover:text-yellow-200 font-saygon text-lg mb-2"
+          className="grid-in-ga-sidebar no-underline text-yellow-100 hover:text-yellow-200 font-saygon text-lg mb-2"
         >{`< all posts`}</NavLink>
         <div className="grid-in-ga-content w-full markdown">
             <PostHeader info={{title, subTitle, updatedAt, emoji}}/>

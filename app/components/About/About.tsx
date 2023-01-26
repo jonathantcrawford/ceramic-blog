@@ -5,6 +5,7 @@ export const About = () => {
     "mt-2",
     "font-hamlin",
     "text-2xl",
+    "md:text-6xl",
     "font-light",
     "text-white-100",
   ].join(" ");
@@ -14,6 +15,7 @@ export const About = () => {
   const navLinkClasses = [
     "font-hamlin",
     "text-2xl",
+    "md:text-6xl",
     "no-underline",
     "text-yellow-100",
     "hover:text-yellow-200",
@@ -22,13 +24,13 @@ export const About = () => {
   return (
     <div className={aboutClasses}>
       <div className={divClasses}>
-        Interests in design, 
+        ux.
         <br/>
-        full stack development,
-        <br/>and web3 user experiences.
-      </div>
-      <div className={divClasses}>
-        Check out my{" "}
+        design.
+        <br/>
+        full stack.
+        <br/>
+        check out my{" "}
         <NavLink prefetch="none" to="/blog"  className={navLinkClasses}>
           blog
         </NavLink>

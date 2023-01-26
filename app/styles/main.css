@@ -374,4 +374,64 @@
     @apply text-pink-200 outline-none border-pink-200;
   }
 
+
+  .resume-template {
+    @apply text-base text-white-100 hyphens divide-y-2;
+  }
+
+  .resume-template section {
+    @apply pb-4 border-white-100 pt-4 first-of-type:pt-0;
+  }
+
+  .resume-template h1 {
+    @apply font-saygon text-6xl pb-2 font-bold;
+  }
+
+  .resume-template h2 {
+    @apply font-saygon text-5xl pb-2;
+  }
+
+  .resume-template h3 {
+    @apply font-saygon text-xl pb-2;
+  }
+
+  .resume-template article {
+    @apply pb-4;
+  }
+
+  .resume-template ul {
+    @apply list-disc pl-4 leading-8;
+  }
+
+  .resume-template li,
+  .resume-template span {
+    @apply font-saygon font-light;
+  }
+
+  .resume-template svg {
+    @apply text-white-100;
+  }
+
+  .resume-template table {
+    @apply w-full; 
+  }
+
+  .resume-template th,
+  .resume-template tr,
+  .resume-template td {
+    @apply font-saygon;
+  }
+
+  .resume-template th {
+    @apply text-base text-left;
+  }
+
+  .resume-template tr {
+    @apply border-white-100 border-opacity-20;
+  }
+
+  .resume-template td {
+    @apply font-saygon text-sm text-left px-2;
+  }
+
 }
