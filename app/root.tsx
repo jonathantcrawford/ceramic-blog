@@ -12,7 +12,7 @@ import {
   json
 } from "@remix-run/server-runtime"
 import type { LinksFunction, MetaFunction, LoaderFunction } from "@remix-run/node";
-
+import fontAwesomeStyles from '@fortawesome/fontawesome-svg-core/styles.css'
 import tailwindStylesheetUrl from "./styles/tailwind.css";
 import { getUser } from "./session.server";
 
@@ -20,6 +20,7 @@ import { getUser } from "./session.server";
 export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: tailwindStylesheetUrl },
+    { rel: "stylesheet", href: fontAwesomeStyles },
     // NOTE: Architect deploys the public directory to /_static/
     { rel: "icon", href: "/_static/favicon.png" },
   ];

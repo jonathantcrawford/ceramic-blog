@@ -135,7 +135,7 @@ const WorkExperience = () => {
           <p data-pdfmake={`{"fontSize": 12, "lineHeight": 0.25}`}>{`${duration}`}</p>
         </h2>
         <ul>
-          {highlights.map(({ description, link}, key) => (<li key={key}>{description}{link && <>{" "}<a href={link}>[{link}]</a></>}</li>))}
+          {highlights.map(({ description, link}, key) => (<li key={key}>{description}{link && <>{" "}<a href={link}>{`[${link}]`}</a></>}</li>))}
         </ul>
       </article>
     )

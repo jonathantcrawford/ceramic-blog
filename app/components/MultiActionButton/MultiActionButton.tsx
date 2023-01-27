@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 
-import "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
