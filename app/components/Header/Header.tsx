@@ -4,6 +4,7 @@ export const Header = () => {
   const navLinkClasses = [
     "font-december",
     "text-6xl",
+    "md:text-7xl",
     "no-underline",
     "flex",
     "flex-wrap",

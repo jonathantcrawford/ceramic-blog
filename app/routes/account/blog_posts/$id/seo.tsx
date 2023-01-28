@@ -14,7 +14,6 @@ import {ErrorBoundary as ComponentErrorBoundary} from "react-error-boundary";
 
 import { MultiActionButton } from "~/components/MultiActionButton/MultiActionButton";
 
-import "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronRight,

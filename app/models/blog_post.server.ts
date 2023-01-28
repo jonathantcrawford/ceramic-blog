@@ -14,7 +14,7 @@ export type BlogPost = {
   createdAt: string;
   updatedAt: string;
   body: string;
-  images: string[];
+  media: string[],
   previewImageMDX: string;
   previewImageUrl: string;
 };
@@ -26,7 +26,7 @@ export async function getBlogPostById({
   id: string;
 }): Promise<Omit<BlogPost, "userId"> | null> {
   const db = await arc.tables();
-  const result = await await db.blog_post.get({ pk: `blog_post#${id}`});
+  const result = await db.blog_post.get({ pk: `blog_post#${id}`});
 
   if (result) {
     return {
@@ -38,7 +38,7 @@ export async function getBlogPostById({
       status: result.status,
       createdAt: result.createdAt,
       updatedAt: result.updatedAt,
-      images: result.images,
+      media: result.media,
       body: result.body,
       previewImageMDX: result.previewImageMDX,
       previewImageUrl: result.previewImageUrl
@@ -51,7 +51,7 @@ export async function getBlogPostBySlug({
   slug,
 }: {
   slug: string;
-}): Promise<Omit<BlogPost, "userId" | "images"> | null> {
+}): Promise<Omit<BlogPost, "userId" | "media"> | null> {
   const db = await arc.tables();
 
   const result = await await db.blog_post.query({
@@ -84,7 +84,7 @@ export async function getBlogPostListItemsByUserId({
   userId,
 }: {
   userId: string;
-}): Promise<Array<Omit<BlogPost, "body" >>> {
+}) {
   const db = await arc.tables();
   const result = await db.blog_post.query({
     IndexName: 'byUserId',
@@ -105,8 +105,7 @@ export async function getBlogPostListItemsByUserId({
   }));
 }
 
-export async function getBlogPostListItems()
-: Promise<Array<Omit<BlogPost, "body" >>> {
+export async function getBlogPostListItems() {
   const db = await arc.tables();
 
   const result = await db.blog_post.scan({
@@ -126,8 +125,7 @@ export async function getBlogPostListItems()
   }));
 }
 
-export async function getPublishedBlogPostItems()
-: Promise<Array<Omit<BlogPost, "body" >>> {
+export async function getPublishedBlogPostItems() {
   const blogPostItems = await getBlogPostListItems();
   return blogPostItems.filter(blogPost => blogPost.status === 'published');
 }
@@ -179,7 +177,7 @@ export async function createBlogPost({
               updatedAt: updatedAt,
               body: '',
               previewImageMDX: '',
-              images: []
+              media: []
             },
             TableName: reflect.blog_post
           }
@@ -224,7 +222,7 @@ export async function updateBlogPost({
   userId: string;
   previewImageMDX?: string;
   previewImageUrl?: string;
-}): Promise<{blogPost?: Omit<BlogPost, "createdAt" | "images">, errors?: any}> {
+}): Promise<{blogPost?: Omit<BlogPost, "createdAt" | "media">, errors?: any}> {
  
 
   const client = await arc.tables();
@@ -382,15 +380,15 @@ export async function updateBlogPost({
   }
 }
 
-export async function updateBlogPostImages({
-  update,
+export async function updateBlogPostMedia({
   id,
   userId,
+  media,
 }: {
-  update: { image: string; } | { images: string[]};
   id: string;
   userId: string;
-}): Promise<{blogPost?: Pick<BlogPost, "id" | "userId" | "images" | "updatedAt">, errors?: any}> {
+  media: string | string[]
+}): Promise<{blogPost?: Pick<BlogPost, "id" | "userId" | "media" | "updatedAt">, errors?: any}> {
  
 
   const client = await arc.tables();
@@ -411,17 +409,14 @@ export async function updateBlogPostImages({
       }
     }
 
-    const images = (update as {images: string[]})?.images;
-    const image = (update as {image: string})?.image;
-    let imageUpdates: string[] = [];
-    if (images) {
-      imageUpdates = [...images];
-    } else if (image) {
-      imageUpdates = [...result.images, image];
-    }
+    let mediaUpdates: string[] = [];
+    if (Array.isArray(media)) {
+      mediaUpdates = [...media];
+    } else (
+      mediaUpdates = [...result.media, media]
+    )
     
 
-    
     //@ts-ignore
     await client._doc.transactWrite({
       TransactItems: [
@@ -430,9 +425,9 @@ export async function updateBlogPostImages({
             Key: {
               pk: `blog_post#${id}`,
             },
-            UpdateExpression: "SET images = :images, updatedAt = :updatedAt",
+            UpdateExpression: "SET media = :media, updatedAt = :updatedAt",
             ExpressionAttributeValues: {
-              ':images': imageUpdates,
+              ':media': mediaUpdates,
               ':updatedAt': updatedAt
             },
             TableName: reflect.blog_post
@@ -445,7 +440,7 @@ export async function updateBlogPostImages({
       blogPost: {
         id: id,
         userId:  userId,
-        images: imageUpdates,
+        media: mediaUpdates,
         updatedAt: updatedAt
       }
     };
@@ -458,6 +453,7 @@ export async function updateBlogPostImages({
     }
   }
 }
+
 
 export async function deleteBlogPost({
   id,

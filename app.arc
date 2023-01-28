@@ -28,6 +28,7 @@ password
 
 blog_post
   pk *String
+  PointInTimeRecovery true
 
 analytics
   pk *String
