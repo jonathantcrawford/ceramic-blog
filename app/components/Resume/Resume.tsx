@@ -34,9 +34,10 @@ const work_experiences = [
     role: "Sr. Software Engineer",
     duration: "April 2021 - Present",
     highlights:[
-      {link: "https://live.lunchbox.dev", description: "Lunchbox Live - Public showcase of company data."},
+      {link: "https://live.lunchbox.dev", description: "Lunchbox Live - Public showcase of company metrics. (Client locations and dollars clients saved using our platform."},
       {link: "https://unboxed.lunchbox.io", description: "Year End Review - Annual recap of ordering statistics for each client and aggregated."} ,
       {link: null, description: "Pulse - Context marketing engine for subscribing to weather events that would trigger webhooks."},
+      {link: null, description: "Conducted over 50 interviews, including code challenges."},
     ],
     slug:"lunchbox"
   },
@@ -46,7 +47,8 @@ const work_experiences = [
     role:"Software Engineer",
     duration:"Dec 2020 - March 2021",
     highlights:[
-      {link: null, description: "Migrated a hardware configuration component from internal tools site to a client admin management site."}
+      {link: null, description: "Migrated a hardware configuration UI component from internal tools site to a client admin management site."},
+      {link: null, description: "Implemented a user facing map component for associating geojson boundaries to addresses."}
     ],
     slug:"bryx"
   },
@@ -64,7 +66,6 @@ const work_experiences = [
       {link: null, description: "Worked with an enterprise partner to integrate their wallet id validation system into our checkout process using a client provided external API using certificate authentication." },
       {link: null, description: "Frequent collaborations with database team to remove and optimize inline SQL queries."},
       {link: null, description: "Built custom SQL reports as requested within a statement of work requirements." },
-      {link: null, description: "Created a communication system for our development teams, which increased transparency of resource availability and project ownership." },
       {link: null, description: "Developed a new online ordering checkout workflow enhancement into a legacy Classic ASP application."},
       {link: null, description: "Led a successful campaign to promote proper documentaion for several C# .NET APIs using C# swagger documentation tools." },
       {link: null, description: "Worked with C# .NET APIs for connecting with payment gateways, user authentication/authorization, data querying, printer hardware integration, internal customer support tools and backend procedure job queues." },
