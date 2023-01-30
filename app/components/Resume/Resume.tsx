@@ -34,10 +34,24 @@ const work_experiences = [
     role: "Sr. Software Engineer",
     duration: "April 2021 - Present",
     highlights:[
-      {link: "https://live.lunchbox.dev", description: "Lunchbox Live - Public showcase of company metrics. (Client locations and dollars clients saved using our platform."},
-      {link: "https://unboxed.lunchbox.io", description: "Year End Review - Annual recap of ordering statistics for each client and aggregated."} ,
-      {link: null, description: "Pulse - Context marketing engine for subscribing to weather events that would trigger webhooks."},
+      {link: null, description: `
+        Lunchbox 2.0 - Rebuild of our frontend online ordering applications. 
+        After some reorganization in the company I was moved to this project halfway during it's completion. 
+        Became the primary contributor for the application's BFF (backend for frontend) API.
+        The BFF was intended to consolidate data from a 3rd party CMS and ordering API acquired by the company.
+        Implemented a JWT encrypted authorization flow to be used by web, iOS and Android front ends.
+        Implemented multi-tenancy patterns for web front end.
+        Implemented authentication and checkout logic on SSR Remix web application.
+      `},
+      {link: null, description: `
+        Pulse - Context marketing engine for subscribing to weather events that would trigger webhooks.
+        Built out complex user interface for walking users through 'trigger' creation and setup.
+        Implemented backend using Nest.js and Postgres.
+        Backend utilized polling and json-logic for dynamically processing the logic for each trigger. 
+      `},
       {link: null, description: "Conducted over 50 interviews, including code challenges."},
+      {link: "https://live.lunchbox.dev", description: "Lunchbox Live - Public showcase of company metrics. (Client locations and dollars clients saved using our platform."},
+      {link: "https://unboxed.lunchbox.io", description: "Year End Review - Annual recap of ordering statistics for each client and aggregated."},
     ],
     slug:"lunchbox"
   },
