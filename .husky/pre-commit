@@ -2,4 +2,4 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 yarn resume
-git add public/resume.pdf
+git add public/jonathan_t_crawford_resume.pdf

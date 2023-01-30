@@ -33,5 +33,5 @@ console.log(JSON.stringify(docDefinition, null, 2));
 
 var pdfDocGenerator = pdfMake.createPdf(docDefinition, undefined, undefined, pdfFonts.pdfMake.vfs);
 pdfDocGenerator.getBuffer(function(buffer) {
-  fs.writeFileSync('./public/resume.pdf', buffer);
+  fs.writeFileSync('./public/jonathan_t_crawford_resume.pdf', buffer);
 });

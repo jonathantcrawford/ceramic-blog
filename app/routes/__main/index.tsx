@@ -44,8 +44,8 @@ export default function Index() {
         <About />
       </div>
       <div className="grid-in-ga-content w-full">
-        <Link to="/_static/resume.pdf" reloadDocument target="_blank" className="font-saygon text-yellow-100 text-tiny">
-          <FontAwesomeIcon icon={faLink} className="text-xs hover:no-underline"/>{" "}<span className="hover:underline">[resume.pdf]</span>
+        <Link to="/_static/jonathan_t_crawford_resume.pdf" reloadDocument target="_blank" className="font-saygon text-yellow-100 text-tiny">
+          <FontAwesomeIcon icon={faLink} className="text-xs hover:no-underline"/>{" "}<span className="hover:underline">[jonathan_t_crawford_resume.pdf]</span>
         </Link>
         <ResumeTemplate/>
       </div>

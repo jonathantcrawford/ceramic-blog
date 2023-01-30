@@ -9,7 +9,7 @@
   "sideEffects": false,
   "scripts": {
     "clean": "rimraf .cache ./server ./public/build",
-    "resume": "rimraf public/resume.pdf && npx tsx ./resume/make.tsx",
+    "resume": "rimraf public/jonathan_t_crawford_resume.pdf && npx tsx ./resume/make.tsx",
     "build": "run-s clean build:css build:remix",
     "build:css": "npm run generate:css -- --minify",
     "build:remix": "remix build",

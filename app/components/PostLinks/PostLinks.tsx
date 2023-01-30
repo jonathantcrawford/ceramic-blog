@@ -27,7 +27,7 @@ function PendingNavLink({ className, to, prefetch, children }: any) {
   );
 }
 
-export const PostLinks = ({title, linkPrefix, linkAttribute, posts}: {title: string, linkPrefix: string, linkAttribute: string, posts: Omit<BlogPost, "body">[] }) => {
+export const PostLinks = ({title, linkPrefix, linkAttribute, posts}: {title: string, linkPrefix: string, linkAttribute: string, posts: Omit<BlogPost, "body" | "media" | "userId"| "previewImageMDX" | "previewImageUrl">[] }) => {
 
   //const [blogPosts, setBlogPosts] = useState<Array<BlogPostItem> | []>([])
   
