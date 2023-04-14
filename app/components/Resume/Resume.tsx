@@ -29,10 +29,20 @@ const skills = [
 
 const work_experiences = [
   {
+    company: "Ownwell",
+    location: "Austin, TX",
+    role: "Fullstack Software Engineer",
+    duration: "April 2023 - Present",
+    highlights:[
+
+    ],
+    slug:"ownwell"
+  },
+  {
     company: "Lunchbox",
     location: "Remote",
     role: "Sr. Software Engineer",
-    duration: "April 2021 - Present",
+    duration: "April 2021 - March 2023",
     highlights:[
       {link: null, description: `
         Lunchbox 2.0 - Rebuild of our frontend online ordering applications. 
