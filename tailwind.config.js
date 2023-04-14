@@ -61,6 +61,39 @@ module.exports = {
       },
       'red': {
         100: '#ff124f'
+      },
+      'clickable': {
+        'content': 'var(--colors-clickable-content)',
+        'static': 'var(--colors-clickable-static)',
+        'hover': 'var(--colors-clickable-hover)',
+        'loading': 'var(--colors-clickable-loading)'
+      },
+      'card': {
+        'background': 'var(--colors-card-background)',
+        'heading': 'var(--colors-card-heading)'
+      },
+      'heading': 'var(--colors-heading)',
+      'content': 'var(--colors-content)',
+      'background': 'var(--colors-background)'
+    },
+    variables: {
+      DEFAULT: {
+        colors: {
+          
+          clickable: {
+            content: '#f7f7f0',
+            static: '#1c7ce5',
+            hover: '#1c7ce5',
+            loading: 'green'
+          },
+          heading: '#014a99',
+          card: {
+            background: '#014a99',
+            heading: '#f7f7f0'
+          },
+          content: '#053249',
+          background: '#f7f7f0'
+        }
       }
     },
     gridTemplateAreas: {
@@ -117,10 +150,11 @@ module.exports = {
       'account': 'auto'
     },
   },
-  plugins: [
-    require('@savvywombat/tailwindcss-grid-areas')
-  ],
   variants: {
     gridTemplateAreas: ['responsive']
-  }
+  },
+  plugins: [
+    require('@mertasan/tailwindcss-variables'),
+    require('@savvywombat/tailwindcss-grid-areas')
+  ],
 };

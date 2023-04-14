@@ -65,6 +65,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
+    "@mertasan/tailwindcss-variables": "^2.6.1",
     "@remix-run/dev": "^1.11.1",
     "@remix-run/eslint-config": "^1.11.1",
     "@savvywombat/tailwindcss-grid-areas": "^3.0.0",

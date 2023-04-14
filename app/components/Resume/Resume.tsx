@@ -156,7 +156,7 @@ const WorkExperience = () => {
     return (
       <article data-pdfmake={`{"marginBottom": 10}`}>
         <h2>
-          <p data-pdfmake={`{"fontSize": 14, "lineHeight": 0.25}`}>{`${role}: ${company}, ${location}`}</p>
+          <p data-pdfmake={`{"fontSize": 14, "lineHeight": 0.25}`}>{`[${company}]: ${role} - ${location}`}</p>
           <p data-pdfmake={`{"fontSize": 12, "lineHeight": 0.25}`}>{`${duration}`}</p>
         </h2>
         <ul>
